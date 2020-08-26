@@ -1,0 +1,59 @@
+
+<app-header [title]='title'></app-header>
+
+<ion-content>
+  <ion-refresher *ngIf="showSpinner === false" (ionRefresh)="refreshBluetooth($event)">
+    <ion-refresher-content class='setup-style' refreshingText=" S e a r c h i n g . . . ">
+    </ion-refresher-content>
+  </ion-refresher>
+  <div [hidden]="showSpinner === false" class='text-center'>
+    <br><ion-spinner></ion-spinner><br>
+    S E A R C H I N G
+  </div>
+
+  <!-- <ion-list lines="full"> -->
+    <ion-card (click)="checkConnection(device)" *ngFor="let device of devices">
+        <ion-card-header class='bt-card-header'>
+          <h4><ion-icon name="bluetooth"></ion-icon>{{device.name? device.name: 'No Name'}}</h4>
+          <p>BluetoothId {{device.id}}</p>
+        </ion-card-header>
+        <ion-card-content class='bt-card'>
+          <p>Bluetooth Adress
+            <span [hidden]="device.address == undefined">mac</span>
+            <span [hidden]="device.uuid == undefined">uuid</span>
+            {{device.address}} {{device.uuid}}
+          </p>
+          <p>
+            <span [hidden]="device.class == undefined">Class</span>
+            <span [hidden]="device.rssi == undefined">Rssi</span>
+            {{device.class}} {{device.rssi}}
+          </p>
+        </ion-card-content>
+    </ion-card>
+  <!-- </ion-list> -->
+  <form (ngSubmit)="sendMessage(message);">
+    <ion-row>
+      <ion-col size='10'>
+        <ion-item>
+          <ion-input type="text" [(ngModel)]="message" name="message"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col size='2'>
+        <ion-button expand="block" type="submit" size='medium' [disabled]="!isConnected">
+          <ion-icon name="arrow-forward"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button expand="block" color="dark" (click)="disconnect()" [disabled]="!isConnected">
+          <ion-icon name="close-circle"></ion-icon> Disconnect
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+  <p *ngFor="let item of messages">{{ item }}</p>
+  <div [hidden]="devices.length > 0 || showSpinner == true || isConnected" class='text-center'>
+    <p>Bluetooth no encontrado</p>
+  </div>
+</ion-content>

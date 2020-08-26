@@ -1,0 +1,33 @@
+<app-header [title]='title'></app-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">TouchScreen</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+<div class='row' (click)="onClick($event)">
+
+  <canvas #imageCanvas fullWidth  class='touchpad'
+  (touchmove)="getCurrentPosition($event)" (touchend)="onTouchEnd($event)" (touchstart)="onTouchStart($event)"></canvas>
+
+</div>
+ 
+
+    <div class="row" class='touch-footer'>
+      <p style="color: white">{{this.character}}</p>
+      <div class="row">
+        <ion-button (click)="show()"><ion-icon name="keypad-outline"></ion-icon>
+        </ion-button>
+      </div>
+  
+      <!-- <div class="row" class='coord-display'>
+          <p class='coord-display-text'>[ {{position.x}} , {{position.y}} ] </p>
+      </div> -->
+
+      <ion-input #myInput placeholder="" (keyup)="getChar($event)"></ion-input>
+    </div>
+    
+
+</ion-content> 

@@ -1,0 +1,7 @@
+{
+  "name": "mouserKeyboarder",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

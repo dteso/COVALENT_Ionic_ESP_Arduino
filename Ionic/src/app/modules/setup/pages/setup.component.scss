@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css?family=Poiret+One&display=swap');
+
+ion-menu-button {
+    color: var(--ion-color-primary);
+  }
+  
+  #container {
+    text-align: center;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  #container strong {
+    font-size: 20px;
+    line-height: 26px;
+  }
+  
+  #container p {
+    font-size: 16px;
+    line-height: 22px;
+    color: #8c8c8c;
+    margin: 0;
+  }
+  
+  #container a {
+    text-decoration: none;
+  }
+
+ .setup-style{
+    --background: aquamarine !important;
+    color: dar;
+    border: 5px solid white;
+    border-radius: 5px;
+    font-family: 'Poiret One', cursive !important;
+  }
+  
+  ion-content ion-toolbar {
+    --background: transparent;
+  }
+
+  .text-center{
+    text-align: center !important;
+  }
+
+  .bt-card{
+    margin-top: 0.5rem;
+    font-family: 'Poiret One', cursive !important;
+  }
+
+  .bt-card-header{
+    background-color: rgb(139, 181, 230);
+    border-bottom: 0.5px solid rgb(113, 21, 219);
+    color: white;
+  }
