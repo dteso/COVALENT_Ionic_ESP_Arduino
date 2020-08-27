@@ -5,8 +5,13 @@ export const appPages = [
       icon: 'square'
     },
     {
-      title: 'Setup',
+      title: 'Bluetooth',
       url: '/setup',
-      icon: 'settings'
+      icon: 'bluetooth'
+    },
+    {
+      title: 'Serial',
+      url: '/serial',
+      icon: 'terminal'
     }
   ];

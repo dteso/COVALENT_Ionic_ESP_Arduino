@@ -14,6 +14,10 @@ const routes: Routes = [
   {
     path: 'setup',
     loadChildren: () => import('./modules/setup/setup.module').then( m => m.SetupModule)
+  },
+  {
+    path: 'serial',
+    loadChildren: () => import('./modules/serial-terminal/serial-terminal.module').then( m => m.SerialTerminalModule)
   }
 ];
 

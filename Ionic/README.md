@@ -61,6 +61,13 @@
                                                                 ionic cordova plugin add cordova-plugin-ionic-keyboard
                                                                 npm install @ionic-native/keyboard
 
++ Serial Native Plugin
+
+                                                                ionic cordova plugin add cordovarduino
+                                                                npm i --save @ionic-native/core@5.0.0-beta.14 ---> Es importante que sea esta versión para poder hacer el import de ngx
+                                                                npm i --save @ionic-native/serial@5.0.0-beta.14
+                                                                npm install --save rxjs-compat ----> Requerido como depenencia
+
 
 > Build & Run 
                                                                             ionic cordova build android 
@@ -69,7 +76,7 @@
 
                                                                             ionic cordova run android -l 
 
-                                                --> Ejecuta la aplicación y abre servidor. al poner -l estamos habilitando el live reloading para la compilación
+                                    --> Ejecuta la aplicación y abre servidor. al poner -l estamos habilitando el live reloading para la compilación
 
 
 
@@ -80,3 +87,10 @@ gradle wrapper --gradle-version 5.0
 En el gradle-wraper.properties.ts
 distributionUrl=https\://services.gradle.org/distributions/gradle-5.6.4-all.zip
 gradle-5.6.4-all.zip
+
+
+https://ionic.zone/debug/ionic-and-android-4
+
+No es posible correr en AndroidStudio 4 con versiones del cordova-ionic-plugin-webview superiores a la 2
+
+ionic cordova plugin add cordova-plugin-ionic-webview@1.2.1

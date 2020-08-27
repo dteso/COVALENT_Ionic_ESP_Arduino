@@ -16,6 +16,7 @@ import { StorageService } from './services/storage.service';
 
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { BluetoothService } from './services/bluetooth.service';
+import { Serial } from '@ionic-native/serial/ngx';
 
 
 
@@ -36,6 +37,7 @@ import { BluetoothService } from './services/bluetooth.service';
     BluetoothSerial,
     StorageService,
     BluetoothService,
+    Serial,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   ],
   bootstrap: [AppComponent]
