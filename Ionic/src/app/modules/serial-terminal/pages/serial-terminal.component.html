@@ -1,5 +1,16 @@
 <app-header title='Serial Terminal'></app-header>
 
-<p>
-  serial-terminal works!
-</p>
+<div class="mb-2" style="text-align: center">
+  <h5 style="color: lightgreen" *ngIf="connected===true">CONNECTED</h5>
+  <h5 style="color: lightcoral" *ngIf="connected===false">NOT CONNECTED</h5>
+</div>
+
+
+<ion-button *ngIf="connected" (click)="connect()" style="background: rgb(167, 43, 43); color: white; margin-bottom:1rem">DISCONNECT</ion-button>
+<ion-content>
+  <!-- <p style="color: gray;"> STATUS: {{data}} </p> -->
+  <ion-textarea style="color: lightskyblue; background-color: black; padding:1rem;"> {{fullStr}} </ion-textarea>
+</ion-content>
+
+
+
