@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Serial } from '@ionic-native/serial/ngx';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-serial-terminal',
@@ -14,6 +13,7 @@ export class SerialTerminalComponent implements OnInit {
   str='';
   fullStr = '';
   codeInput;
+  message: '';
 
   constructor(private serial: Serial) {}
   
@@ -35,14 +35,11 @@ export class SerialTerminalComponent implements OnInit {
         console.log('Serial connection opened');
         this.connected=true;
         this.serial.registerReadCallback().subscribe((data)=> {
-          // var enc = new TextDecoder("utf-8");
-          // this.data = enc.decode(data);
           var view = new Uint8Array(data);
           if(view.length >= 1) {
             for(var i=0; i < view.length; i++) {
                 //if we received a \n, the message is complete, display it
                 if(view[i] == 13) {
-                    // check if the read rate correspond to the arduino serial print rate
                     this.fullStr = this.fullStr + this.str + '\n';
                     this.str = '';
                 }
@@ -65,6 +62,15 @@ export class SerialTerminalComponent implements OnInit {
       this.data = "CONNECTION [ko]";
       console.log(error)
     });
+  }
+
+  showOptions(){
+    console.log("Options");
+  }
+
+  cleanConsole(){
+    this.fullStr='';
+    console.log("Clear Console");
   }
 
 

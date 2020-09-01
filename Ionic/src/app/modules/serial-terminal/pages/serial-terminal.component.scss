@@ -1,0 +1,50 @@
+.connected-style{
+    color: white;
+    background-color: rgb(157, 241, 30);
+}
+
+.not-connected-style{
+    color: lightgray;
+    background-color: lightcoral;
+}
+
+.terminal{
+    color: rgb(157, 241, 30);
+    background-color: black; 
+    padding:1rem;
+    font-size: 10px;
+    overflow-y: visible;
+}
+
+.close-btn{
+    color: white; 
+    margin-bottom:1rem;
+    width: 100%;
+}
+
+.send-btn{
+   min-height: 3rem;
+   border: 1px solid white;
+   border-radius: 5px;
+}
+
+.input-message{
+    border: 1px solid lightgreen;
+    border-radius: 5px; 
+    background-color: rgb(99, 99, 99); 
+    min-height: 3rem; 
+    margin-top: 0.175rem
+}
+
+.bg-black{
+    background-color: black !important;
+    background: black !important;
+}
+
+.console.title{
+    margin-top: 0.5rem !important;
+    margin-left: 1rem !important;
+    color: darkgrey !important;
+    border: solid 1px black;
+    border-radius: 5px;
+}
