@@ -17,6 +17,7 @@ import { StorageService } from './services/storage.service';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { BluetoothService } from './services/bluetooth.service';
 import { Serial } from '@ionic-native/serial/ngx';
+import { SerialTabsModule } from './modules/serial-terminal/pages/serial-tabs.module';
 
 
 
@@ -29,6 +30,7 @@ import { Serial } from '@ionic-native/serial/ngx';
     IonicModule.forRoot(),
     IonicStorageModule.forRoot(),
     CoreModule,
+    SerialTabsModule,
     AppRoutingModule,
   ],
   providers: [

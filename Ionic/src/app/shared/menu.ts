@@ -11,7 +11,7 @@ export const appPages = [
     },
     {
       title: 'Serial',
-      url: '/serial',
+      url: '/terminal-tabs',
       icon: 'terminal'
     }
   ];

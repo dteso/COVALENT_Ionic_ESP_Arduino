@@ -16,8 +16,8 @@ const routes: Routes = [
     loadChildren: () => import('./modules/setup/setup.module').then( m => m.SetupModule)
   },
   {
-    path: 'serial',
-    loadChildren: () => import('./modules/serial-terminal/serial-terminal.module').then( m => m.SerialTerminalModule)
+    path: 'terminal-tabs',
+    loadChildren: () => import('./modules/serial-terminal/pages/serial-tabs.module').then( m => m.SerialTabsModule)
   }
 ];
 

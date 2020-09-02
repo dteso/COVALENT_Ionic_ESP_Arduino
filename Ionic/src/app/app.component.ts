@@ -5,6 +5,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { appPages } from './shared/menu'
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,8 @@ export class AppComponent implements OnInit {
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
-    private statusBar: StatusBar
+    private statusBar: StatusBar,
+    private router: Router
   ) {
     this.initializeApp();
   }
@@ -31,5 +33,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.router.navigate(['/touchscreen']);
   }
 }
