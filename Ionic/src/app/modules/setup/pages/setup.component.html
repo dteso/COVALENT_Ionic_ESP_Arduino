@@ -1,37 +1,61 @@
-
 <app-header [title]='title'></app-header>
 
 <ion-content>
-  <ion-refresher *ngIf="showSpinner === false" (ionRefresh)="refreshBluetooth($event)">
-    <ion-refresher-content class='setup-style' refreshingText=" S e a r c h i n g . . . ">
+
+
+  <ion-refresher slot="fixed" class="p-2" (ionRefresh)="refreshBluetooth($event)">
+    <ion-refresher-content refreshingText=" R e f r e s h i n g  . . . " pullingIcon="chevron-down-circle-outline"
+      pullingText="Pull to refresh" refreshingSpinner="circles">
     </ion-refresher-content>
   </ion-refresher>
-  <div [hidden]="showSpinner === false" class='text-center'>
-    <br><ion-spinner></ion-spinner><br>
-    S E A R C H I N G
-  </div>
 
-  <!-- <ion-list lines="full"> -->
-    <ion-card (click)="checkConnection(device)" *ngFor="let device of devices">
-        <ion-card-header class='bt-card-header'>
-          <h4><ion-icon name="bluetooth"></ion-icon>{{device.name? device.name: 'No Name'}}</h4>
-          <p>BluetoothId {{device.id}}</p>
-        </ion-card-header>
-        <ion-card-content class='bt-card'>
-          <p>Bluetooth Adress
-            <span [hidden]="device.address == undefined">mac</span>
-            <span [hidden]="device.uuid == undefined">uuid</span>
-            {{device.address}} {{device.uuid}}
-          </p>
-          <p>
-            <span [hidden]="device.class == undefined">Class</span>
-            <span [hidden]="device.rssi == undefined">Rssi</span>
-            {{device.class}} {{device.rssi}}
-          </p>
-        </ion-card-content>
-    </ion-card>
-  <!-- </ion-list> -->
-  <form (ngSubmit)="sendMessage(message);">
+
+  <ion-row
+    [ngClass]="{'not-connected-style' : !isConnected, 'connected-style': isConnected, 'searching-style': showSpinner, 'select-device-style': !isConnected && devices.length > 0 }">
+    <ion-col>
+      <div class="ion-text-center">
+        <ion-label lines="none" *ngIf="isConnected">
+          <h2><strong>CONNECTED</strong></h2>
+          <ion-icon size="large" name="flash-outline"></ion-icon>
+        </ion-label>
+        <ion-label lines="none" *ngIf="!isEnabled && !showSpinner">
+          <h2><strong>NOT CONNECTED</strong></h2>
+          <ion-icon size="large" name="flash-off-outline"></ion-icon>
+        </ion-label>
+        <ion-label lines="none" *ngIf="!isConnected && showSpinner">
+          <h2><strong>SEARCHING</strong></h2>
+          <ion-icon size="large" name="search"></ion-icon>
+        </ion-label>
+        <ion-label lines="none" *ngIf="!isConnected && devices.length > 0">
+          <h2><strong>SELECT DEVICE</strong></h2>
+          <ion-icon size="large" name="caret-down-circle"></ion-icon>
+        </ion-label>
+      </div>
+    </ion-col>
+  </ion-row>
+
+
+  <ion-list lines="full" [hidden]="isConnected">
+    <ion-item *ngFor="let device of devices" class='bt-item-style mb-1' (click)="checkConnection(device)">
+      <ion-row>
+        <p><strong>{{device.name? device.name: 'No Name'}}</strong></p>
+      </ion-row>
+
+      <p>Bluetooth Adress
+        <span [hidden]="device.address == undefined">mac</span>
+        <span [hidden]="device.uuid == undefined">uuid</span>
+        {{device.address}} {{device.uuid}}
+      </p>
+      <p>
+        <span [hidden]="device.class == undefined">Class</span>
+        <span [hidden]="device.rssi == undefined">Rssi</span>
+        {{device.class}} {{device.rssi}}
+      </p>
+
+    </ion-item>
+  </ion-list>
+
+  <form *ngIf="isConnected" (ngSubmit)="sendMessage(message);">
     <ion-row>
       <ion-col size='10'>
         <ion-item>
@@ -52,8 +76,54 @@
       </ion-col>
     </ion-row>
   </form>
+  <ion-row *ngIf="isConnected">
+    <ion-col>
+      <div class="ion-text-center">
+        <ion-label *ngIf="isConnected">
+          <h2><strong>{{selectedDevice.name}}</strong></h2>
+          <ion-icon size="large" name="hardware-chip"></ion-icon>
+        </ion-label>
+      </div>
+    </ion-col>
+  </ion-row>
+
+
   <p *ngFor="let item of messages">{{ item }}</p>
-  <div [hidden]="devices.length > 0 || showSpinner == true || isConnected" class='text-center'>
-    <p>Bluetooth no encontrado</p>
+
+  <div *ngIf="!isEnabled">
+    <ion-row>
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle class="text-center">Bluetooth not enabled</ion-card-subtitle>
+          <ion-card-title class="text-center">Bluetooth connection</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="text-center">
+            <ion-icon name="bluetooth" class="font-24"></ion-icon>
+          </div>
+          You have to enable bluetooth on your device to connect external devices.
+        </ion-card-content>
+      </ion-card>
+    </ion-row>
   </div>
+
+  <div [hidden]="!isEnabled && showSpinner === false || devices.length > 0 || isConnected">
+    <ion-row class="w-100">
+      <ion-col size='12'>
+        <ion-card>
+          <ion-card-header>
+            <ion-card-subtitle class="text-center">Checking availbale devices</ion-card-subtitle>
+            <ion-card-title class="text-center">Bluetooth connection</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="text-center">
+              <ion-spinner name="dots" color="secondary"></ion-spinner>
+            </div>
+            Keep your smartphone near bluetooth device you want to connect. If the device is off please turn it on.
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </div>
+
 </ion-content>

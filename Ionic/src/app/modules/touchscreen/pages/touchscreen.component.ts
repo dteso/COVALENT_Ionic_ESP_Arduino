@@ -34,6 +34,7 @@ export class TouchscreenComponent implements AfterViewInit  {
     private bluetooth: BluetoothService,
     private storage: StorageService
     ) { 
+      
     this.position=new Position();
     this.position.x = 0;
     this.position.y = 0;

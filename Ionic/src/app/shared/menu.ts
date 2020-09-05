@@ -1,17 +1,22 @@
 export const appPages = [
-    {
-      title: 'TouchScreen',
-      url: '/touchscreen',
-      icon: 'square'
-    },
-    {
-      title: 'Bluetooth',
-      url: '/setup',
-      icon: 'bluetooth'
-    },
-    {
-      title: 'Serial',
-      url: '/terminal-tabs',
-      icon: 'terminal'
-    }
-  ];
+  {
+    title: 'Bluetooth',
+    url: '/setup',
+    icon: 'bluetooth'
+  },
+  {
+    title: 'TouchScreen',
+    url: '/touchscreen',
+    icon: 'finger-print'
+  },
+  {
+    title: 'Serial',
+    url: '/terminal-tabs',
+    icon: 'terminal'
+  },
+  {
+    title: 'WiFi logger',
+    url: '/wifi-logger',
+    icon: 'wifi'
+  }
+];

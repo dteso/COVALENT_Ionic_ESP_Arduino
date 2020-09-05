@@ -3,6 +3,30 @@
 ion-menu-button {
     color: var(--ion-color-primary);
   }
+
+  .connected-style{
+    color: white;
+    background-color:rgb(71, 71, 212);
+  }
+
+  .not-connected-style{
+      color: lightgray;
+      background-color: lightcoral;
+  }
+
+  .searching-style{
+    color:white;
+    background-color: rgb(71, 71, 212);
+  }
+  
+  .select-device-style{
+    color:white;
+    background-color: gray;
+  }
+
+  ion-spinner {
+    transform: scale(4);
+  }
   
   #container {
     text-align: center;
@@ -54,4 +78,12 @@ ion-menu-button {
     background-color: rgb(139, 181, 230);
     border-bottom: 0.5px solid rgb(113, 21, 219);
     color: white;
+  }
+
+  .bt-item-style{
+    font-family: 'Poiret One', cursive !important;
+  }
+
+  .color-blue{
+    color: rgb(44, 44, 122) !important;
   }

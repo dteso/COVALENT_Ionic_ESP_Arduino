@@ -3,12 +3,7 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { StorageService } from '../services/storage.service';
 import { Observable, Subscription, from } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-/**
- * Esta clase maneja la conectividad bluetooth.
- *
- * @author <a href="mailto:jlozoya1995@gmail.com">Juan Lozoya</a>
- * @see [Bluetooth Serial](https://ionicframework.com/docs/native/bluetooth-serial/)
- */
+
 @Injectable()
 export class BluetoothService {
 
@@ -16,10 +11,13 @@ export class BluetoothService {
   private connectionCommunication: Subscription;
   private reader: Observable<any>;
 
+  private bluetoothEnabled: boolean;
+
   constructor(
     private bluetoothSerial: BluetoothSerial,
     private storage: StorageService
-  ) {  }
+  ) { }
+
   /**
    * Busca los dispositivos bluetooth disponibles, evalúa si es posible usar la funcionalidad
    * bluetooth en el dispositivo.
@@ -44,6 +42,7 @@ export class BluetoothService {
       });
     });
   }
+
   /**
    * Verifica si ya se encuentra conectado a un dispositivo bluetooth o no.
    */
@@ -56,6 +55,38 @@ export class BluetoothService {
       });
     });
   }
+
+  /**
+   * Comprueba que el bluetooth del dispositivo esté activado
+   */
+  checkEnabled() {
+    return new Promise((resolve, reject) => {
+      this.bluetoothSerial.isEnabled().then(isEnabled => {
+        this.bluetoothEnabled = true;
+        resolve(true);
+      }, notEnabled => {
+        this.bluetoothEnabled = false;
+        reject(false);
+      });
+    });
+  }
+
+  /**
+   * Activa el bluetooth del dispsitivo
+   * @return {Promise<Object>} 
+   */
+  enableBT() {
+    return this.bluetoothSerial.enable();
+  }
+
+  /**
+   * Obtiene el estado del bluetooth
+   */
+  getStatus() {
+    return this.bluetoothEnabled;
+  }
+
+
   /**
    * Se conceta a un dispostitivo bluetooth por su id.
    * @param id Es la id del dispositivo al que se desea conectarse
@@ -72,6 +103,7 @@ export class BluetoothService {
       });
     });
   }
+
   /**
    * Cierra el socket para la conexión con un dispositivo bluetooth.
    * @return {Promise<boolean>}
@@ -87,6 +119,7 @@ export class BluetoothService {
       result(true);
     });
   }
+
   /**
    * Establece el socket para las comunicaciones seriales después de conectarse con un dispositivo
    * bluetooth.
@@ -99,10 +132,10 @@ export class BluetoothService {
     return Observable.create(observer => {
       this.bluetoothSerial.isConnected().then((isConnected) => {
         this.reader = from(this.bluetoothSerial.write(message)).pipe(mergeMap(() => {
-            return this.bluetoothSerial.subscribeRawData();
-          })).pipe(mergeMap(() => {
-            return this.bluetoothSerial.readUntil('\n');   // <= delimitador
-          }));
+          return this.bluetoothSerial.subscribeRawData();
+        })).pipe(mergeMap(() => {
+          return this.bluetoothSerial.readUntil('\n');   // <= delimitador
+        }));
         this.reader.subscribe(data => {
           observer.next(data);
         });
@@ -112,6 +145,7 @@ export class BluetoothService {
       });
     });
   }
+
   /**
    * Es un método que se puede llamar desde otras partes del código para intentar conectar con la
    * id del ultimo dispositivo bluetooth al que se allá conectado.
