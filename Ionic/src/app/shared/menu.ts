@@ -15,8 +15,8 @@ export const appPages = [
     icon: 'terminal'
   },
   {
-    title: 'WiFi logger',
-    url: '/wifi-logger',
-    icon: 'wifi'
+    title: 'Network',
+    url: '/network',
+    icon: 'globe'
   }
 ];

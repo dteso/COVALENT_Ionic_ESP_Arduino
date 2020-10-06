@@ -18,6 +18,7 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { BluetoothService } from './services/bluetooth.service';
 import { Serial } from '@ionic-native/serial/ngx';
 import { SerialTabsModule } from './modules/serial-terminal/pages/serial-tabs.module';
+import { NetworkModule } from './modules/network/pages/network.module';
 
 
 
@@ -31,7 +32,8 @@ import { SerialTabsModule } from './modules/serial-terminal/pages/serial-tabs.mo
     IonicStorageModule.forRoot(),
     CoreModule,
     SerialTabsModule,
-    AppRoutingModule,
+    NetworkModule,
+    AppRoutingModule
   ],
   providers: [
     StatusBar,

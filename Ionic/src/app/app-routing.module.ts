@@ -18,6 +18,10 @@ const routes: Routes = [
   {
     path: 'terminal-tabs',
     loadChildren: () => import('./modules/serial-terminal/pages/serial-tabs.module').then( m => m.SerialTabsModule)
+  },
+  {
+    path: 'network',
+    loadChildren: () => import('./modules/network/pages/network.module').then( m => m.NetworkModule)
   }
 ];
 
