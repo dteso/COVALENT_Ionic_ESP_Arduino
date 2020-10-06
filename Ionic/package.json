@@ -25,6 +25,7 @@
     "@ionic-native/serial": "^5.0.0-beta.14",
     "@ionic-native/splash-screen": "^5.0.0",
     "@ionic-native/status-bar": "^5.0.0",
+    "@ionic-native/wifi-wizard-2": "^5.28.0",
     "@ionic/angular": "^5.0.0",
     "@ionic/cli": "^6.11.3",
     "@ionic/storage": "^2.2.0",
@@ -55,7 +56,9 @@
     "cordova-plugin-splashscreen": "5.0.2",
     "cordova-plugin-statusbar": "2.4.2",
     "cordova-plugin-whitelist": "1.3.3",
+    "cordova-plugin-wifiwizard2": "^3.1.1",
     "cordovarduino": "0.0.10",
+    "es6-promise-plugin": "^4.1.0",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.1.0",
@@ -78,7 +81,8 @@
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-ionic-webview": {},
       "cordova-plugin-ionic-keyboard": {},
-      "cordovarduino": {}
+      "cordovarduino": {},
+      "wifiwizard2": {}
     },
     "platforms": [
       "android"

@@ -68,6 +68,10 @@
                                                                 npm i --save @ionic-native/serial@5.0.0-beta.14
                                                                 npm install --save rxjs-compat ----> Requerido como depenencia
 
++ WifiWizard 2
+                                                                ionic cordova plugin add cordova-plugin-wifiwizard2
+                                                                npm install @ionic-native/wifi-wizard-2    
+
 
 > Build & Run 
                                                                             ionic cordova build android 

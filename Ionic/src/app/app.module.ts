@@ -19,6 +19,8 @@ import { BluetoothService } from './services/bluetooth.service';
 import { Serial } from '@ionic-native/serial/ngx';
 import { SerialTabsModule } from './modules/serial-terminal/pages/serial-tabs.module';
 import { NetworkModule } from './modules/network/pages/network.module';
+import { NetworkService } from './services/services';
+import { WifiWizard2 } from '@ionic-native/wifi-wizard-2/ngx';
 
 
 
@@ -41,6 +43,8 @@ import { NetworkModule } from './modules/network/pages/network.module';
     BluetoothSerial,
     StorageService,
     BluetoothService,
+    NetworkService,
+    WifiWizard2,
     Serial,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   ],
