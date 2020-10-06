@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-wifi-logger',
@@ -7,8 +8,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WifiLoggerComponent implements OnInit {
 
-  constructor() { }
+  connected = false;
 
-  ngOnInit() {}
+  private wifiForm : FormGroup;
 
+  constructor( private formBuilder: FormBuilder ) {
+    this.wifiForm = this.formBuilder.group({
+      ssid: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+  }
+
+  ngOnInit(){
+
+  }
+  
+  logForm(){
+    console.log(this.wifiForm.value);
+  }
 }

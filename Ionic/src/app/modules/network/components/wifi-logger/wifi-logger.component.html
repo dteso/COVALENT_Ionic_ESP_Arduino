@@ -1,1 +1,45 @@
 <app-header title='Wifi Logger for ESP'></app-header>
+
+<ion-content class="bg-black" scrollY="true">
+    <ion-row [ngClass]="{'not-connected-style' : !connected, 'connected-style': connected}">
+        <ion-col>
+            <div class="ion-text-center">
+                <ion-label lines="none" *ngIf="connected">
+                    <h2><strong>CONNECTED</strong></h2>
+                    <ion-icon size="large" name="wifi"></ion-icon>
+                </ion-label>
+                <ion-label lines="none" *ngIf="!connected">
+                    <h2><strong>NOT CONNECTED</strong></h2>
+                    <ion-icon size="large" name="alert-circle-outline"></ion-icon>
+                </ion-label>
+            </div>
+        </ion-col>
+    </ion-row>
+    <ion-card>
+        <ion-card-header>
+            <ion-card-subtitle class="text-center">Wifi Logger</ion-card-subtitle>
+            <ion-card-title class="text-center">WiFi</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+            <form [formGroup]="wifiForm" (ngSubmit)="logForm()">
+                <div>
+                    <ion-item>
+                        <ion-input type="text" placeholder="SSID" formControlName="ssid"></ion-input>
+                    </ion-item>
+                    <ion-item>
+                        <ion-input type="password" placeholder="Password" formControlName="password"></ion-input>
+                    </ion-item>
+                </div>
+                <div class="text-center">
+                    <ion-button type="submit" expand="block" color="warning" class="set-button-style"
+                        [disabled]="!wifiForm.valid">SET</ion-button>
+                </div>
+            </form>
+        </ion-card-content>
+        <!-- Para verificar datos de formulario descomentar bloque inferior -->
+        <!-- <div class="text-center">
+            <p>SSID: {{wifiForm.controls.ssid.value}}</p>
+            <p>Password: {{wifiForm.controls.password.value}}</p>
+        </div> -->
+    </ion-card>
+</ion-content>
