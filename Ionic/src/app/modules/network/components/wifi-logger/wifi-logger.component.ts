@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { NetworkService } from 'src/app/services/services';
+import { CustomSerialService, NetworkService, SerialData } from 'src/app/services/services';
 
 @Component({
   selector: 'app-wifi-logger',
@@ -13,7 +13,16 @@ export class WifiLoggerComponent implements OnInit {
 
   private wifiForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private networkService: NetworkService) {
+  serialData:SerialData = {
+    data : '',
+    connected : false,
+    str:'',
+    fullStr : '',
+    codeInput: '',
+    message: '',
+  };
+
+  constructor(private formBuilder: FormBuilder, private networkService: NetworkService, private customSerialService: CustomSerialService) {
     this.wifiForm = this.formBuilder.group({
       ssid: ['', Validators.required],
       password: ['', Validators.required]
@@ -24,9 +33,18 @@ export class WifiLoggerComponent implements OnInit {
     this.networkService.getSSID().then(res => {
       if (res) {
         this.connected = true;
+        console.log('got SSID!');
       }
       this.wifiForm.controls.ssid.setValue(res);
     });
+
+    setInterval(()=>{
+      this.customSerialService.runSerialPort();
+      this.customSerialService.getSerialData().then( res => {
+        this.serialData = res;
+        console.log('New serial Data OK!')
+      }).catch(()=>{console.log('ERROR getting SerialData')});
+    },100);
   }
 
 

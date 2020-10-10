@@ -42,4 +42,25 @@
             <p>Password: {{wifiForm.controls.password.value}}</p>
         </div> -->
     </ion-card>
+
+    <ion-item *ngIf="!connected">
+        <ion-icon name="wifi" style="color: red"></ion-icon>
+        <ion-label color="danger"><strong>ERROR:</strong> WIFI not Connected </ion-label>
+    </ion-item>
+
+
+    <ion-item *ngIf="!serialData.connected">
+        <ion-icon name="terminal" style="color: red"></ion-icon>
+        <ion-label color="danger"><strong>ERROR:</strong> SERIAL not Connected </ion-label>
+    </ion-item>
+
+    <ion-row *ngIf="serialData.connected">
+        <ion-col size='12'>
+            <ion-card>
+                <ion-card-content class="terminal">
+                    <ion-textarea class="terminal"> {{serialData.fullStr}} </ion-textarea>
+                </ion-card-content>
+            </ion-card>
+        </ion-col>
+    </ion-row>
 </ion-content>
