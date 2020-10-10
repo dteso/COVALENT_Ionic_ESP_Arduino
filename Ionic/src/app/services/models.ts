@@ -6,3 +6,12 @@ export interface BluetoothId {
   class: string;
   rssi: string;
 }
+
+export interface SerialData {
+  data : string;
+  connected : boolean;
+  str:string;
+  fullStr : string;
+  codeInput: string;
+  message: string;
+};
