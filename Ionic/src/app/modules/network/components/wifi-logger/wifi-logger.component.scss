@@ -11,3 +11,27 @@
     color: lightgray;
     background-color: lightcoral;
 }
+
+
+ion-content ion-card{
+    --ion-background: transparent;
+}
+
+ion-card-content{
+    --ion-background: transparent;
+    --ion-text-color: white !important;
+}
+
+.txt-white{
+    --ion-text-color: white !important;
+    color: white !important;
+}
+
+.terminal{
+    color: white;
+    background-color: black; 
+    padding:1rem;
+    font-size: 10px;
+    overflow-y: visible;
+}
+

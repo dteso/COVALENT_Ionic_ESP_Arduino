@@ -40,7 +40,7 @@
       <ion-row>
         <p><strong>{{device.name? device.name: 'No Name'}}</strong></p>
       </ion-row>
-
+<!-- 
       <p>Bluetooth Adress
         <span [hidden]="device.address == undefined">mac</span>
         <span [hidden]="device.uuid == undefined">uuid</span>
@@ -50,7 +50,7 @@
         <span [hidden]="device.class == undefined">Class</span>
         <span [hidden]="device.rssi == undefined">Rssi</span>
         {{device.class}} {{device.rssi}}
-      </p>
+      </p> -->
 
     </ion-item>
   </ion-list>
@@ -95,7 +95,7 @@
       <ion-card>
         <ion-card-header>
           <ion-card-subtitle class="text-center">Bluetooth not enabled</ion-card-subtitle>
-          <ion-card-title class="text-center">Bluetooth connection</ion-card-title>
+          <ion-card-title class="text-center txt-white">Bluetooth connection</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <div class="text-center">
@@ -113,7 +113,7 @@
         <ion-card>
           <ion-card-header>
             <ion-card-subtitle class="text-center">Checking availbale devices</ion-card-subtitle>
-            <ion-card-title class="text-center">Bluetooth connection</ion-card-title>
+            <ion-card-title class="text-center txt-white">Bluetooth connection</ion-card-title>
           </ion-card-header>
           <ion-card-content>
             <div class="text-center">

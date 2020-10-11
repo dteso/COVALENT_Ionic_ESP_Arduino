@@ -17,7 +17,7 @@
     </ion-row>
     <ion-card>
         <ion-card-header>
-            <ion-card-subtitle class="text-center">Wifi Logger</ion-card-subtitle>
+            <ion-card-subtitle class="text-center txt-white">Wifi Logger</ion-card-subtitle>
             <ion-card-title class="text-center">WiFi</ion-card-title>
         </ion-card-header>
         <ion-card-content>
@@ -31,7 +31,7 @@
                     </ion-item>
                 </div>
                 <div class="text-center">
-                    <ion-button type="submit" expand="block" color="warning" class="set-button-style"
+                    <ion-button type="submit" expand="block" color="dark" class="set-button-style"
                         [disabled]="!wifiForm.valid">SET</ion-button>
                 </div>
             </form>
@@ -43,7 +43,7 @@
         </div> -->
     </ion-card>
 
-    <ion-item *ngIf="!connected">
+    <!-- <ion-item *ngIf="!connected">
         <ion-icon name="wifi" style="color: red"></ion-icon>
         <ion-label color="danger"><strong>ERROR:</strong> WIFI not Connected </ion-label>
     </ion-item>
@@ -52,7 +52,7 @@
     <ion-item *ngIf="!serialData.connected">
         <ion-icon name="terminal" style="color: red"></ion-icon>
         <ion-label color="danger"><strong>ERROR:</strong> SERIAL not Connected </ion-label>
-    </ion-item>
+    </ion-item> -->
 
     <ion-row *ngIf="serialData.connected">
         <ion-col size='12'>

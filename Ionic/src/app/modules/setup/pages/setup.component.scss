@@ -1,7 +1,15 @@
 @import url('https://fonts.googleapis.com/css?family=Poiret+One&display=swap');
 
-ion-menu-button {
+  ion-menu-button {
     color: var(--ion-color-primary);
+  }
+
+  ion-content{
+    --ion-background-color: -webkit-linear-gradient(-55deg, #02062c 60%, #0440c0 100%);
+  }
+
+  ion-item{
+    color: white !important;
   }
 
   .connected-style{
@@ -87,3 +95,9 @@ ion-menu-button {
   .color-blue{
     color: rgb(44, 44, 122) !important;
   }
+
+  .txt-white{
+    --ion-text-color: white !important;
+    color: white !important;
+}
+
