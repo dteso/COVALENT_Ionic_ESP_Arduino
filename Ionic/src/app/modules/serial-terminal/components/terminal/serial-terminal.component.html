@@ -9,16 +9,19 @@
 </div>
 </ion-col>
 </ion-row>
+
+<form [formGroup]="terminalForm" (ngSubmit)="sendSerialData()">
   <ion-row *ngIf="serialData.connected" class="terminal">
     <ion-col size='9'>
-        <ion-input type="text" class="input-message" [(ngModel)]="serialData.message" name="message"></ion-input>
+        <ion-input type="text" class="form-control input-message" formControlName="message"></ion-input>
     </ion-col>
     <ion-col size='3'>
-      <ion-button expand="block" type="submit" color='dark' size='medium' class="send-btn" [disabled]="!serialData.connected">
+      <ion-button expand="block" type="submit" color='dark' size='medium' class="send-btn">
         <ion-icon name="enter-outline"></ion-icon>
       </ion-button>
     </ion-col>
   </ion-row>
+</form>
 
 <ion-row *ngIf="!serialData.connected">
     <ion-card>

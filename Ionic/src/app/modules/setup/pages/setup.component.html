@@ -35,7 +35,7 @@
   </ion-row>
 
 
-  <ion-list lines="full" [hidden]="isConnected">
+  <ion-list lines="full" *ngIf="isConnected">
     <ion-item *ngFor="let device of devices" class='bt-item-style mb-1' (click)="checkConnection(device)">
       <ion-row>
         <p><strong>{{device.name? device.name: 'No Name'}}</strong></p>

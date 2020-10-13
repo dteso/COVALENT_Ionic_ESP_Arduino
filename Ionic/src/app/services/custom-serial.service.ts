@@ -51,7 +51,7 @@ export class CustomSerialService {
                 this.serialData.str += unescape(str_esc);
               }
             }
-        }
+          }
           this.serialData.data = "[ok]";
           this.serialData.str = "-" + this.serialData.str;
           if (!this.serialData.data) this.serialData.data = "ERROR REGISTER READ CALLBACK";
@@ -79,4 +79,11 @@ export class CustomSerialService {
     this.serialData.fullStr = '';
     console.log("Clear Console");
   }
-}
+
+  sendData(data: string) {
+    for (let pos = 0; pos < data.length; pos++) {
+      this.serial.write(data.charAt(pos));
+    }
+    this.serial.write('#');
+  }
+} 
