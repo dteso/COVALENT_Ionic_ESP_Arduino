@@ -10,11 +10,11 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 })
 export class SerialTerminalComponent implements OnInit {
 
-  serialData:SerialData = {
-    data : '',
-    connected : false,
-    str:'',
-    fullStr : '',
+  serialData: SerialData = {
+    data: '',
+    connected: false,
+    str: '',
+    fullStr: '',
     codeInput: '',
     message: '',
   };
@@ -26,18 +26,19 @@ export class SerialTerminalComponent implements OnInit {
       message: ['']
     });
   }
-  
+
   ngOnInit() {
-    setInterval(()=>{
-      this.customSerialService.runSerialPort();
-      this.customSerialService.getSerialData().then( res => {
+    this.customSerialService.runSerialPort();
+    setInterval(() => {
+      this.customSerialService.getSerialData().then(res => {
         this.serialData = res;
       }).catch(console.log);
-    },100);
+    }, 100);
   }
 
-  sendSerialData(){
-    this.customSerialService.sendData(`>>>APP_MSG: ${this.terminalForm.controls.message.value}`);
+  sendSerialData() {
+    this.customSerialService.sendData("APP-DATA >>> " + this.terminalForm.controls.message.value);
+    this.terminalForm.controls.message.setValue('');
   }
 
 }

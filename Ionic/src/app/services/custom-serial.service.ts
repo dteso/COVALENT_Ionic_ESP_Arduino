@@ -22,7 +22,13 @@ export class CustomSerialService {
   }
 
   runSerialPort() {
-    this.serial.requestPermission().then(() => {
+    this.serial.requestPermission(
+      {
+        vid: '10c4',
+        pid: 'ea60',
+        driver: 'Cp21xxSerialDriver' // or any other
+      }
+    ).then(() => {
       this.serial.open({
         baudRate: 115200,
         dataBits: 8,
@@ -52,8 +58,6 @@ export class CustomSerialService {
               }
             }
           }
-          this.serialData.data = "[ok]";
-          this.serialData.str = "-" + this.serialData.str;
           if (!this.serialData.data) this.serialData.data = "ERROR REGISTER READ CALLBACK";
         });
       });
@@ -64,8 +68,8 @@ export class CustomSerialService {
     });
   }
 
-  getSerialData(): Promise<SerialData> {
-    return new Promise((resolve, reject) => {
+  async getSerialData(): Promise<SerialData> {
+    return await new Promise((resolve, reject) => {
       resolve(this.serialData),
         reject("ERROR TO LOAD SERIAL DATA");
     });
@@ -81,9 +85,13 @@ export class CustomSerialService {
   }
 
   sendData(data: string) {
-    for (let pos = 0; pos < data.length; pos++) {
-      this.serial.write(data.charAt(pos));
+    data = data;
+    let dataToSend=decodeURIComponent(escape(data));
+    if (this.serialData.connected) {
+      for (let pos = 0; pos < dataToSend.length; pos++) {
+        setTimeout(()=>this.serial.write(dataToSend.charAt(pos)),100);
+      }
+      setTimeout(()=> this.getSerialData().then( res => this.serialData = res ),100);
     }
-    this.serial.write('#');
   }
 } 

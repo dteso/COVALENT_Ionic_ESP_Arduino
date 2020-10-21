@@ -13,11 +13,11 @@ export class WifiLoggerComponent implements OnInit {
 
   private wifiForm: FormGroup;
 
-  serialData:SerialData = {
-    data : '',
-    connected : false,
-    str:'',
-    fullStr : '',
+  serialData: SerialData = {
+    data: '',
+    connected: false,
+    str: '',
+    fullStr: '',
     codeInput: '',
     message: '',
   };
@@ -38,18 +38,19 @@ export class WifiLoggerComponent implements OnInit {
       this.wifiForm.controls.ssid.setValue(res);
     });
 
-    setInterval(()=>{
-      this.customSerialService.runSerialPort();
-      this.customSerialService.getSerialData().then( res => {
+
+    this.customSerialService.runSerialPort();
+    setInterval(() => {
+      this.customSerialService.getSerialData().then(res => {
         this.serialData = res;
         console.log('New serial Data OK!')
-      }).catch(()=>{console.log('ERROR getting SerialData')});
-    },100);
+      }).catch(() => { console.log('ERROR getting SerialData') });
+    }, 100);
   }
 
-  sendSerialData(){
+  sendSerialData() {
     this.customSerialService.sendData(">>>WIFI_SSID: " + this.wifiForm.controls.ssid.value);
-    this.customSerialService.sendData(">>>WIFI_PASS: " + this.wifiForm.controls.password.value);
+    this.customSerialService.sendData("\n" + ">>>WIFI_PASS: " + this.wifiForm.controls.password.value);
   }
 
 
