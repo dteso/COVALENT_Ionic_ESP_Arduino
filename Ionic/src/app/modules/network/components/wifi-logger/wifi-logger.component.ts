@@ -53,7 +53,6 @@ export class WifiLoggerComponent implements OnInit {
     this.customSerialService.sendData("\n" + ">>>WIFI_PASS: " + this.wifiForm.controls.password.value);
   }
 
-
   logForm() {
     console.log(this.wifiForm.value);
     this.sendSerialData();

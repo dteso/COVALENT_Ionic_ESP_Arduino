@@ -5,6 +5,7 @@ import { CoreModule } from 'src/app/core/core.module';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { ConsoleModule } from 'src/app/shared/components/console/console.module';
 
 
 
@@ -16,7 +17,8 @@ import { IonicModule } from '@ionic/angular';
     CoreModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forChild([{ path: '', component: WifiLoggerComponent}])
+    RouterModule.forChild([{ path: '', component: WifiLoggerComponent}]),
+    ConsoleModule
   ]
 })
 export class WifiLoggerModule { }

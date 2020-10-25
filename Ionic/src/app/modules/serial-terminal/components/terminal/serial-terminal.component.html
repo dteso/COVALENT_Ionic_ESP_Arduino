@@ -1,9 +1,9 @@
 <app-header title='Serial Terminal'></app-header>
 
-<ion-content scrollY="true">
+<ion-content scrollY="true" class="abel">
 <ion-row [ngClass]="{'not-connected-style' : !serialData.connected, 'connected-style': serialData.connected}">
 <ion-col>
-<div class="ion-text-center">
+<div class="ion-text-center abel">
   <ion-label  lines="none" *ngIf="serialData.connected"><h2><strong>CONNECTED</strong></h2><ion-icon size="large" name="terminal"></ion-icon></ion-label>
   <ion-label  lines="none" *ngIf="!serialData.connected"><h2><strong>NOT CONNECTED</strong></h2><ion-icon size="large" name="flash-off-outline"></ion-icon></ion-label>
 </div>
@@ -24,7 +24,7 @@
 </form>
 
 <ion-row *ngIf="!serialData.connected">
-    <ion-card>
+    <ion-card class="abel">
       <ion-card-header>
         <ion-card-subtitle class="text-center txt-white">Not USB device detected</ion-card-subtitle>
         <ion-card-title class="text-center txt-lightgray">Serial Connection</ion-card-title>
@@ -39,20 +39,8 @@
     </ion-card>
 </ion-row> 
 
-<ion-row *ngIf="serialData.connected">
-  <ion-col size='12'>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-subtitle class="text-center txt-white">USB Terminal Console</ion-card-subtitle>
-        <ion-card-title class="text-center txt-lightgray">Serial</ion-card-title>
-    </ion-card-header>
-    <ion-card-content class="terminal">
-      <ion-textarea class="terminal"> {{serialData.fullStr}} </ion-textarea>
-    </ion-card-content>
-  </ion-card>
-</ion-col>
+<app-console [serialData]="serialData"></app-console>
 
-</ion-row>
 </ion-content>
 
 

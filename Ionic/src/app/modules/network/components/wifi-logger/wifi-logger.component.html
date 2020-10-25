@@ -1,6 +1,6 @@
 <app-header title='Wifi Logger for ESP'></app-header>
 
-<ion-content class="bg-black" scrollY="true">
+<ion-content class="bg-black abel" scrollY="true">
     <ion-row [ngClass]="{'not-connected-style' : !connected, 'connected-style': connected}">
         <ion-col>
             <div class="ion-text-center">
@@ -15,10 +15,10 @@
             </div>
         </ion-col>
     </ion-row>
-    <ion-card>
+    <ion-card class="abel">
         <ion-card-header>
             <ion-card-subtitle class="text-center txt-white">Wifi Logger</ion-card-subtitle>
-            <ion-card-title class="text-center">WiFi</ion-card-title>
+            <ion-card-title class="text-center" style="color: rgb(99, 110, 110)">WiFi</ion-card-title>
         </ion-card-header>
         <ion-card-content>
             <form [formGroup]="wifiForm" (ngSubmit)="logForm()">
@@ -31,36 +31,13 @@
                     </ion-item>
                 </div>
                 <div class="text-center">
+                    <ion-button type="submit" expand="block" color="success" class="set-button-style"
+                        [disabled]="!wifiForm.valid">SAVE</ion-button>
                     <ion-button type="submit" expand="block" color="dark" class="set-button-style"
                         [disabled]="!wifiForm.valid">SET</ion-button>
                 </div>
             </form>
         </ion-card-content>
-        <!-- Para verificar datos de formulario descomentar bloque inferior -->
-        <!-- <div class="text-center">
-            <p>SSID: {{wifiForm.controls.ssid.value}}</p>
-            <p>Password: {{wifiForm.controls.password.value}}</p>
-        </div> -->
     </ion-card>
-
-    <!-- <ion-item *ngIf="!connected">
-        <ion-icon name="wifi" style="color: red"></ion-icon>
-        <ion-label color="danger"><strong>ERROR:</strong> WIFI not Connected </ion-label>
-    </ion-item>
-
-
-    <ion-item *ngIf="!serialData.connected">
-        <ion-icon name="terminal" style="color: red"></ion-icon>
-        <ion-label color="danger"><strong>ERROR:</strong> SERIAL not Connected </ion-label>
-    </ion-item> -->
-
-    <ion-row *ngIf="serialData.connected">
-        <ion-col size='12'>
-            <ion-card>
-                <ion-card-content class="terminal">
-                    <ion-textarea class="terminal"> {{serialData.fullStr}} </ion-textarea>
-                </ion-card-content>
-            </ion-card>
-        </ion-col>
-    </ion-row>
+    <app-console [serialData]="serialData"></app-console>
 </ion-content>

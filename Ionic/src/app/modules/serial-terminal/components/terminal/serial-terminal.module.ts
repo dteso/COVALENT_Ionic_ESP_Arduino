@@ -5,6 +5,7 @@ import { CoreModule } from 'src/app/core/core.module';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { ConsoleModule } from 'src/app/shared/components/console/console.module';
 
 @NgModule({
   declarations: [SerialTerminalComponent],
@@ -14,7 +15,8 @@ import { IonicModule } from '@ionic/angular';
     CoreModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forChild([{ path: '', component: SerialTerminalComponent}])
+    RouterModule.forChild([{ path: '', component: SerialTerminalComponent}]),
+    ConsoleModule
   ]
 })
 export class SerialTerminalModule { }
