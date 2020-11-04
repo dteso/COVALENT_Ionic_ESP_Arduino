@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
-import { SetupComponent } from './pages/setup.component';
+import { EepromComponent } from './pages/eeprom.component';
 import { Routes, RouterModule } from '@angular/router';
+
 
 const routes: Routes = [
   {
     path: '',
-    component: SetupComponent
+    component: EepromComponent
   }
 ];
 
@@ -13,4 +14,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class SetupRoutingModule { }
+export class EepromRoutingModule { }

@@ -1,0 +1,26 @@
+<app-header [title]='title'></app-header>
+
+<ion-content scrollY="true" class="abel">
+    <ion-row>
+      <ion-card class="abel w-100">
+        <ion-card-header>
+          <ion-card-subtitle class="text-center txt-white"><strong>Memory Manager</strong></ion-card-subtitle>
+          <ion-card-title class="text-center txt-white">EEPROM</ion-card-title>
+        </ion-card-header>
+        <ion-card-content class="txt-white">
+          <div class="text-center">
+            <ion-icon name="hardware-chip" class="font-24"></ion-icon>
+          </div>
+          <ion-button type="button" expand="block" size="large" color="light" fill="outline" class="set-button-style abel w-100" (click)="clearEeprom()">
+            <p>CLEAR EEPROM</p>
+            <!-- <ion-icon name="trash-bin-outline" style="color: white"></ion-icon> -->
+          </ion-button>
+          <ion-button type="button" expand="block" size="large" color="light" fill="outline" class="set-button-style abel w-100" (click)="viewMap()">
+            <p>VIEW MAP</p>
+            <!-- <ion-icon name="map-outline" style="color: white"></ion-icon> -->
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </ion-row>
+</ion-content>
+

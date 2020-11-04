@@ -22,6 +22,10 @@ const routes: Routes = [
   {
     path: 'network',
     loadChildren: () => import('./modules/network/pages/network.module').then( m => m.NetworkModule)
+  },
+  {
+    path: 'eeprom',
+    loadChildren: () => import('./modules/eeprom/eeprom.module').then( m => m.EepromModule)
   }
 ];
 
