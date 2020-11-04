@@ -18,5 +18,10 @@ export const appPages = [
     title: 'Network',
     url: '/network',
     icon: 'globe'
+  },
+  {
+    title: 'EEPROM',
+    url: '/eeprom',
+    icon: 'hardware-chip'
   }
 ];

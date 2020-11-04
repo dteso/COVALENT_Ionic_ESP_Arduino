@@ -1,4 +1,4 @@
-<ion-row>
+<ion-row *ngIf="serialData.connected">
   <ion-col size='4'>
       <ion-button type="button" expand="block" color="success" class="set-button-style"
           (click)="sendEnableWebServer()">
