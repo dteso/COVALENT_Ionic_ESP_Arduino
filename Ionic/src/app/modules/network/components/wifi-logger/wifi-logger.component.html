@@ -30,14 +30,17 @@
                         <ion-input type="password" placeholder="Password" formControlName="password"></ion-input>
                     </ion-item>
                 </div>
+                <hr>
+                <ion-row style="background: none !important;" class="mt-2">
+                        <ion-checkbox [disabled]="!wifiForm.valid"></ion-checkbox>
+                        <ion-label style="color: white;"> Remember parameters </ion-label>
+                </ion-row>
                 <div class="text-center">
-                    <ion-button type="submit" expand="block" color="success" class="set-button-style"
-                        [disabled]="!wifiForm.valid">SAVE</ion-button>
                     <ion-button type="submit" expand="block" color="dark" class="set-button-style"
                         [disabled]="!wifiForm.valid">SET</ion-button>
                 </div>
             </form>
         </ion-card-content>
     </ion-card>
-    <app-console [serialData]="serialData"></app-console>
+    <!-- <app-console [serialData]="serialData"></app-console> -->
 </ion-content>

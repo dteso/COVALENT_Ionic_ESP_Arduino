@@ -26,7 +26,7 @@ export class CustomSerialService {
       {
         vid: '10c4',
         pid: 'ea60',
-        driver: 'Cp21xxSerialDriver' // or any other
+        driver: 'Cp21xxSerialDriver' // pendiente de generar archivo configurable para establecer aquí el seleccionado en la aplicación
       }
     ).then(() => {
       this.serial.open({

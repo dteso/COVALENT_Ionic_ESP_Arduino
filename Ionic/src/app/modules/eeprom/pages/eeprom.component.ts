@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { LoadingController, ToastController } from '@ionic/angular';
+import { LoaderService } from 'src/app/services/loader.service';
 import { CustomSerialService, SerialData } from 'src/app/services/services';
 
 @Component({
@@ -20,11 +21,13 @@ export class EepromComponent implements OnInit {
   title;
 
 
-  constructor(private customSerialService: CustomSerialService, private toastCtrl: ToastController) { }
+  constructor(
+    private customSerialService: CustomSerialService, 
+    private toastCtrl: ToastController, 
+    public loaderService: LoaderService) {}
 
   ngOnInit() {
     this.title = "EEPROM";
-
     this.customSerialService.runSerialPort();
     setInterval(() => {
       this.customSerialService.getSerialData().then(res => {
@@ -36,12 +39,14 @@ export class EepromComponent implements OnInit {
 
   clearEeprom() {
     this.presentToast("Deleting EEPROM...");
+    this.loaderService.presentLoading('Borrando EEPROM. Espere');
     this.customSerialService.sendData("MEM_RST");
     setInterval(() => {
       this.customSerialService.getSerialData().then(res => {
         this.serialData = res;
         if(this.serialData.fullStr.indexOf("[ESP-EEPROM] - Memory formatted")>-1){
           this.presentToast("EEPROM Deleted");
+          this.loaderService.hideLoading();
           this.serialData.fullStr = "";
           return;
         }
