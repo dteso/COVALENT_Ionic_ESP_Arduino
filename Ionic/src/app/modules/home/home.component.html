@@ -1,0 +1,241 @@
+<ion-content scrollY="true" class="abel">
+  <!-- <pre style="color: white;">{{ state | json}}</pre>
+  <h4 style="color: white;">Count: {{count}}</h4> -->
+  <ion-row>
+    <ion-card class="abel w-100">
+      <ion-card-header>
+        <!-- <ion-card-subtitle class="text-center txt-white"><strong>Memory Manager</strong></ion-card-subtitle>
+        <ion-card-title class="text-center txt-white">EEPROM</ion-card-title> -->
+        <div class="text-center p-2">
+          <h1 style="font-size: 3rem; font-weight: bolder; color: whitesmoke;"> C0V4L3N7 </h1>
+          <!-- <img src="../../../assets/images/medusa_2.png" width="15%" height="15%"> -->
+        </div>
+        <div class="mt-3">
+          <!-- BLUETOOTH -->
+          <ion-item>
+            <!-- state-btn -->
+            <ion-button fill="outline" shape="round">
+              <ion-icon name="bluetooth"></ion-icon>
+            </ion-button>
+            <!-- value-btn -->
+            <ion-button fill="outline" shape="round" [routerLink]="['/setup']" routerLinkActive="router-link-active"
+              class="w-100">
+              Bluetooth
+            </ion-button>
+            <ion-button fill="outline" shape="round">
+              <ion-icon name="infinite-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <!-- SERIAL -->
+          <ion-item>
+            <ion-button fill="outline" shape="round" color="primary">
+              <ion-icon name="terminal"></ion-icon>
+            </ion-button>
+
+            <ion-button *ngIf="!state.serialConnected" fill="outline" shape="round"
+              [routerLink]="['/terminal-tabs']" routerLinkActive="router-link-active" class="w-100">
+              Serial
+            </ion-button>
+            <ion-button *ngIf="state.serialConnected" color="primary" fill="outline" shape="round"
+              [routerLink]="['/terminal-tabs']" routerLinkActive="router-link-active" class="w-100">
+              115200baud
+            </ion-button>
+
+            <ion-button fill="outline" shape="round">
+              <ion-icon name="infinite-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <!-- NETWORK -->
+          <ion-item>
+            <ion-button fill="outline" *ngIf="!state.wifiEnabled" color="primary" shape="round" [routerLink]="['/network']"
+              routerLinkActive="router-link-active">
+              <ion-icon name="wifi"></ion-icon>
+            </ion-button>
+            <ion-button fill="outline" *ngIf="state.wifiEnabled" color="primary" shape="round" [routerLink]="['/network']"
+            routerLinkActive="router-link-active">
+            <ion-icon name="wifi"></ion-icon>
+          </ion-button>
+
+            <ion-button fill="outline" shape="round" [routerLink]="['/network']"
+              routerLinkActive="router-link-active" class="w-100">
+              WiFi Network
+            </ion-button>
+
+            <ion-button fill="outline" shape="round">
+              <ion-icon name="infinite-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <!-- NTP -->
+          <ion-item>
+            <ion-button fill="outline" shape="round" [routerLink]="['/home']"
+              routerLinkActive="router-link-active">
+              <ion-icon name="time"></ion-icon>
+            </ion-button>
+            <ion-button fill="outline" shape="round" [routerLink]="['/home']"
+              routerLinkActive="router-link-active" class="w-100">
+              NTP
+            </ion-button>
+            <ion-button fill="outline" shape="round">
+              <ion-icon name="infinite-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <!-- EEPROM -->
+          <ion-item>
+            <ion-button fill="outline" *ngIf="!state.serialConnected" shape="round" [routerLink]="['/eeprom']"
+              routerLinkActive="router-link-active">
+              <ion-icon name="hardware-chip"></ion-icon>
+            </ion-button>
+            <ion-button fill="outline" *ngIf="state.serialConnected" color="success" shape="round" [routerLink]="['/eeprom']"
+            routerLinkActive="router-link-active">
+            <ion-icon name="hardware-chip"></ion-icon>
+          </ion-button>
+
+            <ion-button fill="outline" *ngIf="!state.serialConnected" shape="round" [routerLink]="['/eeprom']"
+              routerLinkActive="router-link-active" class="w-100">
+              EEPROM
+            </ion-button>
+            <ion-button fill="outline" *ngIf="state.serialConnected" color="success" shape="round" [routerLink]="['/eeprom']"
+            routerLinkActive="router-link-active" class="w-100">
+            EEPROM
+          </ion-button>
+          <ion-button fill="outline" shape="round">
+            <ion-icon name="infinite-outline"></ion-icon>
+          </ion-button>
+          </ion-item>
+
+          <!-- WEB SERVER -->
+          <ion-item>
+            <ion-button fill="outline" shape="round" [routerLink]="['/network']"
+              routerLinkActive="router-link-active">
+              <ion-icon name="earth"></ion-icon>
+            </ion-button>
+            <ion-button fill="outline" shape="round" [routerLink]="['/network']"
+              routerLinkActive="router-link-active" class="w-100">
+              Web Server
+            </ion-button>
+            <ion-button fill="outline" shape="round">
+              <ion-icon name="infinite-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <!-- HTTP SERVER -->
+          <ion-item>
+            <ion-button fill="outline" shape="round" [routerLink]="['/network']"
+              routerLinkActive="router-link-active">
+              <ion-icon name="server"></ion-icon>
+            </ion-button>
+            <ion-button fill="outline" shape="round" [routerLink]="['/network']"
+              routerLinkActive="router-link-active" class="w-100">
+              HTTP Server
+            </ion-button>
+            <ion-button fill="outline" shape="round">
+              <ion-icon name="infinite-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <!-- HTTP CLIENT -->
+          <ion-item>
+            <ion-button fill="outline" shape="round" [routerLink]="['/network']"
+              routerLinkActive="router-link-active">
+              <ion-icon name="person"></ion-icon>
+            </ion-button>
+            <ion-button fill="outline" shape="round" [routerLink]="['/network']"
+              routerLinkActive="router-link-active" class="w-100">
+              HTTP Client
+            </ion-button>
+            <ion-button fill="outline" shape="round">
+              <ion-icon name="infinite-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <!-- MQTT CLIENT -->
+          <ion-item>
+            <ion-button fill="outline" shape="round" [routerLink]="['/network']"
+              routerLinkActive="router-link-active">
+              <ion-icon name="cloud-circle"></ion-icon>
+            </ion-button>
+            <ion-button fill="outline" shape="round" [routerLink]="['/network']"
+              routerLinkActive="router-link-active" class="w-100">
+              MQTT Client
+            </ion-button>
+            <ion-button fill="outline" shape="round">
+              <ion-icon name="infinite-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <!-- WEATHER -->
+          <ion-item>
+            <ion-button fill="outline" shape="round" [routerLink]="['/network']"
+              routerLinkActive="router-link-active">
+              <ion-icon name="thermometer"></ion-icon>
+            </ion-button>
+            <ion-button fill="outline" shape="round" [routerLink]="['/network']"
+              routerLinkActive="router-link-active" class="w-100">
+              Weather
+            </ion-button>
+            <ion-button fill="outline" shape="round">
+              <ion-icon name="infinite-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <!-- DISPLAY -->
+          <ion-item>
+            <ion-button fill="outline" shape="round" [routerLink]="['/home']"
+              routerLinkActive="router-link-active">
+              <ion-icon name="tablet-landscape"></ion-icon>
+            </ion-button>
+            <ion-button fill="outline" shape="round" [routerLink]="['/home']"
+              routerLinkActive="router-link-active" class="w-100">
+              Display
+            </ion-button>
+            <ion-button fill="outline" shape="round">
+              <ion-icon name="infinite-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+
+          <!-- SETUP -->
+          <ion-item>
+            <ion-button fill="outline" shape="round" [routerLink]="['/home']"
+              routerLinkActive="router-link-active">
+              <ion-icon name="pulse"></ion-icon>
+            </ion-button>
+            <ion-button fill="outline" shape="round" [routerLink]="['/home']"
+              routerLinkActive="router-link-active" class="w-100">
+              Configuration
+            </ion-button>
+            <ion-button fill="outline" shape="round">
+              <ion-icon name="infinite-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </div>
+      </ion-card-header>
+      <ion-card-content class="txt-white text-center">
+        <!-- <p>
+          Conecte su microcontrolador mediante el cable serie correspondiente, o habilite el bluetooth 
+        </p> -->
+        <!-- <ion-grid class="mt-3">
+          <ion-row style="background: transparent !important; color: rgb(13, 99, 228);" class="text-center">
+            <ion-col class="w-100">IP</ion-col>
+            <ion-col class="w-100">192.168.1.0</ion-col>
+          </ion-row>
+          <ion-row style="background: transparent !important; color:  rgb(13, 99, 228);" class="text-center">
+            <ion-col class="w-100">SSID</ion-col>
+            <ion-col class="w-100">Mi-Red</ion-col>
+          </ion-row>
+          <ion-row style="background: transparent !important; color:  rgb(13, 99, 228);" class="text-center">
+            <ion-col class="w-100">EEPROM size</ion-col>
+            <ion-col class="w-100">1024 bytes</ion-col>
+          </ion-row>
+          <ion-row style="background: transparent !important; color:  rgb(13, 99, 228);" class="text-center">
+            <ion-col class="w-100">NTP Time</ion-col>
+            <ion-col class="w-100">22:32</ion-col>
+          </ion-row>
+        </ion-grid> -->
+      </ion-card-content>
+    </ion-card>
+  </ion-row>
+</ion-content>
