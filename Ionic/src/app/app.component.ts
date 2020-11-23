@@ -33,6 +33,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.router.navigate(['/setup']);
+    this.router.navigate(['/home']);
   }
 }

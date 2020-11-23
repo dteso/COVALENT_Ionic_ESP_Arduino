@@ -1,5 +1,10 @@
 export const appPages = [
   {
+    title: 'Home',
+    url: '/home',
+    icon: 'home'
+  },
+  {
     title: 'Bluetooth',
     url: '/setup',
     icon: 'bluetooth'
