@@ -9,7 +9,8 @@ import { CustomSerialService } from 'src/app/services/services';
 })
 export class ConsoleComponent implements OnInit {
 
-  @Input() serialData: SerialData
+  @Input() serialData: SerialData;
+  @Input() showButtons: boolean;
 
   constructor(private readonly customSerialService:CustomSerialService) { }
 

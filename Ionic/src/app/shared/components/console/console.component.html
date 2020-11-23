@@ -1,22 +1,22 @@
-<ion-row *ngIf="serialData.connected">
-  <ion-col size='4'>
+<ion-row *ngIf="showButtons" style="padding-left: 1rem; padding-right: 1rem;">
+  <!-- <ion-col size='4'>
       <ion-button type="button" expand="block" color="success" class="set-button-style"
           (click)="sendEnableWebServer()">
           <ion-icon name="earth" style="color: white"></ion-icon>
       </ion-button>
-  </ion-col>
-  <ion-col size='4'>
-      <ion-button type="button" expand="block" color="warning" class="set-button-style" (click)="clearConsole()">
-          <ion-icon name="trash-bin" style="color: white"></ion-icon>
-      </ion-button>
-  </ion-col>
-  <ion-col size='4'>
-      <ion-button type="button" expand="block" color="primary" class="set-button-style" (click)="saveLog()">
-          <ion-icon name="reader" style="color: white"></ion-icon>
-      </ion-button>
-  </ion-col>
+  </ion-col> -->
+    <ion-col size='6'>
+        <ion-button type="button" expand="block" color="warning" class="set-button-style" (click)="clearConsole()">
+            <ion-icon name="trash-bin" style="color: white"></ion-icon>
+        </ion-button>
+    </ion-col>
+    <ion-col size='6'>
+        <ion-button type="button" expand="block" color="primary" class="set-button-style" (click)="saveLog()">
+            <ion-icon name="reader" style="color: white"></ion-icon>
+        </ion-button>
+    </ion-col>
 </ion-row>
-<ion-row *ngIf="serialData.connected">
+<ion-row>
   <ion-col size='12'>
       <ion-card>
           <ion-card-content class="terminal">
