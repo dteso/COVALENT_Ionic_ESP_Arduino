@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { LoaderService } from 'src/app/services/loader.service';
-import { CustomSerialService, SerialData } from 'src/app/services/services';
+import { BluetoothService, CustomSerialService, SerialData } from 'src/app/services/services';
 
 @Component({
   selector: 'app-eeprom',
@@ -14,6 +14,7 @@ export class EepromComponent implements OnInit {
     data: '',
     connected: false,
     str: '',
+    lastStr: '',
     fullStr: '',
     codeInput: '',
     message: '',
@@ -23,6 +24,7 @@ export class EepromComponent implements OnInit {
 
   constructor(
     private customSerialService: CustomSerialService, 
+    private bluetooth: BluetoothService, 
     private toastCtrl: ToastController, 
     public loaderService: LoaderService) {}
 
@@ -41,6 +43,7 @@ export class EepromComponent implements OnInit {
     this.presentToast("Deleting EEPROM...");
     this.loaderService.presentLoading('Borrando EEPROM. Espere');
     this.customSerialService.sendData("MEM_RST");
+    this.sendMessageByBluetooth("MEM_RST");
     setInterval(() => {
       this.customSerialService.getSerialData().then(res => {
         this.serialData = res;
@@ -52,6 +55,17 @@ export class EepromComponent implements OnInit {
         }
       }).catch(() => { console.log("ERROR") })
     }, 100);
+  }
+
+  
+  sendMessageByBluetooth(message: string) {
+    this.bluetooth.dataInOut(`${message}\n`).subscribe(data => {
+      if (data !== 'BLUETOOTH.NOT_CONNECTED') {
+        this.serialData.fullStr+= data;
+      } else {
+        this.presentToast(data);
+      }
+    });
   }
 
   viewMap() {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { StorageService } from '../services/storage.service';
-import { Observable, Subscription, from } from 'rxjs';
+import { Observable, Subscription, from, Subject } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
 @Injectable()
@@ -11,12 +11,16 @@ export class BluetoothService {
   private connectionCommunication: Subscription;
   private reader: Observable<any>;
 
+  bluetoothData:Subject<any>;
+
+  fullData = '';
+
   private bluetoothEnabled: boolean;
 
   constructor(
     private bluetoothSerial: BluetoothSerial,
     private storage: StorageService
-  ) { }
+  ) {}
 
   /**
    * Busca los dispositivos bluetooth disponibles, evalúa si es posible usar la funcionalidad
@@ -84,6 +88,10 @@ export class BluetoothService {
    */
   getStatus() {
     return this.bluetoothEnabled;
+  }
+
+  getReading(){
+    return this.bluetoothSerial.read();
   }
 
 

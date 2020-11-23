@@ -1,6 +1,9 @@
 import { BluetoothService, StorageService } from './../../../services/services';
 import { Component, OnInit } from '@angular/core';
 import { ToastController, AlertController } from '@ionic/angular';
+import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
+import { IfStmt } from '@angular/compiler';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-setup',
@@ -13,17 +16,24 @@ export class SetupComponent implements OnInit {
   showSpinner = false;
   isConnected = false;
   isEnabled = false;
-  message = '';
+  //message = '';
   messages = [];
   selectedDevice;
+  fullData='';
 
   title = 'Bluetooth';
+  btForm: FormGroup;
 
   constructor(
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
-    private bluetooth: BluetoothService
-  ) { }
+    private bluetooth: BluetoothService,
+    private formBuilder: FormBuilder
+  ) { 
+    this.btForm = this.formBuilder.group({
+      message: ['', Validators.required],
+    });
+  }
 
   ngOnInit() {
     this.bluetooth.enableBT().then(isEnabled => {
@@ -34,9 +44,7 @@ export class SetupComponent implements OnInit {
       this.isEnabled= false;
     });
   }
-  /**
- * Cierra la conexión bluetooth.
- */
+
   disconnect(): Promise<boolean> {
     return new Promise(result => {
       this.isConnected = false;
@@ -47,11 +55,18 @@ export class SetupComponent implements OnInit {
   }
 
 
+  onSubmit(){
+    if(!this.btForm.invalid){
+      this.sendMessage(this.btForm.controls.message.value);
+    }
+  }
+
+
   manageConnection() {
     this.bluetooth.storedConnection().then((connected) => {
       this.isConnected = true;
       this.showSpinner = false;
-      this.sendMessage('> Ouuuh yeah!');
+      this.sendMessage('> BLUETOOTH CONNECTED');
     }, (fail) => {
       this.bluetooth.searchBluetooth().then((devices: Array<Object>) => {
         this.devices = devices;
@@ -66,17 +81,11 @@ export class SetupComponent implements OnInit {
   }
 
 
-  /**
- * Al cerrar la aplicación se asegura de que se cierre la conexión bluetooth.
- */
+
   // ngOnDestroy() {
   //   this.disconnect();
   // }
-  /**
-   * 
- * Busca los dispositivos bluetooth dispositivos al arrastrar la pantalla hacia abajo.
- * @param refresher
- */
+
   refreshBluetooth(refresher) {
     if (refresher) {
       this.bluetooth.searchBluetooth().then((successMessage: Array<Object>) => {
@@ -90,10 +99,7 @@ export class SetupComponent implements OnInit {
     }
   }
 
-  /**
- * Verifica si ya se encuentra conectado a un dispositivo bluetooth o no.
- * @param seleccion Son los datos del elemento seleccionado  de la lista
- */
+
   checkConnection(seleccion) {
     this.bluetooth.checkConnection().then(async (isConnected) => {
       const alert = await this.alertCtrl.create({
@@ -110,7 +116,7 @@ export class SetupComponent implements OnInit {
             handler: () => {
               this.disconnect().then(() => {
                 this.bluetooth.deviceConnection(seleccion.id).then(success => {
-                  this.sendMessage('Ouuuh yeah!');
+                  this.sendMessage('> BLUETOOTH CONNECTED');
                   this.isConnected = true;
                   this.presentToast('CONECTADO CORRECTAMENTE');
                 }, fail => {
@@ -137,7 +143,7 @@ export class SetupComponent implements OnInit {
             text: 'ACEPTAR',
             handler: () => {
               this.bluetooth.deviceConnection(seleccion.id).then(success => {
-                this.sendMessage('Ouuuh yeah!');
+                this.sendMessage('> BLUETOOTH CONNECTED');
                 this.isConnected = true;
                 this.selectedDevice = seleccion;
                 this.presentToast('Connected :)');
@@ -158,21 +164,16 @@ export class SetupComponent implements OnInit {
   * Permite enviar mensajes de texto vía serial al conectarse por bluetooth.
   */
   sendMessage(message: string) {
-    this.bluetooth.dataInOut(`${message}#\n`).subscribe(data => {
+    this.bluetooth.dataInOut(`${message}\n`).subscribe(data => {
       if (data !== 'BLUETOOTH.NOT_CONNECTED') {
-        try {
           if (data) {
-            const entry = JSON.parse(data);
             this.addLine(message);
           }
-        } catch (error) {
-          console.log(`[bluetooth-168]: ${JSON.stringify(error)}`);
-        }
-        this.presentToast(data);
-        this.message = '';
+        this.fullData+= data;
       } else {
         this.presentToast(data);
       }
+      this.btForm.controls.message.reset();
     });
   }
 

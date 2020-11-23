@@ -15,6 +15,7 @@ export class CustomSerialService {
       data: '',
       connected: false,
       str: '',
+      lastStr: '',
       fullStr: '',
       codeInput: '',
       message: '',
@@ -47,6 +48,7 @@ export class CustomSerialService {
               //if we received a \n, the message is complete, display it
               if (view[i] == 13) {
                 this.serialData.fullStr = this.serialData.fullStr + this.serialData.str + '\n';
+                this.serialData.lastStr = this.serialData.str;
                 this.serialData.str = '';
               }
               // if not, concatenate with the begening of the message

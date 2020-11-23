@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
-import { CustomSerialService, NetworkService, SerialData } from 'src/app/services/services';
+import { BluetoothService, CustomSerialService, NetworkService, SerialData } from 'src/app/services/services';
 import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({
@@ -13,8 +13,11 @@ export class WifiLoggerComponent implements OnInit {
 
   connected = false;
   loading;
-  errorCounter: number;
+  errorCounter = 0;
   isLogging = false;
+  mcuConnected = false;
+  showConsole = true;
+  localIp = '';
 
   private wifiForm: FormGroup;
 
@@ -22,6 +25,7 @@ export class WifiLoggerComponent implements OnInit {
     data: '',
     connected: false,
     str: '',
+    lastStr: '',
     fullStr: '',
     codeInput: '',
     message: '',
@@ -31,6 +35,7 @@ export class WifiLoggerComponent implements OnInit {
     private formBuilder: FormBuilder,
     private networkService: NetworkService,
     private customSerialService: CustomSerialService,
+    private bluetooth: BluetoothService,
     private toastCtrl: ToastController,
     public loaderService: LoaderService
   ) {
@@ -50,9 +55,9 @@ export class WifiLoggerComponent implements OnInit {
     });
     this.customSerialService.runSerialPort();
     setInterval(() => {
-      if(this.isLogging){
+      if (this.isLogging) {
         this.checkTimeout();
-      }
+      } 
       this.customSerialService.getSerialData().then(res => {
         this.serialData = res;
         console.log('New serial Data OK!');
@@ -61,37 +66,63 @@ export class WifiLoggerComponent implements OnInit {
     }, 100);
   }
 
-  checkTimeout(){
-    if (this.errorCounter === 100) { // Controlando error en 10 segundos ( 100 ciclos de 100ms del interval)
+  checkTimeout() {
+    if (this.errorCounter === 200) { // Controlando error en 20 segundos ( 200 ciclos de 100ms del interval)
       this.errorCounter = 0;
       this.isLogging = false;
       this.loaderService.hideLoading();
-      this.presentToast("Connection error. Check parameters and try again");
+      this.presentToast("TIMEOUT ERROR. Check parameters and try again");
+      this.mcuConnected = false;
     } else {
       this.errorCounter++;
     }
   }
 
-  decodeSerialData(){
-    if(this.serialData.fullStr.indexOf("[ESP-NET] - WIFI CONNECTION SUCCESS") > -1) {
+  decodeSerialData() {
+    if (this.serialData.fullStr.indexOf("[ESP-NET] - WIFI CONNECTION SUCCESS") > -1) {
       this.loaderService.hideLoading();
+      this.mcuConnected = true;
+      this.serialData.fullStr = "";
+      this.isLogging = false;
       this.presentToast("Connected to " + this.wifiForm.controls.ssid.value + "!!!");
-      this.serialData.fullStr = "";
-      this.isLogging = false;
-    }else if(this.serialData.fullStr.indexOf("[ESP-NET] - WIFI CONNECTION ERROR") > -1){
+    } else if (this.serialData.fullStr.indexOf("[ESP-NET] - WIFI CONNECTION ERROR") > -1) {
       this.loaderService.hideLoading();
-      this.presentToast("Connection error. Check parameters and try again");
+      this.mcuConnected = false;
+      this.presentToast("CONNECTION ERROR. Check parameters and try again");
       this.serialData.fullStr = "";
       this.isLogging = false;
-    }
+    } else if (this.serialData.lastStr.indexOf("[ESP-NET] - LOCAL IP:") > -1) {
+      this.localIp = this.serialData.lastStr.substring(this.serialData.lastStr.indexOf("[ESP-NET] - LOCAL IP:")+21,this.serialData.lastStr.length);
+      if(this.localIp!=''){
+        this.mcuConnected=true;
+      }
+      this.serialData.fullStr = "";
+     }
   }
 
   sendSerialData() {
-    this.customSerialService.sendData(">>>WIFI_SSID: " + this.wifiForm.controls.ssid.value);
-    this.customSerialService.sendData("\n" + ">>>WIFI_PASS: " + this.wifiForm.controls.password.value);
+    this.isLogging = true;
+    if (this.serialData.connected) {
+      this.customSerialService.sendData(">>>WIFI_SSID: " + this.wifiForm.controls.ssid.value);
+      this.customSerialService.sendData("\n" + ">>>WIFI_PASS: " + this.wifiForm.controls.password.value);
+    } else {
+      this.sendMessageByBluetooth(">>>WIFI_SSID: " + this.wifiForm.controls.ssid.value);
+      this.sendMessageByBluetooth("\n" + ">>>WIFI_PASS: " + this.wifiForm.controls.password.value);
+    }
     this.presentToast("Connecting to " + this.wifiForm.controls.ssid.value + "...");
     this.loaderService.presentLoading('(STA Mode) Conectando a red WiFi..');
-    this.isLogging = true;
+  }
+
+  sendMessageByBluetooth(message: string) {
+    this.bluetooth.dataInOut(`${message}\n`).subscribe(data => {
+      if (data !== 'BLUETOOTH.NOT_CONNECTED') {
+        this.serialData.fullStr += data;
+        this.serialData.lastStr = data;
+        this.decodeSerialData();
+      } else {
+        this.presentToast(data);
+      }
+    });
   }
 
   logForm() {

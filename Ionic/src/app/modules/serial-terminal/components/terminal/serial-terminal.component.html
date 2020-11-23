@@ -39,7 +39,7 @@
     </ion-card>
 </ion-row> 
 
-<app-console [serialData]="serialData"></app-console>
+<app-console *ngIf="serialData.connected" [showButtons]="true" [serialData]="serialData"></app-console>
 
 </ion-content>
 

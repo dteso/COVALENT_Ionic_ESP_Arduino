@@ -1,14 +1,15 @@
 <app-header title='Wifi Logger for ESP'></app-header>
 
 <ion-content class="bg-black abel" scrollY="true">
-    <ion-row [ngClass]="{'not-connected-style' : !connected, 'connected-style': connected}">
+    <ion-row [ngClass]="{'not-connected-style' : !mcuConnected, 'connected-style': mcuConnected}">
         <ion-col>
             <div class="ion-text-center">
-                <ion-label lines="none" *ngIf="connected">
+                <ion-label lines="none" *ngIf="mcuConnected">
                     <h2><strong>CONNECTED</strong></h2>
                     <ion-icon size="large" name="wifi"></ion-icon>
+                    <h3>{{localIp}}</h3>
                 </ion-label>
-                <ion-label lines="none" *ngIf="!connected">
+                <ion-label lines="none" *ngIf="!mcuConnected">
                     <h2><strong>NOT CONNECTED</strong></h2>
                     <ion-icon size="large" name="alert-circle-outline"></ion-icon>
                 </ion-label>
@@ -42,5 +43,6 @@
             </form>
         </ion-card-content>
     </ion-card>
-    <!-- <app-console [serialData]="serialData"></app-console> -->
+    <!-- <h6 style="background-color: black; color: white">{{serialData.lastStr}}</h6> -->
+    <app-console *ngIf="showConsole"  [showButtons]="false" [serialData]="serialData"></app-console>
 </ion-content>

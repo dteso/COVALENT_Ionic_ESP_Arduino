@@ -14,6 +14,7 @@ export class SerialTerminalComponent implements OnInit {
     data: '',
     connected: false,
     str: '',
+    lastStr: '',
     fullStr: '',
     codeInput: '',
     message: '',
