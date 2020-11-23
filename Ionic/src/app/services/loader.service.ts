@@ -16,7 +16,8 @@ export class LoaderService {
     this.loading = await this.loadingController.create({
       cssClass: 'loader-class',
       message: msg,
-      spinner: 'dots'
+      spinner: 'dots',
+      backdropDismiss: true
     });
     await this.loading.present();
   }
