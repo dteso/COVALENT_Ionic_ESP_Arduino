@@ -1,21 +1,22 @@
 <app-header title='Wifi Logger for ESP'></app-header>
 
 <ion-content class="bg-black abel" scrollY="true">
-    <ion-row [ngClass]="{'not-connected-style' : !mcuConnected, 'connected-style': mcuConnected}">
+    <ion-row [ngClass]="{'not-connected-style' : !statusService.state.wifiConnected, 'connected-style': statusService.state.wifiConnected}">
         <ion-col>
             <div class="ion-text-center">
-                <ion-label lines="none" *ngIf="mcuConnected">
+                <ion-label lines="none" *ngIf="statusService.state.wifiConnected">
                     <h2><strong>CONNECTED</strong></h2>
                     <ion-icon size="large" name="wifi"></ion-icon>
-                    <h3>{{localIp}}</h3>
+                    <h3>{{statusService.state.localIp}}</h3>
                 </ion-label>
-                <ion-label lines="none" *ngIf="!mcuConnected">
+                <ion-label lines="none" *ngIf="!statusService.state.wifiConnected">
                     <h2><strong>NOT CONNECTED</strong></h2>
                     <ion-icon size="large" name="alert-circle-outline"></ion-icon>
                 </ion-label>
             </div>
         </ion-col>
     </ion-row>
+    <h6 *ngIf="statusService.state.bluetoothConnected" style="background-color: transparent; color: cyan" class="text-center">BLUETOOTH CONNECTED</h6>
     <ion-card class="abel">
         <ion-card-header>
             <ion-card-subtitle class="text-center txt-white">Wifi Logger</ion-card-subtitle>
@@ -43,6 +44,6 @@
             </form>
         </ion-card-content>
     </ion-card>
-    <!-- <h6 style="background-color: black; color: white">{{serialData.lastStr}}</h6> -->
+    <h6 *ngIf="showConsole" style="background-color: transparent; color: white" class="text-center">{{serialData.lastStr}}</h6>
     <app-console *ngIf="showConsole"  [showButtons]="false" [serialData]="serialData"></app-console>
 </ion-content>

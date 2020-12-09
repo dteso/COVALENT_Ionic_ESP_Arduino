@@ -1,4 +1,11 @@
-  ion-content{
-    // --ion-background-color: -webkit-linear-gradient(-55deg, #02062c 50%, #041e57 100%);
-    --ion-background-color: #010213;
-  }
+ion-content{
+ --background: url('../../../assets/images/black-gradient.jpg') no-repeat center/cover fixed;
+}
+
+ion-item{
+  --background: transparent;
+}
+
+// ion-spinner {
+//   transform: scale(5);
+// }

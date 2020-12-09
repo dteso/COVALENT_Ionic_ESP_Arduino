@@ -24,4 +24,8 @@ export interface State {
   serialConnected: boolean;
   bluetoothEnabled: boolean;
   bluetoothConnected: boolean;
+  mcu: string;
+  localIp: string;    
+  wifiSSID: string;
+  webServerEnabled: boolean;
 };

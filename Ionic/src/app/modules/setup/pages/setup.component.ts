@@ -1,8 +1,6 @@
-import { BluetoothService, StorageService } from './../../../services/services';
+import { BluetoothService, StatusService, StorageService } from './../../../services/services';
 import { Component, OnInit } from '@angular/core';
 import { ToastController, AlertController } from '@ionic/angular';
-import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
-import { IfStmt } from '@angular/compiler';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -28,6 +26,7 @@ export class SetupComponent implements OnInit {
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     private bluetooth: BluetoothService,
+    private statusService: StatusService,
     private formBuilder: FormBuilder
   ) { 
     this.btForm = this.formBuilder.group({
@@ -36,18 +35,21 @@ export class SetupComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.bluetooth.enableBT().then(isEnabled => {
-      this.isEnabled= true;
-      this.showSpinner = true;
-      this.manageConnection();
-    }).catch( err => {
-      this.isEnabled= false;
-    });
+    if(!this.statusService.getBluetoothConnectionStatus()){
+      this.bluetooth.enableBT().then(isEnabled => {
+        this.isEnabled= true;
+        this.showSpinner = true;
+        this.manageConnection();
+      }).catch( err => {
+        this.isEnabled= false;
+      });
+    }
   }
 
   disconnect(): Promise<boolean> {
     return new Promise(result => {
       this.isConnected = false;
+      this.statusService.setBluetoothConnected(false);
       this.bluetooth.disconnect().then(response => {
         result(response);
       });
@@ -65,6 +67,7 @@ export class SetupComponent implements OnInit {
   manageConnection() {
     this.bluetooth.storedConnection().then((connected) => {
       this.isConnected = true;
+      this.statusService.setBluetoothConnected(true);
       this.showSpinner = false;
       this.sendMessage('> BLUETOOTH CONNECTED');
     }, (fail) => {
@@ -118,9 +121,11 @@ export class SetupComponent implements OnInit {
                 this.bluetooth.deviceConnection(seleccion.id).then(success => {
                   this.sendMessage('> BLUETOOTH CONNECTED');
                   this.isConnected = true;
+                  this.statusService.setBluetoothConnected(true);
                   this.presentToast('CONECTADO CORRECTAMENTE');
                 }, fail => {
                   this.isConnected = false;
+                  this.statusService.setBluetoothConnected(false);
                   this.presentToast('NO SE PUDO CONECTAR');
                 });
               });
@@ -145,10 +150,12 @@ export class SetupComponent implements OnInit {
               this.bluetooth.deviceConnection(seleccion.id).then(success => {
                 this.sendMessage('> BLUETOOTH CONNECTED');
                 this.isConnected = true;
+                this.statusService.setBluetoothConnected(true);
                 this.selectedDevice = seleccion;
                 this.presentToast('Connected :)');
               }, fail => {
                 this.isConnected = false;
+                this.statusService.setBluetoothConnected(false);
                 this.presentToast('Connection failed :(');
               });
             }
@@ -171,7 +178,7 @@ export class SetupComponent implements OnInit {
           }
         this.fullData+= data;
       } else {
-        this.presentToast(data);
+        this.presentToast('NO DEVICES CONNECTED');
       }
       this.btForm.controls.message.reset();
     });

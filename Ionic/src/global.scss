@@ -37,6 +37,15 @@
 //     --ion-background-color: black;
 // }
 
+.custom-bg{
+    // background: url('./assets/images/blue-grid-desktop.jpg');
+    // background-image: url('./assets/images/blue-grid-desktop.jpg');
+    // background-repeat: no-repeat;
+    // background-size:cover;
+
+    --background: url('./assets/images/black-gradient.jpg');
+  }
+
 .loader-class{
     --background: #222;
     --spinner-color: rgb(0, 183, 255);

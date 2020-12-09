@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
-import { BluetoothService, CustomSerialService, NetworkService, SerialData } from 'src/app/services/services';
+import { BluetoothService, CustomSerialService, NetworkService, SerialData, StatusService } from 'src/app/services/services';
 import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({
@@ -36,6 +36,7 @@ export class WifiLoggerComponent implements OnInit {
     private networkService: NetworkService,
     private customSerialService: CustomSerialService,
     private bluetooth: BluetoothService,
+    private statusService: StatusService,
     private toastCtrl: ToastController,
     public loaderService: LoaderService
   ) {
@@ -73,6 +74,9 @@ export class WifiLoggerComponent implements OnInit {
       this.loaderService.hideLoading();
       this.presentToast("TIMEOUT ERROR. Check parameters and try again");
       this.mcuConnected = false;
+      this.statusService.setLocalIp('');
+      this.statusService.setSSID('');
+      this.statusService.setWifiConnected(false);
     } else {
       this.errorCounter++;
     }
@@ -82,12 +86,16 @@ export class WifiLoggerComponent implements OnInit {
     if (this.serialData.fullStr.indexOf("[ESP-NET] - WIFI CONNECTION SUCCESS") > -1) {
       this.loaderService.hideLoading();
       this.mcuConnected = true;
+      this.statusService.setWifiConnected(true);
       this.serialData.fullStr = "";
       this.isLogging = false;
       this.presentToast("Connected to " + this.wifiForm.controls.ssid.value + "!!!");
     } else if (this.serialData.fullStr.indexOf("[ESP-NET] - WIFI CONNECTION ERROR") > -1) {
       this.loaderService.hideLoading();
       this.mcuConnected = false;
+      this.statusService.setWifiConnected(false);
+      this.statusService.setLocalIp('');
+      this.statusService.setSSID('');
       this.presentToast("CONNECTION ERROR. Check parameters and try again");
       this.serialData.fullStr = "";
       this.isLogging = false;
@@ -95,6 +103,9 @@ export class WifiLoggerComponent implements OnInit {
       this.localIp = this.serialData.lastStr.substring(this.serialData.lastStr.indexOf("[ESP-NET] - LOCAL IP:")+21,this.serialData.lastStr.length);
       if(this.localIp!=''){
         this.mcuConnected=true;
+        this.statusService.setWifiConnected(true);
+        this.statusService.setLocalIp(this.localIp);
+        this.statusService.setSSID(this.wifiForm.controls.ssid.value);
       }
       this.serialData.fullStr = "";
      }
