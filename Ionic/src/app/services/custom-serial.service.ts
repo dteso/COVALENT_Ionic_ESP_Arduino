@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Serial } from '@ionic-native/serial/ngx';
+import { Observable } from 'rxjs';
 import { SerialData } from './models';
+import { StatusService } from './status.service';
 
 
 @Injectable({
@@ -9,8 +11,12 @@ import { SerialData } from './models';
 export class CustomSerialService {
 
   serialData: SerialData;
+  serialConnected: Observable<boolean>;
 
-  constructor(private serial: Serial) {
+  constructor(
+    private serial: Serial,
+    private statusService: StatusService
+  ) {
     this.serialData = {
       data: '',
       connected: false,
@@ -41,6 +47,7 @@ export class CustomSerialService {
       }).then(() => {
         console.log('Serial connection opened');
         this.serialData.connected = true;
+        this.statusService.setSerialConnected(true);
         this.serial.registerReadCallback().subscribe((data) => {
           var view = new Uint8Array(data);
           if (view.length >= 1) {
@@ -65,8 +72,9 @@ export class CustomSerialService {
       });
     }).catch((error: any) => {
       this.serialData.connected = false;
+      this.statusService.setSerialConnected(false);
       this.serialData.data = "CONNECTION [ko]";
-      console.log(error)
+      console.log(error);
     });
   }
 
@@ -96,4 +104,6 @@ export class CustomSerialService {
       setTimeout(()=> this.getSerialData().then( res => this.serialData = res ),100);
     }
   }
+
+
 } 

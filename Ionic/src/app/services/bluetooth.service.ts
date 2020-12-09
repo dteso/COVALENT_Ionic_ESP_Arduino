@@ -3,6 +3,7 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { StorageService } from '../services/storage.service';
 import { Observable, Subscription, from, Subject } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
+import { StatusService } from './services';
 
 @Injectable()
 export class BluetoothService {
@@ -19,6 +20,7 @@ export class BluetoothService {
 
   constructor(
     private bluetoothSerial: BluetoothSerial,
+    private statusService: StatusService,
     private storage: StorageService
   ) {}
 
@@ -55,6 +57,7 @@ export class BluetoothService {
       this.bluetoothSerial.isConnected().then(isConnected => {
         resolve('BLUETOOTH.CONNECTED');
       }, notConnected => {
+        this.statusService.state.bluetoothConnected = false;
         reject('BLUETOOTH.NOT_CONNECTED');
       });
     });
@@ -107,6 +110,7 @@ export class BluetoothService {
         resolve('BLUETOOTH.CONNECTED');
       }, fail => {
         console.log(`[bluetooth.service-88] Error conexión: ${JSON.stringify(fail)}`);
+        this.statusService.state.bluetoothConnected = false;
         reject('BLUETOOTH.CANNOT_CONNECT');
       });
     });
@@ -149,6 +153,7 @@ export class BluetoothService {
         });
       }, notConected => {
         observer.next('BLUETOOTH.NOT_CONNECTED');
+        this.statusService.state.bluetoothConnected = false;
         observer.complete();
       });
     });
