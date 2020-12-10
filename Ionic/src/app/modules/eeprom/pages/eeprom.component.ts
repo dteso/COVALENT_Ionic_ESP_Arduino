@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoadingController, ToastController } from '@ionic/angular';
 import { LoaderService } from 'src/app/services/loader.service';
-import { BluetoothService, CustomSerialService, SerialData } from 'src/app/services/services';
+import { BluetoothService, CustomSerialService, SerialData, StatusService } from 'src/app/services/services';
 
 @Component({
   selector: 'app-eeprom',
@@ -20,10 +20,13 @@ export class EepromComponent implements OnInit {
     message: '',
   };
   title;
+  percentageLoad: number;
+  percentageIndex: number;
+  showProgress: boolean;
 
 
   constructor(
-    private customSerialService: CustomSerialService, 
+    private customSerialService: CustomSerialService,
     private bluetooth: BluetoothService, 
     private toastCtrl: ToastController, 
     public loaderService: LoaderService) {}
@@ -41,6 +44,7 @@ export class EepromComponent implements OnInit {
 
   clearEeprom() {
     this.presentToast("Deleting EEPROM...");
+    this.showProgress=true;
     this.loaderService.presentLoading('Borrando EEPROM. Espere');
     this.customSerialService.sendData("MEM_RST");
     this.sendMessageByBluetooth("MEM_RST");
@@ -49,6 +53,7 @@ export class EepromComponent implements OnInit {
         this.serialData = res;
         if(this.serialData.fullStr.indexOf("[ESP-EEPROM] - Memory formatted")>-1){
           this.presentToast("EEPROM Deleted");
+          this.showProgress=false;
           this.loaderService.hideLoading();
           this.serialData.fullStr = "";
           return;
@@ -62,8 +67,15 @@ export class EepromComponent implements OnInit {
     this.bluetooth.dataInOut(`${message}\n`).subscribe(data => {
       if (data !== 'BLUETOOTH.NOT_CONNECTED') {
         this.serialData.fullStr+= data;
+        let percentagePos
+        if(percentagePos = data.indexOf('%')>-1){
+          this.serialData.lastStr = data;
+          this.percentageLoad =  parseInt(data.substring(0,data.length-1),10);
+          this.percentageIndex = this.percentageLoad / 100.00;
+        }
       } else {
         this.presentToast(data);
+        this.showProgress=false;
       }
     });
   }
