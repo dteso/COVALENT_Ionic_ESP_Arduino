@@ -45,7 +45,6 @@ export class HomeComponent implements OnInit{
       // } 
       this.customSerialService.getSerialData().then(res => {
         this.serialData = res;
-        console.log('New serial Data OK!');
         this.decodeData(this.serialData.lastStr);
       }).catch(() => { console.log('ERROR getting SerialData') });
     }, 100);

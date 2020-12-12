@@ -37,7 +37,6 @@ export class EepromComponent implements OnInit {
     setInterval(() => {
       this.customSerialService.getSerialData().then(res => {
         this.serialData = res;
-        console.log('New serial Data OK!')
       }).catch(() => { console.log('ERROR getting SerialData') });
     }, 100);
   }

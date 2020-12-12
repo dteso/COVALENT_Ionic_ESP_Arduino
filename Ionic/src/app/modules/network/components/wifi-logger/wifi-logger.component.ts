@@ -61,7 +61,6 @@ export class WifiLoggerComponent implements OnInit {
       } 
       this.customSerialService.getSerialData().then(res => {
         this.serialData = res;
-        console.log('New serial Data OK!');
         this.decodeSerialData();
       }).catch(() => { console.log('ERROR getting SerialData') });
     }, 100);
