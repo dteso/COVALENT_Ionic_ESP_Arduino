@@ -98,3 +98,30 @@ https://ionic.zone/debug/ionic-and-android-4
 No es posible correr en AndroidStudio 4 con versiones del cordova-ionic-plugin-webview superiores a la 2
 
 ionic cordova plugin add cordova-plugin-ionic-webview@1.2.1
+
+--------------------------------------------------------------------------------------------------------------------------------
+
++ WEB_VIEW ( web server )
+
+M U T   I M P O R T A N T E
+Para el correcto funcionamiento del iframe del componenete web-server, será necesario añadir este segmento en el archivo
+/andoriod/app/res/xml/network_security_config.xml
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <network-security-config>
+        <base-config cleartextTrafficPermitted="true">
+            <trust-anchors>
+                <certificates src="system" />
+            </trust-anchors>
+        </base-config>
+    </network-security-config>
+
+
+Además este archivo debe estar referenciado desde el AndoridManifest.xml ( desde el Android stuido antes de hacer la build )
+y se debe permitir el usesCleartextTraffic
+
+<application .... android:usesCleartextTraffic="true" android:networkSecurityConfig="@xml/network_security_config">
+</application>
+
+
+--------------------------------------------------------------------------------------------------------------------------------
