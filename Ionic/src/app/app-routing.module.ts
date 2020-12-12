@@ -30,6 +30,10 @@ const routes: Routes = [
   {
     path: 'eeprom',
     loadChildren: () => import('./modules/eeprom/eeprom.module').then( m => m.EepromModule)
+  },
+  {
+    path: 'web-server',
+    loadChildren: () => import('./modules/web-server/web-server.module').then( m => m.WebServerModule)
   }
 ];
 

@@ -1,0 +1,21 @@
+ion-content{
+    --ion-background-color: -webkit-linear-gradient(-90deg, #02062c 50%, #0da4ca 100%);
+  }
+
+.align-vertical{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.txt-white{
+  --ion-text-color: white !important;
+  color: white !important;
+}
+
+.webPage{
+    border: 1px white solid !important;
+    background-color: white !important;
+}

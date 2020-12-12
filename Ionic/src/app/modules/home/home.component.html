@@ -178,20 +178,20 @@
           <!-- WEB SERVER -->
           <ion-item>
             <ion-button *ngIf="statusService.state.webServerEnabled && statusService.state.bluetoothConnected && statusService.state.localIp" color="secondary" shape="round"
-              [routerLink]="['/network']" routerLinkActive="router-link-active">
+              [routerLink]="['/web-server']" routerLinkActive="router-link-active">
               <ion-icon name="earth"></ion-icon>
             </ion-button>
             <ion-button fill="outline" *ngIf="!statusService.state.webServerEnabled" color="light" shape="round"
-              [routerLink]="['/network']" routerLinkActive="router-link-active">
+              [routerLink]="['/web-server']" routerLinkActive="router-link-active">
               <ion-icon name="earth"></ion-icon>
             </ion-button>
 
             <ion-button *ngIf="statusService.state.webServerEnabled && statusService.state.bluetoothConnected && statusService.state.localIp" color="secondary" shape="round"
-              [routerLink]="['/network']" routerLinkActive="router-link-active" class="w-100">
+              [routerLink]="['/web-server']" routerLinkActive="router-link-active" class="w-100">
               {{statusService.state.localIp}}
             </ion-button>
             <ion-button fill="outline" *ngIf="!statusService.state.webServerEnabled" color="light" shape="round"
-              [routerLink]="['/network']" routerLinkActive="router-link-active" class="w-100">
+              [routerLink]="['/web-server']" routerLinkActive="router-link-active" class="w-100">
               Web Server
             </ion-button>
 
