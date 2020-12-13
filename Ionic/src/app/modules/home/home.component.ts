@@ -40,9 +40,6 @@ export class HomeComponent implements OnInit{
   ngOnInit() {
     this.serialService.runSerialPort();
     setInterval(() => {
-      // if (this.isLogging) {
-      //   this.checkTimeout();
-      // } 
       this.customSerialService.getSerialData().then(res => {
         this.serialData = res;
         this.decodeData(this.serialData.lastStr);
@@ -92,6 +89,12 @@ export class HomeComponent implements OnInit{
     if(msg.indexOf('[ESP-NET] - STA: ') > -1){
       this.statusService.state.wifiSSID = msg.substring(msg.indexOf("[ESP-NET] - STA: ")+17,msg.length);
     }
+    if(msg.indexOf('[ESP-NTP] - TIME: ') > -1){
+      this.statusService.state.ntpData = msg.substring(msg.indexOf("[ESP-NTP] - TIME: ")+18,msg.length);
+    }
+    if(msg.indexOf('[ESP-NTP] - NTP ENABLED') > -1){
+      this.statusService.state.ntpEnabled = true;
+    }
     if(msg.indexOf('[ESP-NET] - WEB_SERVER_STATUS: ') > -1){
       let webServerStatus = 0;
       webServerStatus = parseInt(msg.substring(msg.indexOf("[ESP-NET] - WEB_SERVER_STATUS: ")+31,msg.length),10);
@@ -114,7 +117,8 @@ export class HomeComponent implements OnInit{
   async presentToast(text: string) {
     const toast = await this.toastCtrl.create({
       message: text,
-      duration: 3000
+      duration: 3000,
+      position: "middle"
     });
     await toast.present();
   }

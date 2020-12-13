@@ -28,4 +28,6 @@ export interface State {
   localIp: string;    
   wifiSSID: string;
   webServerEnabled: boolean;
+  ntpEnabled: boolean;
+  ntpData: string;
 };

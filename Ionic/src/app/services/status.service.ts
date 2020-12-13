@@ -16,7 +16,9 @@ export class StatusService {
     localIp: '',
     wifiSSID: '',
     mcu:'',
-    webServerEnabled: false  
+    webServerEnabled: false,
+    ntpEnabled: false,
+    ntpData: ''  
   };
 
   constructor() { }

@@ -45,7 +45,7 @@
           <!-- BLUETOOTH -->
           <ion-item>
             <!-- state-btn -->
-            <ion-button *ngIf="statusService.state.bluetoothConnected"  shape="round" color="secondary">
+            <ion-button *ngIf="statusService.state.bluetoothConnected"  shape="round" color="primary">
               <ion-icon name="bluetooth"></ion-icon>
             </ion-button>
             <ion-button *ngIf="!statusService.state.bluetoothConnected" fill="outline" shape="round" color="light">
@@ -53,7 +53,7 @@
             </ion-button>
 
             <!-- value-btn -->
-            <ion-button *ngIf="statusService.state.bluetoothConnected" shape="round" color="secondary"
+            <ion-button *ngIf="statusService.state.bluetoothConnected" shape="round" color="primary"
               [routerLink]="['/setup']" routerLinkActive="router-link-active" class="w-100">
               Bluetooth
             </ion-button>
@@ -62,7 +62,7 @@
               Bluetooth
             </ion-button>
 
-            <ion-button *ngIf="statusService.state.bluetoothConnected" shape="round" color="secondary">
+            <ion-button *ngIf="statusService.state.bluetoothConnected" shape="round" color="primary">
               <ion-icon name="infinite-outline"></ion-icon>
             </ion-button>
             <ion-button *ngIf="!statusService.state.bluetoothConnected" fill="outline" shape="round" color="light">
@@ -75,7 +75,7 @@
             <ion-button fill="outline" shape="round" *ngIf="!statusService.state.serialConnected" color="light">
               <ion-icon name="terminal"></ion-icon>
             </ion-button>
-            <ion-button shape="round" *ngIf="statusService.state.serialConnected" color="secondary">
+            <ion-button shape="round" *ngIf="statusService.state.serialConnected" color="primary">
               <ion-icon name="terminal"></ion-icon>
             </ion-button>
 
@@ -83,7 +83,7 @@
               [routerLink]="['/terminal-tabs']" routerLinkActive="router-link-active" class="w-100">
               Serial
             </ion-button>
-            <ion-button *ngIf="statusService.state.serialConnected" color="secondary" shape="round"
+            <ion-button *ngIf="statusService.state.serialConnected" color="primary" shape="round"
               [routerLink]="['/terminal-tabs']" routerLinkActive="router-link-active" class="w-100">
               115200baud
             </ion-button>
@@ -91,14 +91,14 @@
             <ion-button fill="outline" shape="round" *ngIf="!statusService.state.serialConnected" color="light">
               <ion-icon name="infinite-outline"></ion-icon>
             </ion-button>
-            <ion-button shape="round" *ngIf="statusService.state.serialConnected" color="secondary">
+            <ion-button shape="round" *ngIf="statusService.state.serialConnected" color="primary">
               <ion-icon name="infinite-outline"></ion-icon>
             </ion-button>
           </ion-item>
 
           <!-- NETWORK -->
           <ion-item>
-            <ion-button *ngIf="statusService.state.wifiConnected && statusService.state.bluetoothConnected" color="secondary" shape="round"
+            <ion-button *ngIf="statusService.state.wifiConnected && statusService.state.bluetoothConnected" color="primary" shape="round"
               [routerLink]="['/network']" routerLinkActive="router-link-active">
               <ion-icon name="wifi"></ion-icon>
             </ion-button>
@@ -107,7 +107,7 @@
               <ion-icon name="wifi"></ion-icon>
             </ion-button>
 
-            <ion-button *ngIf="statusService.state.wifiConnected && statusService.state.bluetoothConnected" shape="round" color="secondary"
+            <ion-button *ngIf="statusService.state.wifiConnected && statusService.state.bluetoothConnected" shape="round" color="primary"
               [routerLink]="['/network']" routerLinkActive="router-link-active" class="w-100">
               {{statusService.state.wifiSSID}}
             </ion-button>
@@ -119,22 +119,35 @@
             <ion-button *ngIf="!statusService.state.wifiConnected || !statusService.state.bluetoothConnected" fill="outline" shape="round" color="light">
               <ion-icon name="infinite-outline"></ion-icon>
             </ion-button>
-            <ion-button *ngIf="statusService.state.wifiConnected && statusService.state.bluetoothConnected" shape="round" color="secondary">
+            <ion-button *ngIf="statusService.state.wifiConnected && statusService.state.bluetoothConnected" shape="round" color="primary">
               <ion-icon name="infinite-outline"></ion-icon>
             </ion-button>
           </ion-item>
 
           <!-- NTP -->
           <ion-item>
-            <ion-button fill="outline" shape="round" [routerLink]="['/home']" color="light"
+            <ion-button *ngIf="!statusService.state.ntpEnabled" fill="outline" shape="round" [routerLink]="['/home']" color="light"
               routerLinkActive="router-link-active">
               <ion-icon name="time"></ion-icon>
             </ion-button>
-            <ion-button fill="outline" shape="round" [routerLink]="['/home']" color="light"
+            <ion-button *ngIf="statusService.state.ntpEnabled" shape="round" [routerLink]="['/home']" color="primary"
+            routerLinkActive="router-link-active">
+            <ion-icon name="time"></ion-icon>
+          </ion-button>
+
+            <ion-button fill="outline"  *ngIf="!statusService.state.ntpEnabled" shape="round" [routerLink]="['/home']" color="light"
               routerLinkActive="router-link-active" class="w-100">
               NTP
             </ion-button>
-            <ion-button fill="outline" color="light" shape="round">
+            <ion-button *ngIf="statusService.state.ntpEnabled" shape="round" [routerLink]="['/home']" color="primary"
+            routerLinkActive="router-link-active" class="w-100">
+            {{statusService.state.ntpData}}
+          </ion-button>
+
+            <ion-button fill="outline" *ngIf="!statusService.state.ntpEnabled" color="light" shape="round">
+              <ion-icon name="infinite-outline"></ion-icon>
+            </ion-button>
+            <ion-button  *ngIf="statusService.state.ntpEnabled"  color="primary" shape="round">
               <ion-icon name="infinite-outline"></ion-icon>
             </ion-button>
           </ion-item>
@@ -147,7 +160,7 @@
               <ion-icon name="hardware-chip"></ion-icon>
             </ion-button>
             <ion-button 
-              *ngIf="statusService.state.serialConnected || statusService.state.bluetoothConnected" color="secondary"
+              *ngIf="statusService.state.serialConnected || statusService.state.bluetoothConnected" color="primary"
               shape="round" [routerLink]="['/eeprom']" routerLinkActive="router-link-active">
               <ion-icon name="hardware-chip"></ion-icon>
             </ion-button>
@@ -158,13 +171,13 @@
               EEPROM
             </ion-button>
             <ion-button 
-              *ngIf="statusService.state.serialConnected || statusService.state.bluetoothConnected" color="secondary"
+              *ngIf="statusService.state.serialConnected || statusService.state.bluetoothConnected" color="primary"
               shape="round" [routerLink]="['/eeprom']" routerLinkActive="router-link-active" class="w-100">
               EEPROM [ 1024 bytes ]
             </ion-button>
 
             <ion-button 
-              *ngIf="statusService.state.serialConnected || statusService.state.bluetoothConnected" color="secondary"
+              *ngIf="statusService.state.serialConnected || statusService.state.bluetoothConnected" color="primary"
               shape="round">
               <ion-icon name="infinite-outline"></ion-icon>
             </ion-button>
@@ -177,7 +190,7 @@
 
           <!-- WEB SERVER -->
           <ion-item>
-            <ion-button *ngIf="statusService.state.webServerEnabled && statusService.state.bluetoothConnected && statusService.state.localIp" color="secondary" shape="round"
+            <ion-button *ngIf="statusService.state.webServerEnabled && statusService.state.bluetoothConnected && statusService.state.localIp" color="primary" shape="round"
               [routerLink]="['/web-server']" routerLinkActive="router-link-active">
               <ion-icon name="earth"></ion-icon>
             </ion-button>
@@ -186,7 +199,7 @@
               <ion-icon name="earth"></ion-icon>
             </ion-button>
 
-            <ion-button *ngIf="statusService.state.webServerEnabled && statusService.state.bluetoothConnected && statusService.state.localIp" color="secondary" shape="round"
+            <ion-button *ngIf="statusService.state.webServerEnabled && statusService.state.bluetoothConnected && statusService.state.localIp" color="primary" shape="round"
               [routerLink]="['/web-server']" routerLinkActive="router-link-active" class="w-100">
               {{statusService.state.localIp}}
             </ion-button>
@@ -195,7 +208,7 @@
               Web Server
             </ion-button>
 
-            <ion-button *ngIf="statusService.state.webServerEnabled && statusService.state.bluetoothConnected && statusService.state.localIp" color="secondary" shape="round">
+            <ion-button *ngIf="statusService.state.webServerEnabled && statusService.state.bluetoothConnected && statusService.state.localIp" color="primary" shape="round">
               <ion-icon name="infinite-outline"></ion-icon>
             </ion-button>
             <ion-button fill="outline" *ngIf="!statusService.state.webServerEnabled" color="light" shape="round">
