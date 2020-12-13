@@ -1,8 +1,25 @@
-# MAUSKY_Ionic_ArduinoMicro
-Aplicación Ionic para comunicación serie y bluetooth con dispositivos IoT. Las funcionalidades de está aplicación son:
-- Con la pantalla de nuestro móvil Android como touchpad y con la ayuda de Arduino Micro vamos a poder usar nuestro smartphone como ratón y teclado inalámbrico 
-gracias a la implementación de Cordova y su administración de las características nativas del teléfono.
-- Vinculación Bluetooth, también gracias a Cordova, con dipositivos externos ( Arduino ) y comunicación bidireccional como Terminal BT. Esta característica
-es la que nos permite llevar a cabo la función anterior.
-- Comunicación Serie con distintos microcontroladores. Cordova vuelve a ser protagonista en este punto permitiendo a la aplicación actuar como Terminal.
-- Configuración de SSID y Password para nuestros dispositivos que hagan uso de la librería WiFi.h sin necesidad de que estos datos estén predefinidos en el fichero de configuración.
+# COVALENT ( Ionic + NodeMCU ESP8266 + Arduino controller )
+Covalente surge de la necesidad de llevar a cabo la opción de aportar las configuraciones necesarias a nuestros disporitivos IOT de forma continua a lo largo de todo un proyecto, sin necesidad de modificar nuestro código inicial, sino estableciendo nuestras condiciones dinámicamente en función del entorno en el que nos encontremos en cada momento gracias a la app Covalent.
+
+La idea es sencilla. Se trata de llevarnos nuestro proyecto Base_Template a nuestra placa ( en este momento sólo probado con nodeMCU ).
+
+Una vez volcado el programa en nuestro controlador, simplemente haciendo uso de la aplicación Covalente vamos a poder:
+
+- Logar nuestro micro y conectarlo a Internet aportando únicamente nuestra SSID y password de la misma. De esta forma, por ejemplo, cuando no estemos en red local, podremos habilitar en nuestro movil un punto de acceso que simule una red wifi que permita que nuestro node funcione en todo su explendor. 
+
+- Control absoluto de la EEPROM de nuestro dispositivo con capacidad de operación plena sobre ella. 
+
+- Terminal de comunicaciones serie tanto para el puerto USB de nuestro dispositivo móvil como para una posible conexión bluetooth. 
+
+- Sincronización del tiempo mediante NTP. Configuración de servidor NTP en nuestras placas.
+
+- Generación de web server dinámico con posibilidad de configuración remota así como la activación o desactivación del mismo. 
+
+- Configuración de cliente y servidor HTTP.
+
+- Configuraciñon especifica y preprogramación de operaciones evento-acción.
+
+- Configuración MQTT usando la App como herramienta de configuración o estableciendo nuestro microcontrolador como un servidor o cliente Mosquitto en sólo unos pasos.
+
+Pero esto es sólo la entrada a una posiblidad de configuración individual de cada uno de nuestros elementos dentro de un todo que podrá conformar una red domótica administrable igualmente a través de Covalent.
+
