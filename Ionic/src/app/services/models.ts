@@ -30,4 +30,6 @@ export interface State {
   webServerEnabled: boolean;
   ntpEnabled: boolean;
   ntpData: string;
+  temperature: string;
+  humidity: string;
 };

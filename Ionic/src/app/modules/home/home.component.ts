@@ -92,6 +92,12 @@ export class HomeComponent implements OnInit{
     if(msg.indexOf('[ESP-NTP] - TIME: ') > -1){
       this.statusService.state.ntpData = msg.substring(msg.indexOf("[ESP-NTP] - TIME: ")+18,msg.length);
     }
+    if(msg.indexOf('[ESP-DHT] - HUM: ') > -1){
+      this.statusService.state.humidity = msg.substring(msg.indexOf("[ESP-DHT] - HUM: ")+17,msg.length);
+    }
+    if(msg.indexOf('[ESP-DHT] - TEMP: ') > -1){
+      this.statusService.state.temperature = msg.substring(msg.indexOf("[ESP-DHT] - TEMP: ")+18,msg.length);
+    }
     if(msg.indexOf('[ESP-NTP] - NTP ENABLED') > -1){
       this.statusService.state.ntpEnabled = true;
     }

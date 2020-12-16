@@ -18,7 +18,9 @@ export class StatusService {
     mcu:'',
     webServerEnabled: false,
     ntpEnabled: false,
-    ntpData: ''  
+    ntpData: '',
+    temperature: '',
+    humidity: ''  
   };
 
   constructor() { }
