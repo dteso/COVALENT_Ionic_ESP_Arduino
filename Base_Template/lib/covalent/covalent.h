@@ -8,6 +8,8 @@
 #include "../globals.h"
 #include <WiFiUdp.h> // importamos librería UDP para comunicar con NTP
 #include <NTPClient.h>
+#include "DHT.h"
+#include <Adafruit_Sensor.h>
 
 class Covalent
 {
@@ -52,6 +54,9 @@ public:
 
     // NTP
     void ntp();
+
+    //DHT
+    Weather readWeather();
 
 private:
 

@@ -15,6 +15,12 @@ const String MCU = "NodeMCU v3.0 - ESP8266";
 #define CLOSE_WEB_SERVER "CLOSE_WEB_SERVER"
 #define DISABLE_NTP "DISABLE_NTP"
 #define READ_STATUS ">>>READ_STATUS"
+#define READ_WEATHER ">>>READ_WEATHER"
+
+
+/*-------------VARIABLES DE CLIMA DHT11----------------*/
+#define DHTPIN D3   // what pin we're connected to
+#define DHTTYPE DHT11   // DHT 22  (AM2302)
 
 /* DIRECCIONES DE MEMORIA EEEPROM */
 const int USER1_CODE_DIR = 0;
@@ -35,6 +41,8 @@ const int NTP_SERVER_STATUS_DIR = 38; //Size: 1---> Value: 1 ENABLED - 0 DISABLE
 const int SSID_DIR = 60;        // Size:20
 const int WIFI_PASS_DIR = 80;   //Size: 20
 
+
+/*STRUCT STATUS*/
 struct Status
 {
     boolean STA_connected;
@@ -47,4 +55,10 @@ struct Status
     String ssid;
     boolean ntpEnabled;
     String ntpData;
+};
+
+struct Weather
+{
+    float hum;
+    float temp;
 };

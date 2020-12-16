@@ -6,6 +6,7 @@ const char *hostname = "ESP8266_1";
 IPAddress ip(192, 168, 1, 17);
 IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
+DHT dht(DHTPIN, DHTTYPE); //Constructor para el sensor de temperatura
 // Wifi Server
 WiFiServer webServer(80);
 WiFiUDP ntpUDP;
@@ -165,6 +166,20 @@ void Covalent::verifyCommands(String reading)
         this->getStatus();
         aux = "";
     }
+    delay(10);
+    value = READ_WEATHER;
+    if (reading.indexOf(value) > -1)
+    {
+        String aux;
+        Weather currentWeather;
+        aux = reading.substring(value.length(), reading.length());
+        this->send("[ESP_SERIAL] - Message received with content... " + aux);
+        this->send("[ESP_NET] - WEATHER_READ_START");
+        currentWeather = this->readWeather();
+        this->send("[ESP-DHT] - HUM: " + (String)currentWeather.hum);
+        this->send("[ESP-DHT] - TEMP: " + (String)currentWeather.temp);
+        aux = "";
+    }
     reading = "";
     delay(10);
     digitalWrite(D5, LOW);
@@ -173,6 +188,7 @@ void Covalent::verifyCommands(String reading)
 void Covalent::getStatus()
 {
     Status status;
+    Weather currentWeather;
     this->send("[ESP-NET] - BOARD: " + MCU);
     status.deviceName = this->readStringFromMemory(DEVICE_NAME_DIR);
     this->send("[ESP-NET] - DEVICE_NAME: " + status.deviceName);
@@ -213,8 +229,10 @@ void Covalent::getStatus()
             this->send((String)realMinute);
         }
     }
-
     //Enviar fin de lectura
+    currentWeather = this->readWeather();
+    this->send("[ESP-DHT] - HUM: " + (String)currentWeather.hum);
+    this->send("[ESP-DHT] - TEMP: " + (String)currentWeather.temp);
     this->send("[ESP_NET] - STATUS_READ_END");
 }
 
@@ -502,3 +520,18 @@ void Covalent::ntp()
     delay(50);
 }
 /************************************************************************************************/
+
+/**********************************************************************************************
+ *                                       DHT
+ **********************************************************************************************/
+Weather Covalent::readWeather()
+{
+    Weather weather;
+    weather.hum = dht.readHumidity();
+    weather.temp = dht.readTemperature();
+    if (isnan(weather.hum) || isnan(weather.temp))
+    {
+        this->send("Failed to read from DHT sensor!");
+    }
+    return weather;
+}
