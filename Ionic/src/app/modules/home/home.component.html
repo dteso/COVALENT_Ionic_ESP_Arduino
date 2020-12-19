@@ -226,20 +226,20 @@
 
           <!-- WEATHER -->
           <ion-item>
-            <ion-button *ngIf="statusService.state.temperature.length === 0 && statusService.state.temperature.length === 0" fill="outline" shape="round" color="light" [routerLink]="['/home']"
+            <ion-button *ngIf="statusService.state.temperature.length === 0 && statusService.state.temperature.length === 0" fill="outline" shape="round" color="light" [routerLink]="['/weather']"
               routerLinkActive="router-link-active">
               <ion-icon name="thermometer"></ion-icon>
             </ion-button>
-            <ion-button *ngIf="statusService.state.temperature.length > 0 && statusService.state.temperature.length > 0"  shape="round" color="primary" [routerLink]="['/home']"
+            <ion-button *ngIf="statusService.state.temperature.length > 0 && statusService.state.temperature.length > 0"  shape="round" color="primary" [routerLink]="['/weather']"
             routerLinkActive="router-link-active">
             <ion-icon name="thermometer"></ion-icon>
           </ion-button>
 
-            <ion-button *ngIf="statusService.state.temperature.length === 0 && statusService.state.temperature.length === 0" fill="outline" shape="round" color="light" [routerLink]="['/home']"
+            <ion-button *ngIf="statusService.state.temperature.length === 0 && statusService.state.temperature.length === 0" fill="outline" shape="round" color="light" [routerLink]="['/weather']"
               routerLinkActive="router-link-active" class="w-100">
               Weather
             </ion-button>
-            <ion-button *ngIf="statusService.state.temperature.length > 0 && statusService.state.temperature.length > 0" shape="round" color="primary" [routerLink]="['/home']"
+            <ion-button *ngIf="statusService.state.temperature.length > 0 && statusService.state.temperature.length > 0" shape="round" color="primary" [routerLink]="['/weather']"
             routerLinkActive="router-link-active" class="w-100">
             {{statusService.state.temperature}} ºC - {{statusService.state.humidity}} %
           </ion-button>

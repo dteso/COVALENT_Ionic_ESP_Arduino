@@ -34,6 +34,10 @@ const routes: Routes = [
   {
     path: 'web-server',
     loadChildren: () => import('./modules/web-server/web-server.module').then( m => m.WebServerModule)
+  },
+  {
+    path: 'weather',
+    loadChildren: () => import('./modules/weather/weather.module').then( m => m.WeatherModule)
   }
 ];
 
