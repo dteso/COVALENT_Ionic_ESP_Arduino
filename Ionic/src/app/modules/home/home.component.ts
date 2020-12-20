@@ -123,8 +123,7 @@ export class HomeComponent implements OnInit{
   async presentToast(text: string) {
     const toast = await this.toastCtrl.create({
       message: text,
-      duration: 3000,
-      position: "middle"
+      duration: 3000
     });
     await toast.present();
   }

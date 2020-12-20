@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SerialData, StatusService } from 'src/app/services/services';
 
 @Component({
   selector: 'app-weather',
@@ -7,8 +8,29 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WeatherComponent implements OnInit {
 
-  constructor() { }
+  tempValue = '0';
+  humValue = '0';
 
-  ngOnInit() {}
+  serialData: SerialData = {
+    data: '',
+    connected: false,
+    str: '',
+    lastStr: '',
+    fullStr: '',
+    codeInput: '',
+    message: '',
+  };
+  title = "Indoor weather";
+
+  constructor(
+    private statusService: StatusService
+  ) { }
+
+  ngOnInit() {
+    setTimeout(()=> {
+      this.tempValue = this.statusService.state.temperature;
+      this.humValue = this.statusService.state.humidity;
+    }, 250);
+  }
 
 }
