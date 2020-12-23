@@ -38,6 +38,10 @@ const routes: Routes = [
   {
     path: 'weather',
     loadChildren: () => import('./modules/weather/weather.module').then( m => m.WeatherModule)
+  },
+  {
+    path: 'mqtt-client',
+    loadChildren: () => import('./modules/mqtt-client/pages/mqtt-client.module').then( m => m.MqttClientModule)
   }
 ];
 
