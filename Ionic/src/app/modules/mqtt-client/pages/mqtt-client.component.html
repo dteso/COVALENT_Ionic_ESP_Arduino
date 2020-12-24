@@ -11,6 +11,7 @@
         <ion-card-content class="txt-white">
           <div class="text-center">
             <ion-icon name="cloud-circle" class="font-12"></ion-icon>
+            <h1>{{options.hostname}}:{{options.port}}</h1>
           </div>
         <form [formGroup]="mqttForm">
           Topic
@@ -40,14 +41,12 @@
               </ion-button>
             </ion-col>
           </ion-row>
-
-          <br /><br />
         </form>
+        <br>
+        <div class="abel text-center text-white w-100" style="background-color: black; padding-bottom: 2rem; color: cyan !important;" #msglog>
+        </div>
         </ion-card-content>
       </ion-card>
     </ion-row>
-    </div>
-
-    <div #msglog>
     </div>
 </ion-content>

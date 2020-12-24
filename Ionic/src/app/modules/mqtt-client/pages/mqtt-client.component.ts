@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MqttService } from 'ngx-mqtt';
 import { IMqttMessage } from 'ngx-mqtt/public-api';
 import { Subscription } from 'rxjs';
+import {MQTT_SERVICE_OPTIONS} from '../components/mqtt-options';
 
 @Component({
   selector: 'app-mqtt-client',
@@ -16,6 +17,8 @@ export class MqttClientComponent implements OnInit {
   msg: any;
   isConnected: boolean = false;
   @ViewChild('msglog', { static: true }) msglog: ElementRef;
+  options = MQTT_SERVICE_OPTIONS;
+  title="MQTT Client";
 
   mqttForm: FormGroup;
 
@@ -27,6 +30,12 @@ export class MqttClientComponent implements OnInit {
       topicname: [''],
       msg: ['', Validators.required],
     });
+    // TODO: Changing mqtt connection parameters dinamically
+    this._mqttService.disconnect();
+    this.options.hostname = 'broker.emqx.io';
+    this.options.port = 8083;
+    this._mqttService.connect(this.options);
+    // TODO: Form creation pending for this configuration
   }
 
   ngOnInit(): void {
@@ -45,10 +54,10 @@ export class MqttClientComponent implements OnInit {
       this.msg = message;
       console.log('msg: ', message);
       this.clear();
-      this.logMsg('Message: ' + message.payload.toString() + '<br> for topic: ' + message.topic);
+      this.logMsg('· Message > ' + message.payload.toString() + '<br> · Topic: ' + message.topic);
     });
     this.clear();
-    this.logMsg('subscribed to topic: ' + this.mqttForm.controls.topicname.value);
+    this.logMsg('· Subscribed to topic: ' + this.mqttForm.controls.topicname.value);
   }
 
   sendmsg(): void {
