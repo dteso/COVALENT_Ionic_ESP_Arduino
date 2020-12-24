@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 import { LoaderService } from 'src/app/services/loader.service';
-import { BluetoothService, CustomSerialService, SerialData, StatusService } from 'src/app/services/services';
+import { BluetoothService, CustomSerialService, SerialData } from 'src/app/services/services';
+import { StatusService } from '../../../services/status.service';
 
 @Component({
   selector: 'app-eeprom',

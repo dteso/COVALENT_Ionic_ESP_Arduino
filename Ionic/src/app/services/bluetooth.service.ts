@@ -3,7 +3,7 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { StorageService } from '../services/storage.service';
 import { Observable, Subscription, from, Subject } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
-import { StatusService } from './services';
+import { StatusService } from '../services/status.service';
 
 @Injectable()
 export class BluetoothService {

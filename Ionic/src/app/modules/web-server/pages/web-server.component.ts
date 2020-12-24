@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { LoaderService } from 'src/app/services/loader.service';
-import { CustomSerialService, BluetoothService, SerialData, StatusService } from 'src/app/services/services';
+import { CustomSerialService, BluetoothService, SerialData } from 'src/app/services/services';
+import { StatusService } from '../../../services/status.service';
 
 @Component({
   selector: 'app-web-server',

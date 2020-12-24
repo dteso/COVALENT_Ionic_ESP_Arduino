@@ -1,19 +1,14 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
-
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-
 import { CoreModule } from './core/core.module';
-
 import { IonicStorageModule } from '@ionic/storage';
 import { StorageService } from './services/storage.service';
-
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial/ngx';
 import { BluetoothService } from './services/bluetooth.service';
 import { Serial } from '@ionic-native/serial/ngx';
@@ -27,7 +22,7 @@ import { MqttModule } from 'ngx-mqtt';
 
 export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
   hostname: 'test.mosquitto.org',
-  port: 8080, //Es el puerto sin seguridad para conexión mediante shockets
+  port: 8080, //Es el puerto sin seguridad para conexión mediante sockets
   path: '/mqtt'
 }
 

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { SerialData, StatusService } from 'src/app/services/services';
+import { SerialData } from 'src/app/services/services';
+import { StatusService } from '../../../services/status.service';
 
 @Component({
   selector: 'app-weather',

@@ -30,9 +30,7 @@ export class MqttClientComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    setInterval(()=>{
-      this._mqttService.unsafePublish('medusa/devices/outputs', 'Im alive', { qos: 1, retain: true });
-    }, 1000);
+      this._mqttService.unsafePublish('test', 'Connection Success from C0V4L3N7', { qos: 1, retain: true });
   }
 
   ngOnDestroy(): void {

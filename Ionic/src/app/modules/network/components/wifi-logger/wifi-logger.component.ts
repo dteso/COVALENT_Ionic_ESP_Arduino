@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
-import { BluetoothService, CustomSerialService, NetworkService, SerialData, StatusService } from 'src/app/services/services';
+import { BluetoothService, CustomSerialService, NetworkService, SerialData } from 'src/app/services/services';
+import { StatusService } from '../../../../services/status.service';
 import { LoaderService } from 'src/app/services/loader.service';
 
 @Component({

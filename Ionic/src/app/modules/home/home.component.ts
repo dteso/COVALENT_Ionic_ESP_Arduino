@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { SerialData, State } from 'src/app/services/models';
-import { BluetoothService, CustomSerialService, NetworkService, StatusService } from 'src/app/services/services';
+import { BluetoothService, CustomSerialService, NetworkService } from 'src/app/services/services';
+import { StatusService } from '../../services/status.service';
 
 @Component({
   selector: 'app-home',

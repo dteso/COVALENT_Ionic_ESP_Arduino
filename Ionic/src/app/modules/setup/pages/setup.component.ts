@@ -1,4 +1,5 @@
-import { BluetoothService, StatusService, StorageService } from './../../../services/services';
+import { BluetoothService, StorageService } from './../../../services/services';
+import { StatusService } from '../../../services/status.service';
 import { Component, OnInit } from '@angular/core';
 import { ToastController, AlertController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
