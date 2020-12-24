@@ -1,3 +1,54 @@
-<p>
-  mqtt-client works!
-</p>
+<app-header [title]='title'></app-header>
+
+<ion-content>
+
+  <div>
+    <ion-row>
+      <ion-card class="abel">
+        <ion-card-header>
+          <ion-card-subtitle class="text-center txt-white"><strong>MQTT Client</strong></ion-card-subtitle>
+          <ion-card-title class="text-center txt-white">MQTT</ion-card-title>
+        </ion-card-header>
+        <ion-card-content class="txt-white">
+          <div class="text-center">
+            <ion-icon name="cloud-circle" class="font-12"></ion-icon>
+          </div>
+        <form [formGroup]="mqttForm">
+          Topic
+          <ion-row class="text-center">
+            <ion-col size='12'>
+              <ion-item style="background: white; background-color: white !important;">
+                <ion-input type="text" formControlName="topicname" name="message"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size='6'>
+              <ion-button expand="block" type="submit" size='medium' (click)="subscribeNewTopic()">
+                Subscribe
+              </ion-button>
+            </ion-col>
+          </ion-row>
+
+          Message
+          <ion-row class="text-center">
+            <ion-col size='12'>
+              <ion-item style="background: white; background-color: white !important;">
+                <ion-input type="text" formControlName="msg" name="message"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size='6'>
+              <ion-button expand="block" type="submit" size='medium' (click)="sendmsg()">
+                Send
+              </ion-button>
+            </ion-col>
+          </ion-row>
+
+          <br /><br />
+        </form>
+        </ion-card-content>
+      </ion-card>
+    </ion-row>
+    </div>
+
+    <div #msglog>
+    </div>
+</ion-content>
