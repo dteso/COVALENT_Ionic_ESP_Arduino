@@ -16,17 +16,8 @@ import { SerialTabsModule } from './modules/serial-terminal/pages/serial-tabs.mo
 import { NetworkModule } from './modules/network/pages/network.module';
 import { NetworkService } from './services/services';
 import { WifiWizard2 } from '@ionic-native/wifi-wizard-2/ngx';
-import { IMqttServiceOptions } from 'ngx-mqtt/lib/mqtt.model';
 import { MqttModule } from 'ngx-mqtt';
 import {MQTT_SERVICE_OPTIONS} from './modules/mqtt-client/components/mqtt-options';
-
-
-// export const MQTT_SERVICE_OPTIONS: IMqttServiceOptions = {
-//   hostname: 'test.mosquitto.org',
-//   port: 8080, //Es el puerto sin seguridad para conexión mediante sockets
-//   path: '/mqtt'
-// }
-
 
 @NgModule({
   declarations: [AppComponent],

@@ -5,7 +5,7 @@
        </trust-anchors>
    </base-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain>test.mosquitto.org</domain>
+        <domain>192.168.1.27:9001</domain>
     </domain-config>
 </network-security-config>
 

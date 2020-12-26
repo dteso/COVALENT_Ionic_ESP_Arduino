@@ -9,10 +9,36 @@
           <ion-card-title class="text-center txt-white">MQTT</ion-card-title>
         </ion-card-header>
         <ion-card-content class="txt-white">
-          <div class="text-center">
-            <ion-icon name="cloud-circle" class="font-12"></ion-icon>
-            <h1>{{options.hostname}}:{{options.port}}</h1>
+
+          <ion-item>
+            <ion-label><strong>Mqtt Server</strong></ion-label>
+            <ion-select value="null" okText="Okay" cancelText="Dismiss" placeholder="Mqtt Server" (ionChange)="onSelectServer($event)">
+              <ion-select-option [value]="server" *ngFor="let server of mqttServers; i as index">{{server.name}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <div class="text-center" style="padding: 1rem;">
+            <ion-icon *ngIf="!serverSelected" name="cloud-circle" class="font-12"></ion-icon>
+            <img *ngIf="serverSelected" [src]="mqttServers[serverSelected].imgUrl" width="65rem" height="65rem">
+            <h1 *ngIf="options.hostname">{{options.hostname}}:{{options.port}}</h1>
           </div>
+
+          <ion-row *ngIf="!serverSelected" class="text-center">
+            <ion-col size='8'>
+              <ion-item style="background: white; background-color: white !important;">
+                <ion-input type="text" [(ngModel)]="host" name="host" (ngModelChange)="onModelChange()" placeholder="server"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size='4'>
+              <ion-item style="background: white; background-color: white !important;">
+                <ion-input type="text" [(ngModel)]="port" name="message" (ngModelChange)="onModelChange()" placeholder="port"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-button expand="block" type="submit" size='medium' (click)="connect()">
+              Connect
+            </ion-button>
+          </ion-row>
+          
         <form [formGroup]="mqttForm">
           Topic
           <ion-row class="text-center">
