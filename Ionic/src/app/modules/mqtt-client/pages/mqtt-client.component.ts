@@ -20,8 +20,12 @@ export class MqttClientComponent implements OnInit {
   options = MQTT_SERVICE_OPTIONS;
   title = "MQTT Client";
   serverSelected = 0;
-  host='';
-  port=null;
+  host = '';
+  port = null;
+  lastTopicIndex = 0;
+  msgToSend = '';
+
+  topics = [];
 
   mqttForm: FormGroup;
 
@@ -83,25 +87,38 @@ export class MqttClientComponent implements OnInit {
   }
 
   subscribeNewTopic(): void {
-    console.log('inside subscribe new topic')
+    console.log('inside subscribe new topic');
+    this.topics.push({ topic: this.mqttForm.controls.topicname.value, message: ''});
     this.subscription = this._mqttService.observe(this.mqttForm.controls.topicname.value).subscribe((message: IMqttMessage) => {
+      let pos = 0;
       this.msg = message;
       console.log('msg: ', message);
       this.clear();
-      this.logMsg('· Message > ' + message.payload.toString() + '<br> · Topic: ' + message.topic);
+      let count = 0;
+      this.topics.forEach( topic => {
+        if(topic.topic === message.topic){
+          pos=count;
+        }else{
+          count++;
+        }
+      })
+      this.topics[pos].message = message.payload.toString();
+      this.lastTopicIndex = pos;
+      this.logMsg('Last MESSAGE received was: << ' + message.payload.toString() + '>> on TOPIC: << ' + message.topic +' >>');
     });
     this.clear();
-    this.logMsg('· Subscribed to topic: ' + this.mqttForm.controls.topicname.value);
+    this.logMsg('Subscribed to topic: << ' + this.mqttForm.controls.topicname.value +' >>');
   }
 
-  sendmsg(): void {
+  sendmsg(topic:string, msg: string): void {
     // use unsafe publish for non-ssl websockets
-    this._mqttService.unsafePublish(this.mqttForm.controls.topicname.value, this.mqttForm.controls.msg.value, { qos: 1, retain: true })
+    this._mqttService.unsafePublish(topic, msg, { qos: 1, retain: true })
     this.msg = '';
+    this.msgToSend = '';
   }
 
   logMsg(message): void {
-    this.msglog.nativeElement.innerHTML += '<br><hr>' + message;
+    this.msglog.nativeElement.innerHTML += '' + message;
   }
 
   clear(): void {
