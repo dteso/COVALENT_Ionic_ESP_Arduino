@@ -1,7 +1,22 @@
-.bg-blue{
-    background: blueviolet;
+.bg-active{
+    border: solid 0.250rem rgb(153, 255, 140);
+    border-radius: 1%;
 }
 
-.bg-gray{
-    background: lightgray;
+.bg-normal{
+    background: rgb(65, 64, 64);
+    //color:white;
+}
+
+ion-card-header{
+    background-color: whitesmoke !important;
+    color: rgb(65, 64, 64) !important;
+}
+
+.text-white{
+    color: white !important;
+}
+
+.pd-2{
+    padding: 2rem !important;
 }

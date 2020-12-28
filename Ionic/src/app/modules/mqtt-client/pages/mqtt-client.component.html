@@ -3,100 +3,132 @@
 <ion-content>
   <div>
     <ion-row>
+
       <ion-card class="abel w-100">
-        <ion-card-header>
-          <ion-card-subtitle class="text-center txt-white"><strong>MQTT Client</strong></ion-card-subtitle>
-          <ion-card-title class="text-center txt-white">MQTT</ion-card-title>
+        <ion-card-header class="pd-2">
+          <ion-card-subtitle class="text-center"><strong>MQTT Client</strong></ion-card-subtitle>
+          <ion-card-title class="text-center"><strong>MQTT</strong></ion-card-title>
         </ion-card-header>
         <ion-card-content class="txt-white">
 
+          <!-- Select for servers -->
           <ion-item>
             <ion-label><strong>Mqtt Server</strong></ion-label>
-            <ion-select value="null" okText="Okay" cancelText="Dismiss" placeholder="Mqtt Server" (ionChange)="onSelectServer($event)">
-              <ion-select-option [value]="server" *ngFor="let server of mqttServers; i as index">{{server.name}}</ion-select-option>
+            <ion-select value="null" okText="Okay" cancelText="Dismiss" placeholder="Mqtt Server"
+              (ionChange)="onSelectServer($event)">
+              <ion-select-option [value]="server" *ngFor="let server of mqttServers; i as index">{{server.name}}
+              </ion-select-option>
             </ion-select>
           </ion-item>
 
+
+          <!-- Selected server info -->
           <div class="text-center" style="padding: 1rem;">
             <ion-icon *ngIf="!serverSelected" name="cloud-circle" class="font-12"></ion-icon>
             <img *ngIf="serverSelected" [src]="mqttServers[serverSelected].imgUrl" width="65rem" height="65rem">
             <h1 *ngIf="options.hostname">{{options.hostname}}:{{options.port}}</h1>
           </div>
 
+
+          <!-- Custom mqtt Server form -->
           <ion-row *ngIf="!serverSelected" class="text-center">
             <ion-col size='8'>
               <ion-item style="background: white; background-color: white !important;">
-                <ion-input type="text" [(ngModel)]="host" name="host" (ngModelChange)="onModelChange()" placeholder="server"></ion-input>
+                <ion-input type="text" [(ngModel)]="host" name="host" (ngModelChange)="onModelChange()"
+                  placeholder="server"></ion-input>
               </ion-item>
             </ion-col>
             <ion-col size='4'>
               <ion-item style="background: white; background-color: white !important;">
-                <ion-input type="text" [(ngModel)]="port" name="message" (ngModelChange)="onModelChange()" placeholder="port"></ion-input>
+                <ion-input type="text" [(ngModel)]="port" name="message" (ngModelChange)="onModelChange()"
+                  placeholder="port"></ion-input>
               </ion-item>
             </ion-col>
-            <ion-button expand="block" type="submit" size='medium' (click)="connect()">
+            <ion-button fill='outline' expand="block" type="submit" size='medium' (click)="connect()">
               Connect
             </ion-button>
           </ion-row>
-          
-        <form [formGroup]="mqttForm">
-          Topic
-          <ion-row class="text-center">
-            <ion-col size='12'>
-              <ion-item style="background: white; background-color: white !important;">
-                <ion-input type="text" formControlName="topicname" name="message"></ion-input>
-              </ion-item>
-            </ion-col>
-            <ion-col size='6'>
-              <ion-button expand="block" type="submit" size='medium' (click)="subscribeNewTopic()">
-                Subscribe
-              </ion-button>
-            </ion-col>
-          </ion-row>
 
-          <!-- Message -->
-          <!-- <ion-row class="text-center">
-            <ion-col size='12'>
-              <ion-item style="background: white; background-color: white !important;">
-                <ion-input type="text" formControlName="msg" name="message"></ion-input>
-              </ion-item>
-            </ion-col>
-            <ion-col size='6'>
-              <ion-button expand="block" type="submit" size='medium' (click)="sendmsg()">
-                Send
-              </ion-button>
-            </ion-col>
-          </ion-row> -->
-        </form>
-        <br>
-        <div class="abel text-white w-100" style="background-color: white; padding: 1rem; color: darkgray !important; border: 1px solid lightgray; border-radius: 2%" #msglog>
-        </div>
+
+
+          <!-- Create or subscribe to topic form -->
+          <form [formGroup]="mqttForm">
+            Topic
+            <ion-row class="text-center">
+              <ion-col size='12'>
+                <ion-item style="background: white; background-color: white !important;">
+                  <ion-input type="text" formControlName="topicname" name="message"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size='6'>
+                <ion-button fill='outline' expand="block" type="submit" size='medium' (click)="subscribeNewTopic()">
+                  Subscribe
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </form>
+          <br>
+          <div hidden="true" class="abel w-100"
+            style="background-color: white; padding: 1rem; color: darkgray !important; border: 1px solid lightgray; border-radius: 2%"
+            #msglog>
+          </div>
         </ion-card-content>
       </ion-card>
+
     </ion-row>
-    </div>
+  </div>
 
+  <!-- Topics card list-->
+  <div>
+    <ion-card *ngFor="let topic of topics; index as i" class="abel" style="background: white; background-color: white !important;" [ngClass]="{'bg-active': lastTopicIndex === i ,'bg-normal': lastTopicIndex !== i }">
 
-    <div>
-      <ion-card *ngFor="let topic of topics; i as index" style="background: white; background-color: white !important;">
-        <ion-card-header style="background: darkgray; color:  white;">
-          <strong>{{topic.topic}}</strong>
-        </ion-card-header>
-        <ion-card-content style="padding: 1rem">
-          {{topic.message}}
-          <ion-row class="text-center">
-            <ion-col size='8'>
-              <ion-item style="background: white; background-color: white !important;">
-                <ion-input type="text" [(ngModel)]="msgToSend" name="message"></ion-input>
-              </ion-item>
-            </ion-col>
-            <ion-col size='4'>
-              <ion-button expand="block" type="submit" size='medium' (click)="sendmsg(topic.topic, msgToSend)">
-                Send
-              </ion-button>
-            </ion-col>
-          </ion-row>
-        </ion-card-content>
-      </ion-card>
-    </div>
+      <ion-card-header>
+        <ion-row style="border-bottom: solid 0.125px rgb(12, 135, 218); border-radius: 2%;">
+          <ion-col size='11'>
+            {{topic.timestamp | date}} - {{topic.timestamp | date:'HH:MM'}}
+          </ion-col>
+          <ion-col size='1'>
+            <ion-icon name="close-outline" (click)="deleteTopic(i)"></ion-icon>
+          </ion-col>
+        </ion-row>
+
+        <ion-row class='text-center'>
+          <h5><strong>{{topic.topic}}</strong></h5>
+        </ion-row>
+      </ion-card-header>
+
+      <ion-card-content class='text-center' style="padding: 1rem">
+        <p style="border: solid 0.125px lightgray; border-radius: 2%; padding: 1rem; font-size: large;">{{topic.message}}</p>
+
+        <ion-row *ngIf="topic.allowPublish" class="text-center">
+          <ion-col size='8'>
+            <ion-item style="background: white; background-color: white !important;">
+              <ion-input type="text" [(ngModel)]="msgToSend" name="message"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col size='2'>
+            <ion-button fill='outline' expand="block" type="button" color='danger' size='medium' (click)="topic.allowPublish = false">
+              x
+            </ion-button>
+          </ion-col>
+          <ion-col size='2'>
+            <ion-button fill='outline' expand="block" type="button" size='medium' (click)="sendmsg(i, topic.topic, msgToSend)">
+              >
+            </ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-row *ngIf="!topic.allowPublish" class="text-center">
+          <div style="padding: 0.5rem;">
+            <ion-button fill='outline' color='success' expand="block" type="submit" size='medium' (click)="topic.allowPublish = true">
+              Publish
+            </ion-button>
+          </div>
+        </ion-row>
+
+      </ion-card-content>
+
+    </ion-card>
+  </div>
+
 </ion-content>
