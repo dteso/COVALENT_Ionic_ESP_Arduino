@@ -22,6 +22,7 @@ void Covalent::setup()
     this->beginBT(this->BT_BAUDRATE, SWSERIAL_8N1, 13, 15, false, 256);
     Serial.begin(this->SERIAL_BAUDRATE);
     EEPROM.begin(this->EEPROM_SIZE);
+    dht.begin();
     this->WEB_SERVER_ENABLED = this->readStringFromMemory(WEB_SERVER_STATUS_DIR).indexOf("1") > -1 ? true : false;
     this->NTP_SERVER_ENABLED = true;
     this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1");

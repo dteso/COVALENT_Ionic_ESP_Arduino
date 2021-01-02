@@ -17,7 +17,6 @@ const String MCU = "NodeMCU v3.0 - ESP8266";
 #define READ_STATUS ">>>READ_STATUS"
 #define READ_WEATHER ">>>READ_WEATHER"
 
-
 /*-------------VARIABLES DE CLIMA DHT11----------------*/
 #define DHTPIN D3   // what pin we're connected to
 #define DHTTYPE DHT11   // DHT 22  (AM2302)
