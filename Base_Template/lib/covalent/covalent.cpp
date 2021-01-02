@@ -1,6 +1,7 @@
 
 #include "covalent.h"
 #include <serial.hpp>
+#include "myoled.cpp"
 
 const char *hostname = "ESP8266_1";
 
@@ -14,6 +15,8 @@ WiFiUDP ntpUDP;
 char *ntpServer = "0.es.pool.ntp.org";
 NTPClient timeClient(ntpUDP, ntpServer, -10800, 6000);
 SerialCore serialCore;
+boolean blink = false;
+int lastSec = 0;
 
 Covalent::Covalent() {}
 
@@ -28,6 +31,10 @@ void Covalent::setup()
     this->WEB_SERVER_ENABLED = this->readStringFromMemory(WEB_SERVER_STATUS_DIR).indexOf("1") > -1 ? true : false;
     this->NTP_SERVER_ENABLED = true;
     this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1");
+      loadingScreen();
+  display.clearDisplay();                                        //for Clearing the display
+  display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+  display.display();
 }
 
 void Covalent::loop()
@@ -46,6 +53,24 @@ void Covalent::loop()
         this->renderWebServer();
     }
     this->ntp();
+      if(lastSec != this->realSec){
+    lastSec = this->realSec;
+    blink = true;
+  }else{
+    blink = false;
+  }
+
+  if ((blink) && (this->realSec == 2 || this->realSec == 3 || this->realSec == 4 || this->realSec == 10 || this->realSec == 11 || this->realSec == 13 || this->realSec == 16 || this->realSec == 20 || this->realSec == 21 || this->realSec == 25 || this->realSec == 26 || this->realSec == 30 || this->realSec == 34 || this->realSec == 37 || this->realSec == 49 || this->realSec == 51 || this->realSec == 57 || this->realSec == 58 || this->realSec == 59))
+  {
+    blink=false;
+    display.clearDisplay();                                         //for Clearing the display
+    display.drawBitmap(0, 0, medusaka_logoBitmap2, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+    display.display();
+    delay(70);
+    display.clearDisplay();                                        //for Clearing the display
+    display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+    display.display();
+  }
 }
 
 /**********************************************************************************************
