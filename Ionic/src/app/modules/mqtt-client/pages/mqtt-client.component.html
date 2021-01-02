@@ -80,7 +80,7 @@
 
   <!-- Topics card list-->
   <div>
-    <ion-card *ngFor="let topic of topics; index as i" class="abel" style="background: white; background-color: white !important;" [ngClass]="{'bg-active': lastTopicIndex === i ,'bg-normal': lastTopicIndex !== i }">
+    <ion-card *ngFor="let topic of topics; index as i" class="abel"  [ngClass]="{'bg-active': lastTopicIndex === i ,'bg-normal': lastTopicIndex !== i }">
 
       <ion-card-header>
         <ion-row style="border-bottom: solid 0.125px rgb(12, 135, 218); border-radius: 2%;">
