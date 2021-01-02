@@ -1,5 +1,6 @@
 
 #include "covalent.h"
+#include <serial.hpp>
 
 const char *hostname = "ESP8266_1";
 
@@ -12,6 +13,7 @@ WiFiServer webServer(80);
 WiFiUDP ntpUDP;
 char *ntpServer = "0.es.pool.ntp.org";
 NTPClient timeClient(ntpUDP, ntpServer, -10800, 6000);
+SerialCore serialCore;
 
 Covalent::Covalent() {}
 
@@ -19,8 +21,8 @@ void Covalent::setup()
 {
     pinMode(D4, OUTPUT);
     pinMode(D5, OUTPUT);
-    this->beginBT(this->BT_BAUDRATE, SWSERIAL_8N1, 13, 15, false, 256);
-    Serial.begin(this->SERIAL_BAUDRATE);
+    serialCore.beginBT(serialCore.BT_BAUDRATE, SWSERIAL_8N1, 13, 15, false, 256);
+    Serial.begin(serialCore.SERIAL_BAUDRATE);
     EEPROM.begin(this->EEPROM_SIZE);
     dht.begin();
     this->WEB_SERVER_ENABLED = this->readStringFromMemory(WEB_SERVER_STATUS_DIR).indexOf("1") > -1 ? true : false;
@@ -30,8 +32,15 @@ void Covalent::setup()
 
 void Covalent::loop()
 {
-    this->readSerial();
-    this->readBT();
+    String serialReading = serialCore.readSerial();
+    String btReading = serialCore.readBT();
+    if(serialReading!=""){
+        //serialCore.send("Leido para verificar SERIAL: " + serialReading);
+        this->verifyCommands(serialReading);
+    }else if(btReading !=""){
+       //serialCore.send("Leido para verificar BT: " + btReading);
+        this->verifyCommands(btReading);
+    }
     if (this->WEB_SERVER_ENABLED)
     {
         this->renderWebServer();
@@ -46,18 +55,18 @@ void Covalent::loop()
 void Covalent::verifyCommands(String reading)
 {
     digitalWrite(D5, HIGH);
-    this->send(reading);
+    serialCore.send(reading);
 
     String value = WIFI_SSID;
     if (reading.indexOf(value) > -1)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        this->send("[ESP_SERIAL] - WiFi SSID is " + aux);
+        serialCore.send("[ESP_SERIAL] - WiFi SSID is " + aux);
         this->saveStringInMemory(SSID_DIR, aux);
         aux = "";
         this->SSIDreadFromMemory = this->readStringFromMemory(SSID_DIR);
-        this->send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)SSID_DIR + " ] ::: " + SSIDreadFromMemory + " - Size: " + SSIDreadFromMemory.length());
+        serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)SSID_DIR + " ] ::: " + SSIDreadFromMemory + " - Size: " + SSIDreadFromMemory.length());
     }
     delay(10);
     value = WIFI_PASS;
@@ -66,11 +75,11 @@ void Covalent::verifyCommands(String reading)
         String aux;
         boolean readCompleted = false;
         aux = reading.substring(value.length(), reading.length());
-        this->send("[ESP_SERIAL] - WiFi Password is " + aux);
+        serialCore.send("[ESP_SERIAL] - WiFi Password is " + aux);
         readCompleted = this->saveStringInMemory(WIFI_PASS_DIR, aux);
         if (!readCompleted)
         {
-            this->send("[ESP-EEPROM] - " + aux + " >>> Saved in eeprom");
+            serialCore.send("[ESP-EEPROM] - " + aux + " >>> Saved in eeprom");
             readCompleted = false;
         }
         aux = "";
@@ -83,7 +92,7 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        this->send("[ESP_SERIAL] - Message received with content... " + aux);
+        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         aux = "";
     }
     delay(10);
@@ -92,14 +101,14 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        this->send("[ESP_SERIAL] - Message received with content... " + aux);
-        this->send("[ESP-EEPROM] - Formatting EEPROM. Please wait...");
+        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        serialCore.send("[ESP-EEPROM] - Formatting EEPROM. Please wait...");
         this->clearMemory();
-        this->send("[ESP-EEPROM] - Memory formatted");
+        serialCore.send("[ESP-EEPROM] - Memory formatted");
         // Decidimos desconectar el WiFi cuando se borre la EEPROM obligando a reconectar
         // y que no haya parámetros inválidos en memoria
         WiFi.disconnect();
-        this->send("[ESP-NET] - STA_STATUS: KO");
+        serialCore.send("[ESP-NET] - STA_STATUS: KO");
         aux = "";
     }
     delay(10);
@@ -108,8 +117,8 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        this->send("[ESP_SERIAL] - Message received with content... " + aux);
-        this->send("[ESP_NET] - WEB SERVER ENABLED");
+        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        serialCore.send("[ESP_NET] - WEB SERVER ENABLED");
         WEB_SERVER_ENABLED = true;
         this->saveStringInMemory(WEB_SERVER_STATUS_DIR, "1");
         webServer.begin();
@@ -122,8 +131,8 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        this->send("[ESP_SERIAL] - Message received with content... " + aux);
-        this->send("[ESP_NET] - WEB SERVER CLOSED");
+        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        serialCore.send("[ESP_NET] - WEB SERVER CLOSED");
         WEB_SERVER_ENABLED = false;
         this->saveStringInMemory(WEB_SERVER_STATUS_DIR, "0");
         webServer.close();
@@ -135,8 +144,8 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        this->send("[ESP_SERIAL] - Message received with content... " + aux);
-        this->send("[ESP_NTP] - NTP ENABLED");
+        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        serialCore.send("[ESP_NTP] - NTP ENABLED");
         NTP_SERVER_ENABLED = true;
         this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1");
         //webServer.begin();
@@ -149,8 +158,8 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        this->send("[ESP_SERIAL] - Message received with content... " + aux);
-        this->send("[ESP_NTP] - NTP DISABLED");
+        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        serialCore.send("[ESP_NTP] - NTP DISABLED");
         NTP_SERVER_ENABLED = false;
         this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "0");
         //webServer.close();
@@ -162,8 +171,8 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        this->send("[ESP_SERIAL] - Message received with content... " + aux);
-        this->send("[ESP_NET] - STATUS_READ_START");
+        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        serialCore.send("[ESP_NET] - STATUS_READ_START");
         this->getStatus();
         aux = "";
     }
@@ -174,11 +183,11 @@ void Covalent::verifyCommands(String reading)
         String aux;
         Weather currentWeather;
         aux = reading.substring(value.length(), reading.length());
-        this->send("[ESP_SERIAL] - Message received with content... " + aux);
-        this->send("[ESP_NET] - WEATHER_READ_START");
+        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        serialCore.send("[ESP_NET] - WEATHER_READ_START");
         currentWeather = this->readWeather();
-        this->send("[ESP-DHT] - HUM: " + (String)currentWeather.hum);
-        this->send("[ESP-DHT] - TEMP: " + (String)currentWeather.temp);
+        serialCore.send("[ESP-DHT] - HUM: " + (String)currentWeather.hum);
+        serialCore.send("[ESP-DHT] - TEMP: " + (String)currentWeather.temp);
         aux = "";
     }
     reading = "";
@@ -190,121 +199,53 @@ void Covalent::getStatus()
 {
     Status status;
     Weather currentWeather;
-    this->send("[ESP-NET] - BOARD: " + MCU);
+    serialCore.send("[ESP-NET] - BOARD: " + MCU);
     status.deviceName = this->readStringFromMemory(DEVICE_NAME_DIR);
-    this->send("[ESP-NET] - DEVICE_NAME: " + status.deviceName);
+    serialCore.send("[ESP-NET] - DEVICE_NAME: " + status.deviceName);
     status.STA_connected = WiFi.isConnected();
     if (status.STA_connected)
     {
-        this->send("[ESP-NET] - STA_STATUS_OK");
+        serialCore.send("[ESP-NET] - STA_STATUS_OK");
         status.localIp = this->readStringFromMemory(LOCAL_IP_DIR);
-        this->send("[ESP-NET] - LOCAL IP: " + status.localIp);
+        serialCore.send("[ESP-NET] - LOCAL IP: " + status.localIp);
         status.ssid = this->readStringFromMemory(SSID_DIR);
-        this->send("[ESP-NET] - STA: " + status.ssid);
+        serialCore.send("[ESP-NET] - STA: " + status.ssid);
     }
     else
     {
-        this->send("[ESP-NET] - STA_STATUS_KO");
+        serialCore.send("[ESP-NET] - STA_STATUS_KO");
     }
     status.webServerEnabled = this->readStringFromMemory(WEB_SERVER_STATUS_DIR);
-    this->send("[ESP-NET] - WEB_SERVER_STATUS: " + status.webServerEnabled);
+    serialCore.send("[ESP-NET] - WEB_SERVER_STATUS: " + status.webServerEnabled);
 
     status.ntpEnabled = this->readStringFromMemory(NTP_SERVER_STATUS_DIR);
     if (status.ntpEnabled)
     {
-        this->send("[ESP-NTP] - NTP ENABLED");
+        serialCore.send("[ESP-NTP] - NTP ENABLED");
         timeClient.update();                                                  //sincronizamos con el server NTP
         realHour = timeClient.getFormattedTime().substring(0, 2).toInt() + 5; //+5 para que coja la hora de Madrid
         realMinute = timeClient.getFormattedTime().substring(3, 5).toInt();
         realSec = timeClient.getFormattedTime().substring(6, 8).toInt();
-        this->sendInLine("[ESP-NTP] - TIME: ");
-        this->sendInLine((String)realHour);
-        this->sendInLine(":");
+        serialCore.sendInLine("[ESP-NTP] - TIME: ");
+        serialCore.sendInLine((String)realHour);
+        serialCore.sendInLine(":");
         if (realMinute < 10)
         {
-            this->sendInLine("0");
-            this->send((String)realMinute);
+            serialCore.sendInLine("0");
+            serialCore.send((String)realMinute);
         }
         else
         {
-            this->send((String)realMinute);
+            serialCore.send((String)realMinute);
         }
     }
     //Enviar fin de lectura
     currentWeather = this->readWeather();
-    this->send("[ESP-DHT] - HUM: " + (String)currentWeather.hum);
-    this->send("[ESP-DHT] - TEMP: " + (String)currentWeather.temp);
-    this->send("[ESP_NET] - STATUS_READ_END");
+    serialCore.send("[ESP-DHT] - HUM: " + (String)currentWeather.hum);
+    serialCore.send("[ESP-DHT] - TEMP: " + (String)currentWeather.temp);
+    serialCore.send("[ESP_NET] - STATUS_READ_END");
 }
 
-/**********************************************************************************************
- *                                 SERIAL COMMUNICATIONS
- **********************************************************************************************/
-void Covalent::beginBT(int baudRate, SoftwareSerialConfig config, int rx, int tx, boolean flag, int bufferSize)
-{
-    BTserial.begin(baudRate, config, rx, tx, flag, bufferSize);
-}
-
-void Covalent::readBT()
-{
-    digitalWrite(D4, HIGH);
-    String btReading;
-    while (BTserial.available()) //Check if there is an available byte to read
-    {
-        digitalWrite(D4, LOW);
-        delay(10);
-        char c = BTserial.read(); //Conduct a serial read
-        if (c == '\n')
-        {
-            break;
-        }
-        else
-        {
-            btReading += c; //Shorthand for reading = reading + c
-            digitalWrite(D4, HIGH);
-        }
-    }
-
-    if (btReading.length() > 0)
-    {
-        verifyCommands(btReading);
-        btReading = "";
-    }
-}
-
-void Covalent::readSerial()
-{
-    digitalWrite(D4, LOW);
-    String serialReading;
-    while (Serial.available()) //Check if there is an available byte to read
-    {
-        delay(10);              //Delay added to make thing stable
-        char d = Serial.read(); //Conduct a serial read
-        if (d == '\n')
-        {
-            break;
-        }
-        serialReading += d; //Shorthand for reading = reading + c
-        digitalWrite(D4, HIGH);
-    }
-
-    if (serialReading.length() > 0)
-    {
-        verifyCommands(serialReading);
-    }
-}
-
-void Covalent::send(String message)
-{
-    Serial.println(message);
-    BTserial.println(message);
-}
-
-void Covalent::sendInLine(String message)
-{
-    Serial.print(message);
-    BTserial.print(message);
-}
 
 /**********************************************************************************************
  *                                       NETWORK
@@ -312,15 +253,15 @@ void Covalent::sendInLine(String message)
 
 void Covalent::ConnectWiFi_STA(bool useStaticIP = false, String ssid = "", String password = "")
 {
-    this->send("[ESP-NET] - Trying to connect to " + ssid);
+    serialCore.send("[ESP-NET] - Trying to connect to " + ssid);
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     delay(50);
-    this->send("[ESP-NET] - Connection parameters are SSID: " + ssid + " y password " + password);
+    serialCore.send("[ESP-NET] - Connection parameters are SSID: " + ssid + " y password " + password);
     delay(100);
     if (useStaticIP)
         WiFi.config(ip, gateway, subnet);
-    this->send("[ESP-NET] - GATEWAY and SUBNET established");
+    serialCore.send("[ESP-NET] - GATEWAY and SUBNET established");
     int attempts = 0;
     while (WiFi.status() != WL_CONNECTED && attempts < 50)
     {
@@ -328,22 +269,22 @@ void Covalent::ConnectWiFi_STA(bool useStaticIP = false, String ssid = "", Strin
         Serial.print(">");
         delay(200);
     }
-    this->send("");
+    serialCore.send("");
     delay(100);
 
     if (WiFi.isConnected() && ssid)
     {
-        this->send("[ESP-NET] - STA: " + ssid);
-        this->send("[ESP-NET] - LOCAL IP: " + WiFi.localIP().toString()); // TODO: Debe poder pasarse a string
+        serialCore.send("[ESP-NET] - STA: " + ssid);
+        serialCore.send("[ESP-NET] - LOCAL IP: " + WiFi.localIP().toString()); // TODO: Debe poder pasarse a string
         this->saveStringInMemory(LOCAL_IP_DIR, WiFi.localIP().toString());
         delay(100);
-        this->send("[ESP-NET] - WIFI CONNECTION SUCCESS");
+        serialCore.send("[ESP-NET] - WIFI CONNECTION SUCCESS");
         delay(1000);
     }
     else
     {
         delay(2000);
-        this->send("[ESP-NET] - WIFI CONNECTION ERROR");
+        serialCore.send("[ESP-NET] - WIFI CONNECTION ERROR");
     }
 }
 
@@ -353,7 +294,7 @@ void Covalent::renderWebServer()
     WiFiClient client = webServer.available();
     if (client)
     {
-        this->send("New Client.");
+        serialCore.send("New Client.");
         String currentLine = "";
         while (client.connected())
         {
@@ -413,11 +354,11 @@ void Covalent::renderWebServer()
         // delay(50);
         // client.stop();
         // delay(50);
-        this->send("Client disconnected.");
+        serialCore.send("Client disconnected.");
         delay(100);
         //this->send("[ESP_NET] - WEB SERVER CLOSED");
         delay(100);
-        this->send("");
+        serialCore.send("");
     }
 }
 
@@ -435,7 +376,7 @@ void Covalent::clearMemory()
     for (int i = 0; i < 1024; i++)
     {
         EEPROM.write(i, 255);
-        this->send((String)((int)(((float)((float)i / 1024.00)) * 100)) + "%");
+        serialCore.send((String)((int)(((float)((float)i / 1024.00)) * 100)) + "%");
         delay(10);
     }
 }
@@ -447,13 +388,13 @@ void Covalent::clearMemoryRange(int initPos, int rangeSize)
         EEPROM.write(i, 255);
         delay(10);
     }
-    this->send("[ESP-EEPROM] - Register ready to write at pos " + (String)initPos + "...");
+    serialCore.send("[ESP-EEPROM] - Register ready to write at pos " + (String)initPos + "...");
 }
 
 boolean Covalent::saveStringInMemory(int add, String data)
 {
     String dataToSave = data;
-    this->send("[ESP-EEPROM] - Data to Save: " + dataToSave + " - size: " + dataToSave.length());
+    serialCore.send("[ESP-EEPROM] - Data to Save: " + dataToSave + " - size: " + dataToSave.length());
     clearMemoryRange(add, 20);
     for (int i = 0; i < dataToSave.length(); i++)
     {
@@ -462,7 +403,7 @@ boolean Covalent::saveStringInMemory(int add, String data)
     EEPROM.write(add + dataToSave.length(), 255);
     delay(10);
     EEPROM.commit();
-    this->send("[ESP-EEPROM] - " + dataToSave + " >>> Saved in eeprom");
+    serialCore.send("[ESP-EEPROM] - " + dataToSave + " >>> Saved in eeprom");
     return true;
 }
 
@@ -484,7 +425,7 @@ String Covalent::readStringFromMemory(int pos)
             eos = true;
         }
     }
-    this->send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)pos + " ] ::: " + dataToRead + " - Size: " + (String)dataToRead.length());
+    serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)pos + " ] ::: " + dataToRead + " - Size: " + (String)dataToRead.length());
     return dataToRead;
 }
 
@@ -500,17 +441,17 @@ void Covalent::ntp()
     if (realSec == 0 && !printNtpStatus)
     {
         printNtpStatus = true;
-        this->sendInLine("[ESP-NTP] - TIME: ");
-        this->sendInLine((String)realHour);
-        this->sendInLine(":");
+        serialCore.sendInLine("[ESP-NTP] - TIME: ");
+        serialCore.sendInLine((String)realHour);
+        serialCore.sendInLine(":");
         if (realMinute < 10)
         {
-            this->sendInLine("0");
-            this->send((String)realMinute);
+            serialCore.sendInLine("0");
+            serialCore.send((String)realMinute);
         }
         else
         {
-            this->send((String)realMinute);
+            serialCore.send((String)realMinute);
         }
         delay(10);
     }
@@ -532,7 +473,7 @@ Weather Covalent::readWeather()
     weather.temp = dht.readTemperature();
     if (isnan(weather.hum) || isnan(weather.temp))
     {
-        this->send("Failed to read from DHT sensor!");
+        serialCore.send("Failed to read from DHT sensor!");
     }
     return weather;
 }

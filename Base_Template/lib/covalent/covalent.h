@@ -2,7 +2,6 @@
 #define COVALENT_H
 
 #include <Arduino.h>
-#include <SoftwareSerial.h>
 #include <EEPROM.h>
 #include <ESP8266WiFi.h>
 #include "../globals.h"
@@ -18,9 +17,6 @@ class Covalent
 
 public:
     const int EEPROM_SIZE = 4096;
-    const int SERIAL_BAUDRATE = 115200;
-    const int BT_BAUDRATE = 9600;
-    SoftwareSerial BTserial;
     String SSIDreadFromMemory;
     String passReadFromMemory;
     bool WEB_SERVER_ENABLED;
@@ -35,13 +31,6 @@ public:
     //Utils
     void verifyCommands(String);
     void getStatus();
-
-    //Serial Communications
-    void beginBT(int, SoftwareSerialConfig, int, int, boolean, int);
-    void readBT();
-    void readSerial();
-    void send(String);
-    void sendInLine(String);
 
     // Network
     void ConnectWiFi_STA(bool, String, String);
