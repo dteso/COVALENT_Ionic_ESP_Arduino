@@ -1,15 +1,15 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { SerialData, State } from 'src/app/services/models';
-import { BluetoothService, CustomSerialService, NetworkService, StorageService } from 'src/app/services/services';
+import { BluetoothService, CustomSerialService, StorageService } from 'src/app/services/services';
 import { StatusService } from '../../services/status.service';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  selector: 'app-device',
+  templateUrl: './device.component.html',
+  styleUrls: ['./device.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class DeviceComponent implements OnInit {
 
   count = 0;
 

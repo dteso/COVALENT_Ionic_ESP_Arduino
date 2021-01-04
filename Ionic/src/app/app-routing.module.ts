@@ -4,12 +4,12 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'device',
     pathMatch: 'full'
   },
   {
-    path: 'home',
-    loadChildren: () => import('./modules/home/home.module').then( m => m.HomeModule)
+    path: 'device',
+    loadChildren: () => import('./modules/device/device.module').then( m => m.DeviceModule)
   },
   {
     path: 'touchscreen',

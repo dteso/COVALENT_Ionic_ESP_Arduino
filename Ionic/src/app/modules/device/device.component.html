@@ -29,23 +29,16 @@
           <h1 style="font-size: 3rem; font-weight: bolder; color: whitesmoke; margin-top: 1.250rem"> C0V4L3N7 </h1>
         </div>
 
-
-
-
-
-
         <div class="text-center p-2">
           <ion-button color="secondary" shape="round" fill="outline" (click)="storeConfig()">
             <ion-col size="2">
               <ion-icon name="save-outline"></ion-icon>
             </ion-col>
             <ion-col size="10">
-              SAVE CONFIG
+              SAVE DEVICE
             </ion-col>
           </ion-button>
         </div>
-
-
 
         <ion-row style="background: transparent !important; color:  white;" class="text-center">
           <ion-col class="w-100">{{statusService.state?.mcu}}</ion-col>
@@ -150,20 +143,20 @@
 
           <!-- NTP -->
           <ion-item lines="none">
-            <ion-button *ngIf="!statusService.state.ntpEnabled" fill="outline" shape="round" [routerLink]="['/home']"
+            <ion-button *ngIf="!statusService.state.ntpEnabled" fill="outline" shape="round" [routerLink]="['/device']"
               color="light" routerLinkActive="router-link-active">
               <ion-icon name="time"></ion-icon>
             </ion-button>
-            <ion-button *ngIf="statusService.state.ntpEnabled" shape="round" [routerLink]="['/home']" color="primary"
+            <ion-button *ngIf="statusService.state.ntpEnabled" shape="round" [routerLink]="['/device']" color="primary"
               routerLinkActive="router-link-active">
               <ion-icon name="time"></ion-icon>
             </ion-button>
 
-            <ion-button fill="outline" *ngIf="!statusService.state.ntpEnabled" shape="round" [routerLink]="['/home']"
+            <ion-button fill="outline" *ngIf="!statusService.state.ntpEnabled" shape="round" [routerLink]="['/device']"
               color="light" routerLinkActive="router-link-active" class="w-100">
               NTP
             </ion-button>
-            <ion-button *ngIf="statusService.state.ntpEnabled" shape="round" [routerLink]="['/home']" color="primary"
+            <ion-button *ngIf="statusService.state.ntpEnabled" shape="round" [routerLink]="['/device']" color="primary"
               routerLinkActive="router-link-active" class="w-100">
               {{statusService.state.ntpData}}
             </ion-button>
@@ -327,11 +320,11 @@
 
           <!-- DISPLAY -->
           <ion-item lines="none">
-            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/home']"
+            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/device']"
               routerLinkActive="router-link-active">
               <ion-icon name="tablet-landscape"></ion-icon>
             </ion-button>
-            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/home']"
+            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/device']"
               routerLinkActive="router-link-active" class="w-100">
               Display
             </ion-button>
@@ -342,11 +335,11 @@
 
           <!-- SETUP -->
           <ion-item lines="none">
-            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/home']"
+            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/device']"
               routerLinkActive="router-link-active">
               <ion-icon name="pulse"></ion-icon>
             </ion-button>
-            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/home']"
+            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/device']"
               routerLinkActive="router-link-active" class="w-100">
               Configuration
             </ion-button>

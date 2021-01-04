@@ -1,7 +1,7 @@
 export const appPages = [
   {
-    title: 'Home',
-    url: '/home',
+    title: 'Device',
+    url: '/device',
     icon: 'home'
   },
   {
