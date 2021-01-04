@@ -8,6 +8,7 @@ export class StorageService {
 
   BLUETOOTH_ID = 'bluetoothId';
   LANG = 'lang';
+  DEVICE = 'device'
 
   constructor(
     //public events: Events,
@@ -41,5 +42,9 @@ export class StorageService {
    */
   async getLang(): Promise<string> {
     return await this.storage.get(this.LANG);
+  }
+
+  async setDevice(device: any): Promise<any>{
+    return await this.storage.set(this.DEVICE, device);
   }
 }
