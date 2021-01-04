@@ -8,7 +8,8 @@ export class StorageService {
 
   BLUETOOTH_ID = 'bluetoothId';
   LANG = 'lang';
-  DEVICE = 'device'
+  DEVICES = 'devices';
+  devices = [];
 
   constructor(
     //public events: Events,
@@ -44,7 +45,20 @@ export class StorageService {
     return await this.storage.get(this.LANG);
   }
 
+  async getDevices(): Promise<any>{
+    return await this.storage.get(this.DEVICES);
+  }
+
   async setDevice(device: any): Promise<any>{
-    return await this.storage.set(this.DEVICE, device);
+    this.getBluetoothId().then(id => {
+      device.bluetoothId = id;
+    });
+    this.getDevices().then(devs =>{
+      if (devs){
+        this.devices = devs;
+      }
+      this.devices.push(device);
+      return this.storage.set(this.DEVICES, this.devices);
+    });
   }
 }

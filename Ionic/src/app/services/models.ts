@@ -18,6 +18,8 @@ export interface SerialData {
 };
 
 export interface State {
+  bluetoothId?:string;
+  name: string;
   wifiEnabled : boolean;
   wifiConnected: boolean;
   serialEnabled: boolean;

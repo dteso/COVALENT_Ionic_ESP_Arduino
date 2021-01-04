@@ -7,10 +7,12 @@ import { State } from './models';
 export class StatusService {
 
   state:State = {
+    bluetoothId: '',
+    name: 'no name',
     wifiConnected: false,
     wifiEnabled: false,
     serialConnected: false,
-    serialEnabled: false,
+    serialEnabled: true,
     bluetoothConnected: false,
     bluetoothEnabled: false,
     localIp: '',
