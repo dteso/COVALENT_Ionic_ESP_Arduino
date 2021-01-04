@@ -60,17 +60,19 @@ export class MqttClientComponent implements OnInit {
   }
 
   subscribeNewTopic(): void {
-    if(this.topics.filter(topic => topic.topic === this.mqttForm.controls.topicname.value).length > 0 || this.mqttForm.invalid){
+    const tp =  JSON.parse(JSON.stringify(this.mqttForm.controls.topicname.value));
+    if(this.topics.filter(topic => topic.topic === tp).length > 0 || this.mqttForm.invalid){
       return;
     };
+    this.mqttForm.controls.topicname.setValue('');
     console.log('inside subscribe new topic');
     this.topics.push({ 
-      topic: this.mqttForm.controls.topicname.value, 
+      topic: tp, 
       message: '', 
       timestamp: this.date.getTime(),
       allowPublish: false
     });
-    this.subscription = this._mqttService.observe(this.mqttForm.controls.topicname.value).subscribe((message: IMqttMessage) => {
+    this.subscription = this._mqttService.observe(tp).subscribe((message: IMqttMessage) => {
       if(this.deletedTopics.filter( topic => topic.topic === message.topic).length > 0){
         this.subscription.unsubscribe();
         let topicPos=0;
@@ -90,11 +92,10 @@ export class MqttClientComponent implements OnInit {
       this.topics[pos].message = message.payload.toString();
       this.topics[pos].timestamp = this.date.getTime();
       this.lastTopicIndex = pos;
-      this.mqttForm.controls.topicname.setValue('');
       this.logMsg('Last MESSAGE received was: << ' + message.payload.toString() + '>> on TOPIC: << ' + message.topic +' >>');
     });
     this.clear();
-    this.logMsg('Subscribed to topic: << ' + this.mqttForm.controls.topicname.value +' >>');
+    this.logMsg('Subscribed to topic: << ' + tp +' >>');
   }
 
   sendmsg(index:any, topic:string, msg: string): void {
@@ -125,7 +126,6 @@ export class MqttClientComponent implements OnInit {
     this._mqttService.connect(this.options);
     this.logMsg('');
     this.mqttForm.controls.topicname.setValue('');
-    this.mqttForm.controls.msg.setValue('');
     this.host='';
     this.port='';
     this.topics = [];
