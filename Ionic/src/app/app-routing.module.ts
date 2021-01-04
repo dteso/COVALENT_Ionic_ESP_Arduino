@@ -46,6 +46,10 @@ const routes: Routes = [
   {
     path: 'mqtt-client',
     loadChildren: () => import('./modules/mqtt-client/pages/mqtt-client.module').then( m => m.MqttClientModule)
+  },
+  {
+    path: 'system',
+    loadChildren: () => import('./modules/system/system.module').then( m => m.SystemModule)
   }
 ];
 

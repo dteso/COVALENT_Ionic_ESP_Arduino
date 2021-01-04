@@ -1,0 +1,37 @@
+<ion-content>
+  <ion-card *ngFor="let device of devices" class="abel">
+    <ion-card-header style="display: flex !important; border-bottom: 0.5px solid white;">
+        <ion-col size='10'>
+          <div><strong>{{device.name}}</strong></div>
+          <div>IP: {{device.localIp}}</div>
+          <div>BT MAC: {{device.bluetoothId}}</div>
+        </ion-col>
+        <ion-col size='2' style="font-size: larger !important;">
+          <!-- <ion-icon name="hardware-chip"></ion-icon> -->
+          <img src="../../../../assets/images/medusa_2.png">
+        </ion-col>
+    </ion-card-header>
+    <ion-card-content class="text-center">
+      <ion-row>
+        <ion-col size='6' style="text-align: left;">
+          <!-- <p>IP: {{device.localIp}}</p>
+          <p>BT MAC: {{device.bluetoothId}}</p> -->
+          <p>WiFi: {{device.wifiSSID}}</p>
+          <p>{{device.temperature}} ºC</p>
+          <p>{{device.humidity}} %</p>
+          <div style="display: flex;">
+            <ion-icon *ngIf="device.bluetoothConnected" name="bluetooth" color="sucess" style="margin-top: 0.175rem ;">
+            </ion-icon>
+            Bluetooth: {{device.bluetoothConnected}}
+          </div>
+        </ion-col>
+        <ion-col size='6'>
+          <ion-button color="light" fill="outline" class="w-100">OPTION 1</ion-button>
+          <ion-button color="light" fill="outline" class="w-100">OPTION 2</ion-button>
+          <ion-button color="light" fill="outline" class="w-100">OPTION 3</ion-button>
+        </ion-col>
+      </ion-row>
+
+    </ion-card-content>
+  </ion-card>
+</ion-content>
