@@ -3,30 +3,9 @@
   <h4 style="color: white;">Count: {{count}}</h4> -->
   <ion-row>
     <ion-card class="abel w-100" style="background: transparent;">
-      <!-- <ion-card-header *ngIf="!readingData && statusService.state.bluetoothConnected" style="border: 1px solid white; background-color: black !important;" >
-        <ion-grid class="mt-3">
-          <ion-row style="background: transparent !important; color: white;" class="text-center">
-            <ion-col class="w-100">IP</ion-col>
-            <ion-col class="w-100">{{statusService.state?.localIp}}</ion-col>
-          </ion-row>
-          <ion-row style="background: transparent !important; color:  white;" class="text-center">
-            <ion-col class="w-100">SSID</ion-col>
-            <ion-col class="w-100">{{statusService.state?.wifiSSID}}</ion-col>
-          </ion-row>
-          <ion-row style="background: transparent !important; color:  white;" class="text-center">
-            <ion-col class="w-100">Microcontroller</ion-col>
-            <ion-col class="w-100">{{statusService.state?.mcu}}</ion-col>
-          </ion-row>
-          <ion-row style="background: transparent !important; color:  white;" class="text-center">
-            <ion-col class="w-100">GMT</ion-col>
-            <ion-col class="w-100">GMT+1</ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-card-header> -->
-
       <ion-card-content>
         <div class="text-center p-2">
-          <h1 style="font-size: 3rem; font-weight: bolder; color: whitesmoke; margin-top: 1.250rem"> C0V4L3N7 </h1>
+          <h1 style="font-size: 3rem; font-weight: bolder; color: whitesmoke; margin-top: 1.250rem"> DEVICE </h1>
         </div>
 
         <div class="text-center p-2">
@@ -268,52 +247,6 @@
             </ion-button>
             <ion-button *ngIf="statusService.state.temperature.length > 0 && statusService.state.temperature.length > 0"
               shape="round" color="primary">
-              <ion-icon name="infinite-outline"></ion-icon>
-            </ion-button>
-          </ion-item>
-
-
-          <!-- HTTP SERVER -->
-          <!-- <ion-item>
-            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/network']"
-              routerLinkActive="router-link-active">
-              <ion-icon name="server"></ion-icon>
-            </ion-button>
-            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/network']"
-              routerLinkActive="router-link-active" class="w-100">
-              HTTP Server
-            </ion-button>
-            <ion-button fill="outline" color="light" shape="round">
-              <ion-icon name="infinite-outline"></ion-icon>
-            </ion-button>
-          </ion-item> -->
-
-          <!-- HTTP CLIENT -->
-          <!-- <ion-item>
-            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/network']"
-              routerLinkActive="router-link-active">
-              <ion-icon name="person"></ion-icon>
-            </ion-button>
-            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/network']"
-              routerLinkActive="router-link-active" class="w-100">
-              HTTP Client
-            </ion-button>
-            <ion-button fill="outline" shape="round" color="light">
-              <ion-icon name="infinite-outline"></ion-icon>
-            </ion-button>
-          </ion-item> -->
-
-          <!-- MQTT CLIENT -->
-          <ion-item lines="none">
-            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/mqtt-client']"
-              routerLinkActive="router-link-active">
-              <ion-icon name="cloud-circle"></ion-icon>
-            </ion-button>
-            <ion-button fill="outline" shape="round" color="light" [routerLink]="['/mqtt-client']"
-              routerLinkActive="router-link-active" class="w-100">
-              MQTT Client
-            </ion-button>
-            <ion-button fill="outline" shape="round" color="light">
               <ion-icon name="infinite-outline"></ion-icon>
             </ion-button>
           </ion-item>
