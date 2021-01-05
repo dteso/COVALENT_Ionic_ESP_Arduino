@@ -18,6 +18,8 @@ SerialCore serialCore;
 boolean blink = false;
 int lastSec = 0;
 
+Status status;
+
 Covalent::Covalent() {}
 
 void Covalent::setup()
@@ -222,7 +224,6 @@ void Covalent::verifyCommands(String reading)
 
 void Covalent::getStatus()
 {
-    Status status;
     Weather currentWeather;
     serialCore.send("[ESP-NET] - BOARD: " + MCU);
     status.deviceName = this->readStringFromMemory(DEVICE_NAME_DIR);

@@ -42,22 +42,28 @@ const int WIFI_PASS_DIR = 80;   //Size: 20
 
 
 /*STRUCT STATUS*/
-struct Status
-{
-    boolean STA_connected;
-    String webServerEnabled;
-    int user1_code[4];
-    int user2_code[4];
-    int deviceType;
-    String deviceName;
-    String localIp;
-    String ssid;
-    boolean ntpEnabled;
-    String ntpData;
-};
 
 struct Weather
 {
     float hum;
     float temp;
 };
+
+struct Status
+{
+    int user1_code[4];
+    int user2_code[4];
+    int deviceType;
+    String deviceName;
+    String localIp;
+    String ssid;
+    boolean STA_connected;
+    boolean btEnabled;
+    boolean ntpEnabled;
+    String webServerEnabled;
+    String ntpData;
+    String temperature;
+    String humidity;
+};
+
+
