@@ -27,6 +27,7 @@ public:
 
     void setup();
     void loop();
+    void reloj();
     
     //Utils
     void verifyCommands(String);

@@ -1,6 +1,7 @@
 
 #include "covalent.h"
 #include <serial.hpp>
+#include <mqtt.hpp>
 #include "myoled.cpp"
 
 const char *hostname = "ESP8266_1";
@@ -14,11 +15,12 @@ WiFiServer webServer(80);
 WiFiUDP ntpUDP;
 char *ntpServer = "0.es.pool.ntp.org";
 NTPClient timeClient(ntpUDP, ntpServer, -10800, 6000);
-SerialCore serialCore;
 boolean blink = false;
 int lastSec = 0;
 
+SerialCore serialCore;
 Status status;
+Mqtt mqttClient;
 
 Covalent::Covalent() {}
 
@@ -33,51 +35,95 @@ void Covalent::setup()
     this->WEB_SERVER_ENABLED = this->readStringFromMemory(WEB_SERVER_STATUS_DIR).indexOf("1") > -1 ? true : false;
     this->NTP_SERVER_ENABLED = true;
     this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1");
-      loadingScreen();
-  display.clearDisplay();                                        //for Clearing the display
-  display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
-  display.display();
+    loadingScreen();
+    display.clearDisplay();                                        //for Clearing the display
+    display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+    display.display();
+    mqttClient.setupMqtt();
+    this->ntp();
 }
 
 void Covalent::loop()
 {
     String serialReading = serialCore.readSerial();
     String btReading = serialCore.readBT();
-    if(serialReading!=""){
-        //serialCore.send("Leido para verificar SERIAL: " + serialReading);
+    if (serialReading != "")
+    {
         this->verifyCommands(serialReading);
-    }else if(btReading !=""){
-       //serialCore.send("Leido para verificar BT: " + btReading);
+    }
+    else if (btReading != "")
+    {
         this->verifyCommands(btReading);
     }
+
     if (this->WEB_SERVER_ENABLED)
     {
         this->renderWebServer();
     }
-    this->ntp();
-      if(lastSec != this->realSec){
-    lastSec = this->realSec;
-    blink = true;
-  }else{
-    blink = false;
-  }
 
-  if ((blink) && (this->realSec == 2 || this->realSec == 3 || this->realSec == 4 || this->realSec == 10 || this->realSec == 11 || this->realSec == 13 || this->realSec == 16 || this->realSec == 20 || this->realSec == 21 || this->realSec == 25 || this->realSec == 26 || this->realSec == 30 || this->realSec == 34 || this->realSec == 37 || this->realSec == 49 || this->realSec == 51 || this->realSec == 57 || this->realSec == 58 || this->realSec == 59))
-  {
-    blink=false;
-    display.clearDisplay();                                         //for Clearing the display
-    display.drawBitmap(0, 0, medusaka_logoBitmap2, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
-    display.display();
-    delay(70);
-    display.clearDisplay();                                        //for Clearing the display
-    display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
-    display.display();
-  }
+    if (lastSec != this->realSec)
+    {
+        lastSec = this->realSec;
+        blink = true;
+    }
+    else
+    {
+        blink = false;
+    }
+
+    if ((blink) && (this->realSec == 2 || this->realSec == 3 || this->realSec == 4 || this->realSec == 10 || this->realSec == 11 || this->realSec == 13 || this->realSec == 16 || this->realSec == 20 || this->realSec == 21 || this->realSec == 25 || this->realSec == 26 || this->realSec == 30 || this->realSec == 34 || this->realSec == 37 || this->realSec == 49 || this->realSec == 51 || this->realSec == 57 || this->realSec == 58 || this->realSec == 59))
+    {
+        blink = false;
+        display.clearDisplay();                                         //for Clearing the display
+        display.drawBitmap(0, 0, medusaka_logoBitmap2, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+        display.display();
+        delay(70);
+        display.clearDisplay();                                        //for Clearing the display
+        display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+        display.display();
+    }
+    mqttClient.mqtt_loop();
+    this->reloj();
 }
 
 /**********************************************************************************************
  *                                       UTILS
  **********************************************************************************************/
+
+/*-------------VARIABLES DE TIEMPO---------------------*/
+int newValue;
+int currentValue;
+int sec = 0, mn = 0, hor = 0;
+/*******************************************************/
+
+void Covalent::reloj()
+{
+    newValue = (millis() / 1000);
+    if (newValue != currentValue)
+    {
+        currentValue = newValue;
+        // +1 SEGUNDO
+        sec++;
+        if (sec == 60)
+        {
+            sec = 0;
+            // +1 MINUTO
+            mn++;
+            mqttClient.publishFloatValue("medusa/devices/temperatura", this->readWeather().temp);
+            mqttClient.publishFloatValue("medusa/devices/humedad", this->readWeather().hum);
+            this->ntp();
+        }
+        //          ----------------------------
+        if (mn == 60)
+        {
+            mn = 0;
+            // +1 HORA
+            hor++;
+            //-------------EVERY HOUR METHODS---------------
+        }
+        //-------------EVERY SECOND METHODS---------------
+    }
+}
 
 void Covalent::verifyCommands(String reading)
 {
@@ -119,7 +165,7 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         aux = "";
     }
     delay(10);
@@ -128,7 +174,7 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP-EEPROM] - Formatting EEPROM. Please wait...");
         this->clearMemory();
         serialCore.send("[ESP-EEPROM] - Memory formatted");
@@ -144,7 +190,7 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP_NET] - WEB SERVER ENABLED");
         WEB_SERVER_ENABLED = true;
         this->saveStringInMemory(WEB_SERVER_STATUS_DIR, "1");
@@ -158,7 +204,7 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP_NET] - WEB SERVER CLOSED");
         WEB_SERVER_ENABLED = false;
         this->saveStringInMemory(WEB_SERVER_STATUS_DIR, "0");
@@ -171,7 +217,7 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP_NTP] - NTP ENABLED");
         NTP_SERVER_ENABLED = true;
         this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1");
@@ -185,7 +231,7 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP_NTP] - NTP DISABLED");
         NTP_SERVER_ENABLED = false;
         this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "0");
@@ -198,7 +244,7 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP_NET] - STATUS_READ_START");
         this->getStatus();
         aux = "";
@@ -210,7 +256,7 @@ void Covalent::verifyCommands(String reading)
         String aux;
         Weather currentWeather;
         aux = reading.substring(value.length(), reading.length());
-        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP_NET] - WEATHER_READ_START");
         currentWeather = this->readWeather();
         serialCore.send("[ESP-DHT] - HUM: " + (String)currentWeather.hum);
@@ -271,7 +317,6 @@ void Covalent::getStatus()
     serialCore.send("[ESP-DHT] - TEMP: " + (String)currentWeather.temp);
     serialCore.send("[ESP_NET] - STATUS_READ_END");
 }
-
 
 /**********************************************************************************************
  *                                       NETWORK
@@ -456,7 +501,6 @@ String Covalent::readStringFromMemory(int pos)
 }
 
 /***************************************** NTP ***********************************************/
-boolean printNtpStatus = false;
 
 void Covalent::ntp()
 {
@@ -464,28 +508,19 @@ void Covalent::ntp()
     realHour = timeClient.getFormattedTime().substring(0, 2).toInt() + 5; //+5 para que coja la hora de Madrid
     realMinute = timeClient.getFormattedTime().substring(3, 5).toInt();
     realSec = timeClient.getFormattedTime().substring(6, 8).toInt();
-    if (realSec == 0 && !printNtpStatus)
+    serialCore.sendInLine("[ESP-NTP] - TIME: ");
+    serialCore.sendInLine((String)realHour);
+    serialCore.sendInLine(":");
+    if (realMinute < 10)
     {
-        printNtpStatus = true;
-        serialCore.sendInLine("[ESP-NTP] - TIME: ");
-        serialCore.sendInLine((String)realHour);
-        serialCore.sendInLine(":");
-        if (realMinute < 10)
-        {
-            serialCore.sendInLine("0");
-            serialCore.send((String)realMinute);
-        }
-        else
-        {
-            serialCore.send((String)realMinute);
-        }
-        delay(10);
+        serialCore.sendInLine("0");
+        serialCore.send((String)realMinute);
     }
-    else if (realSec > 0)
+    else
     {
-        printNtpStatus = false;
+        serialCore.send((String)realMinute);
     }
-    delay(50);
+    delay(10);
 }
 /************************************************************************************************/
 
