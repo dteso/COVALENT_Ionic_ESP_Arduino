@@ -10,18 +10,23 @@
 
 class Mqtt
 {
-
 public:
+
+    String data;
 
     Mqtt();
 
     //Mqtt methods Communications
     void reconnect();
-    void publishFloatValue(char topic[], float temperatura);
+    void publishFloatValue(char topic[], float value);
+    void publishString(char topic[], char []);
     void setupMqtt();
     void mqtt_loop();
+    void setData();
 
 private:
+
+
 
 };
 

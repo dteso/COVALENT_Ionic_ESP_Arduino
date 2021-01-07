@@ -5,11 +5,13 @@ const char *mqtt_server = "test.mosquitto.org";
 WiFiClient espClient;
 PubSubClient client(espClient);
 String response;
+String payloadData;
 char msg[50];
 
 SerialCore serialcore;
 
 Mqtt::Mqtt() {}
+
 /*
  * Método de lectura de mensajes Mosquitto como cliente 
  */
@@ -17,27 +19,18 @@ void callback(char *topic, byte *payload, unsigned int length)
 {
     serialcore.sendInLine("Message arrived [");
     serialcore.sendInLine(topic);
-    serialcore.sendInLine("] ");
+    serialcore.send("] ");
     for (int i = 0; i < length; i++)
     {
         char c = ((char)payload[i]);
         response = response + c;
     }
     serialcore.sendInLine("Respuesta:" + response);
-    serialcore.sendInLine("");
-
-    // Switch on the LED if an 1 was received as first character
-    if (response == "OFF")
-    {
-        digitalWrite(D5, LOW);
-        response = "";
-    }
-    else if (response = "ON")
-    {
-        digitalWrite(D5, HIGH);
-        response = "";
-    }
+    serialcore.send("");
+    payloadData = response;
+    response="";
 }
+
 
 /*
  * Método de conexión recursiva a Servidor Mosquitto
@@ -81,16 +74,20 @@ void Mqtt::reconnect()
     }
 }
 
-void Mqtt::publishFloatValue(char topic[], float temperatura)
+void Mqtt::publishFloatValue(char topic[], float value)
 {
     if (client.connected())
     {
-        snprintf(msg, 50, " %.2f ºC", temperatura);
-        serialcore.sendInLine("Publish message: ");
-        delay(10);
-        serialcore.send(msg);
-        delay(10);
+        snprintf(msg, 50, " %.2f", value);
         client.publish(topic, msg);
+    }
+}
+
+void Mqtt::publishString(char topic[], char value[])
+{
+    if (client.connected())
+    {
+        client.publish(topic, value);
     }
 }
 
@@ -101,6 +98,8 @@ void Mqtt::setupMqtt()
 }
 
 void Mqtt::mqtt_loop(){
+  data = payloadData;
+  payloadData = "";
   if (!client.connected()) {
     reconnect();
   }

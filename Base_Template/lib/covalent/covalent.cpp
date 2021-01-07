@@ -4,6 +4,12 @@
 #include <mqtt.hpp>
 #include "myoled.cpp"
 
+/*-------------VARIABLES DE TIEMPO---------------------*/
+int newValue;
+int currentValue;
+int sec = 0, mn = 0, hor = 0;
+/*******************************************************/
+
 const char *hostname = "ESP8266_1";
 
 IPAddress ip(192, 168, 1, 17);
@@ -17,12 +23,28 @@ char *ntpServer = "0.es.pool.ntp.org";
 NTPClient timeClient(ntpUDP, ntpServer, -10800, 6000);
 boolean blink = false;
 int lastSec = 0;
-
 SerialCore serialCore;
 Status status;
 Mqtt mqttClient;
+char message[200] = "";
 
 Covalent::Covalent() {}
+
+void verifyData(String data){
+    if(data=="SUPERV"){
+        String deviceData;
+        serialCore.send ( "Supervision request received");
+        deviceData = "{'localIp':" + status.localIp + "," + "'ssid':"+ status.ssid +"}";
+        deviceData.toCharArray(message,200);
+        mqttClient.publishString("medusa/network/connections", message);
+    }else if(data == "OFF"){
+        digitalWrite(D5, LOW);
+    }else if(data == "ON"){
+        digitalWrite(D5, HIGH);
+    }
+    data = "";
+    mqttClient.data = "";
+}
 
 void Covalent::setup()
 {
@@ -40,7 +62,11 @@ void Covalent::setup()
     display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
     display.display();
     mqttClient.setupMqtt();
-    this->ntp();
+    if (WiFi.isConnected())
+    {
+        this->ntp();
+    }
+    this->getStatus();
 }
 
 void Covalent::loop()
@@ -61,9 +87,9 @@ void Covalent::loop()
         this->renderWebServer();
     }
 
-    if (lastSec != this->realSec)
+    if (lastSec != sec)
     {
-        lastSec = this->realSec;
+        lastSec = sec;
         blink = true;
     }
     else
@@ -71,7 +97,7 @@ void Covalent::loop()
         blink = false;
     }
 
-    if ((blink) && (this->realSec == 2 || this->realSec == 3 || this->realSec == 4 || this->realSec == 10 || this->realSec == 11 || this->realSec == 13 || this->realSec == 16 || this->realSec == 20 || this->realSec == 21 || this->realSec == 25 || this->realSec == 26 || this->realSec == 30 || this->realSec == 34 || this->realSec == 37 || this->realSec == 49 || this->realSec == 51 || this->realSec == 57 || this->realSec == 58 || this->realSec == 59))
+    if ((blink) && (sec == 2 || sec == 3 || sec == 4 || sec == 10 || sec == 11 || sec == 13 || sec == 16 || sec == 20 || sec == 21 || sec == 25 || sec == 26 || sec == 30 || sec == 34 || sec == 37 || sec == 49 || sec == 51 || sec == 57 || sec == 58 || sec == 59))
     {
         blink = false;
         display.clearDisplay();                                         //for Clearing the display
@@ -82,19 +108,17 @@ void Covalent::loop()
         display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
         display.display();
     }
-    mqttClient.mqtt_loop();
+    if (WiFi.isConnected())
+    {
+        mqttClient.mqtt_loop();
+        verifyData(mqttClient.data);
+    }
     this->reloj();
 }
 
 /**********************************************************************************************
  *                                       UTILS
  **********************************************************************************************/
-
-/*-------------VARIABLES DE TIEMPO---------------------*/
-int newValue;
-int currentValue;
-int sec = 0, mn = 0, hor = 0;
-/*******************************************************/
 
 void Covalent::reloj()
 {
@@ -109,8 +133,23 @@ void Covalent::reloj()
             sec = 0;
             // +1 MINUTO
             mn++;
-            mqttClient.publishFloatValue("medusa/devices/temperatura", this->readWeather().temp);
-            mqttClient.publishFloatValue("medusa/devices/humedad", this->readWeather().hum);
+            if (WiFi.isConnected())
+            {
+                Weather currentWeather;
+                currentWeather = this->readWeather();
+                mqttClient.publishFloatValue("medusa/devices/temperatura", currentWeather.temp);
+                snprintf(message, 50, " %.2f", currentWeather.temp);
+                serialCore.sendInLine(">>> Published message: ");
+                delay(10);
+                serialCore.send(message);
+                delay(10);
+                mqttClient.publishFloatValue("medusa/devices/humedad", currentWeather.hum);
+                snprintf(message, 50, " %.2f", currentWeather.hum);
+                serialCore.sendInLine(">>> Published message: ");
+                delay(10);
+                serialCore.send(message);
+                delay(10);
+            }
             this->ntp();
         }
         //          ----------------------------
