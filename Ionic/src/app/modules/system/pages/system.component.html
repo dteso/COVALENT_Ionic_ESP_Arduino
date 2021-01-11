@@ -2,8 +2,8 @@
   <ion-card *ngFor="let device of devices" class="abel">
     <ion-card-header style="display: flex !important; border-bottom: 0.5px solid white;">
         <ion-col size='10'>
-          <div><strong>{{device.name}}</strong></div>
-          <div>IP: {{device.localIp}}</div>
+          <div style="font-size: 1.5rem; color: white !important;"><strong>{{device.name | uppercase}}</strong></div>
+          <div>Device MAC: {{device.deviceMAC}}</div>
           <div>BT MAC: {{device.bluetoothId}}</div>
         </ion-col>
         <ion-col size='2' style="font-size: larger !important;">
@@ -12,18 +12,27 @@
         </ion-col>
     </ion-card-header>
     <ion-card-content class="text-center">
+
       <ion-row>
         <ion-col size='6' style="text-align: left;">
-          <!-- <p>IP: {{device.localIp}}</p>
-          <p>BT MAC: {{device.bluetoothId}}</p> -->
+          <ion-row>
+            <div style="padding-right: 0.250rem; margin-top: 0.250rem;" *ngIf="device.bluetoothConnected">
+              <ion-icon name="bluetooth" color="primary">
+              </ion-icon>
+            </div>
+            <div style="padding: 0.250rem;" *ngIf="device.deviceMAC && device.wifiConnected && device.localIp" >
+              <ion-icon name="wifi" color="success">
+              </ion-icon>
+            </div>
+            <div style="padding: 0.250rem;">
+              <ion-icon name="terminal-outline" color="warning">
+              </ion-icon>
+            </div>
+          </ion-row>
+          <div>IP: {{device.localIp}}</div>
           <p>WiFi: {{device.wifiSSID}}</p>
           <p>{{device.temperature}} ºC</p>
           <p>{{device.humidity}} %</p>
-          <div style="display: flex;">
-            <ion-icon *ngIf="device.bluetoothConnected" name="bluetooth" color="sucess" style="margin-top: 0.175rem ;">
-            </ion-icon>
-            Bluetooth: {{device.bluetoothConnected}}
-          </div>
         </ion-col>
         <ion-col size='6'>
           <ion-button color="light" fill="outline" class="w-100">OPTION 1</ion-button>

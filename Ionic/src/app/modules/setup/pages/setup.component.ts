@@ -28,6 +28,7 @@ export class SetupComponent implements OnInit {
     private alertCtrl: AlertController,
     private bluetooth: BluetoothService,
     private statusService: StatusService,
+    private storage: StorageService,
     private formBuilder: FormBuilder
   ) { 
     this.btForm = this.formBuilder.group({
@@ -50,7 +51,7 @@ export class SetupComponent implements OnInit {
   disconnect(): Promise<boolean> {
     return new Promise(result => {
       this.isConnected = false;
-      this.statusService.setBluetoothConnected(false);
+      this.statusService.state.bluetoothConnected = false;
       this.bluetooth.disconnect().then(response => {
         result(response);
       });
@@ -69,14 +70,21 @@ export class SetupComponent implements OnInit {
     this.bluetooth.storedConnection().then((connected) => {
       this.isConnected = true;
       this.statusService.setBluetoothConnected(true);
+      this.statusService.state.bluetoothConnected = true;
       this.showSpinner = false;
       this.sendMessage('> BLUETOOTH CONNECTED');
+      this.storage.getBluetoothId().then( res => {
+        this.statusService.state.bluetoothId = res;
+        if(this.statusService.state.bluetoothId){
+          this.sendMessage(">>>BLUETOOTH_ID: " + this.statusService.state.bluetoothId);
+        }
+      })
     }, (fail) => {
       this.bluetooth.searchBluetooth().then((devices: Array<Object>) => {
         this.devices = devices;
         this.showSpinner = false;
       }, (error) => {
-        this.presentToast(error);
+        this.presentToast(error, 'danger');
         this.showSpinner = false;
       }).catch(err => {
         this.bluetooth.enableBT();
@@ -97,7 +105,7 @@ export class SetupComponent implements OnInit {
         this.devices = successMessage;
         refresher.target.complete();
       }, fail => {
-        this.presentToast("Activate bluetooth first");
+        this.presentToast("Activate bluetooth first", 'primary');
         refresher.target.complete();
       });
     }
@@ -123,11 +131,11 @@ export class SetupComponent implements OnInit {
                   this.sendMessage('> BLUETOOTH CONNECTED');
                   this.isConnected = true;
                   this.statusService.setBluetoothConnected(true);
-                  this.presentToast('CONECTADO CORRECTAMENTE');
+                  this.presentToast('CONECTADO CORRECTAMENTE', 'success');
                 }, fail => {
                   this.isConnected = false;
                   this.statusService.setBluetoothConnected(false);
-                  this.presentToast('NO SE PUDO CONECTAR');
+                  this.presentToast('NO SE PUDO CONECTAR', 'danger');
                 });
               });
             }
@@ -153,11 +161,11 @@ export class SetupComponent implements OnInit {
                 this.isConnected = true;
                 this.statusService.setBluetoothConnected(true);
                 this.selectedDevice = seleccion;
-                this.presentToast('Connected :)');
+                this.presentToast('Connected :)', 'success');
               }, fail => {
                 this.isConnected = false;
                 this.statusService.setBluetoothConnected(false);
-                this.presentToast('Connection failed :(');
+                this.presentToast('Connection failed :(', 'danger');
               });
             }
           }
@@ -179,7 +187,7 @@ export class SetupComponent implements OnInit {
           }
         this.fullData+= data;
       } else {
-        this.presentToast('NO DEVICES CONNECTED');
+        this.presentToast('NO DEVICES CONNECTED', 'danger');
       }
       this.btForm.controls.message.reset();
     });
@@ -198,10 +206,11 @@ export class SetupComponent implements OnInit {
  * Presenta un cuadro de mensaje.
  * @param {string} text Mensaje a mostrar.
  */
-  async presentToast(text: string) {
+  async presentToast(text: string, color: string) {
     const toast = await this.toastCtrl.create({
       message: text,
-      duration: 3000
+      duration: 3000,
+      color: color
     });
     await toast.present();
   }

@@ -18,6 +18,8 @@ export class DeviceComponent implements OnInit {
   fullData = '';
 
   readingData = false;
+  showNameDeviceInput = false;
+  deviceName = '';
 
   serialData: SerialData = {
     data: '',
@@ -43,7 +45,9 @@ export class DeviceComponent implements OnInit {
     setInterval(() => {
       this.customSerialService.getSerialData().then(res => {
         this.serialData = res;
-        this.decodeData(this.serialData.lastStr);
+        if(this.serialData.lastStr){
+          this.decodeData(this.serialData.lastStr);
+        }
       }).catch(() => { console.log('ERROR getting SerialData') });
     }, 100);
   }
@@ -51,8 +55,16 @@ export class DeviceComponent implements OnInit {
   ionViewDidEnter() {
     if (this.statusService.state.bluetoothConnected) {
       this.readingData = true;
+      setTimeout(()=>{
+        if(this.readingData){
+          // Mandamos caracter en blanco para continuar la comunicación si ha exisitido alguna ausencia de respuesta
+          this.sendMessageByBluetooth(" ");
+        }
+      }, 10000);
     }
     this.sendMessageByBluetooth(">>>READ_STATUS");
+    this.customSerialService.sendData(">>>READ_STATUS");
+    this.deviceName = this.statusService.state.name;
   }
 
   /**
@@ -63,15 +75,23 @@ export class DeviceComponent implements OnInit {
       if (data !== 'BLUETOOTH.NOT_CONNECTED') {
         this.serialData.fullStr += data;
         this.serialData.lastStr = data;
-        this.decodeData(data);
+        if(data){
+          this.decodeData(data);
+        }
       } else {
         this.statusService.state.bluetoothConnected = false;
-        this.presentToast('NO DEVICES CONNECTED');
+        this.presentToast('NO DEVICES CONNECTED', "danger");
       }
     });
   }
 
   decodeData(msg: string) {
+    if(msg!=='' && this.statusService.state.bluetoothConnected){
+      //this.statusService.state.bluetoothConnected = true;
+      this.storage.getBluetoothId().then( res => {
+        this.statusService.state.bluetoothId = res;
+      });
+    }
     if (msg.indexOf('[ESP_NET] - STATUS_READ_START') > -1) {
       this.readingData = true;
     }
@@ -80,6 +100,9 @@ export class DeviceComponent implements OnInit {
     }
     if (msg.indexOf('[ESP-NET] - STA_STATUS_OK') > -1) {
       this.statusService.state.wifiConnected = true;
+    }
+    if (msg.indexOf('[ESP-NET] - STA_STATUS_KO') > -1) {
+      this.statusService.state.wifiConnected = false;
     }
     if (msg.indexOf('[ESP-NET] - BOARD: ') > -1) {
       this.statusService.state.mcu = msg.substring(msg.indexOf("[ESP-NET] - BOARD: ") + 19, msg.length);
@@ -102,6 +125,12 @@ export class DeviceComponent implements OnInit {
     if (msg.indexOf('[ESP-NTP] - NTP ENABLED') > -1) {
       this.statusService.state.ntpEnabled = true;
     }
+    if (msg.indexOf('[ESP-SYS] - DEVICE_MAC: ') > -1) {
+      this.statusService.state.deviceMAC = msg.substring(msg.indexOf("[ESP-SYS] - DEVICE_MAC: ") + 24, msg.length);
+    }
+    if (msg.indexOf('[ESP-NET] - DEVICE_NAME: ') > -1) {
+      this.statusService.state.name = msg.substring(msg.indexOf("[ESP-SYS] - DEVICE_NAME: ") + 25, msg.length);
+    }
     if (msg.indexOf('[ESP-NET] - WEB_SERVER_STATUS: ') > -1) {
       let webServerStatus = 0;
       webServerStatus = parseInt(msg.substring(msg.indexOf("[ESP-NET] - WEB_SERVER_STATUS: ") + 31, msg.length), 10);
@@ -121,16 +150,26 @@ export class DeviceComponent implements OnInit {
  * Presenta un cuadro de mensaje.
  * @param {string} text Mensaje a mostrar.
  */
-  async presentToast(text: string) {
+  async presentToast(text: string, color:string) {
     const toast = await this.toastCtrl.create({
       message: text,
-      duration: 3000
+      duration: 3000,
+      color: color
     });
     await toast.present();
   }
 
   async storeConfig() {
-    await this.storage.setDevice(this.statusService.state).then(res => console.log(res))
+    this.statusService.state.name = this.deviceName;
+    this.showNameDeviceInput = !this.showNameDeviceInput;
+    this.statusService.state.name = this.deviceName;
+    this.sendMessageByBluetooth(">>>DEVICE_NAME: "+ this.deviceName);
+    this.customSerialService.sendData(">>>DEVICE_NAME: " + this.deviceName);
+    await this.storage.setDevice(this.statusService.state).then(res => 
+      {
+        console.log(res);
+        this.presentToast("NEW DEVICE ADDED !!!", "success");
+      })
       .catch(err => console.log("ERROR: ", err));
   }
 

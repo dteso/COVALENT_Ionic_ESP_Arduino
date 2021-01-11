@@ -19,6 +19,7 @@ export interface SerialData {
 
 export interface State {
   bluetoothId?:string;
+  deviceMAC?: string;
   name: string;
   wifiEnabled : boolean;
   wifiConnected: boolean;
