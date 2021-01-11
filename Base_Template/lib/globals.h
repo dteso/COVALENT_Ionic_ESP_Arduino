@@ -3,19 +3,24 @@
 // debe ser modificable desde la aplicación y por eso no se habilita campo en eeprom para él,
 // puesto que se encuentra en la memoria de programa
 const String MCU = "NodeMCU v3.0 - ESP8266";
-#define _GMT 2
+#define _GMT 1
 
 /* MENSAJES */
 #define APP_DATA "APP-DATA >>>"
 #define WIFI_SSID ">>>WIFI_SSID: "
 #define WIFI_PASS ">>>WIFI_PASS: "
+#define DEVICE_NAME ">>>DEVICE_NAME: "
+#define DEVICE_MAC ">>>DEVICE_MAC: "
 #define EEPROM_RESET "MEM_RST"
 #define CREATE_WEB_SERVER "CREATE_WEB_SERVER"
 #define ENABLE_NTP "ENABLE_NTP"
 #define CLOSE_WEB_SERVER "CLOSE_WEB_SERVER"
+#define BLUETOOTH_CONNECTED "BLUETOOTH CONNECTED"
 #define DISABLE_NTP "DISABLE_NTP"
 #define READ_STATUS ">>>READ_STATUS"
 #define READ_WEATHER ">>>READ_WEATHER"
+#define READ_BT_ID "[ESP-SYS] - BT_ID QUERY"
+#define BLUETOOTH_ID ">>>BLUETOOTH_ID: " 
 
 /*-------------VARIABLES DE CLIMA DHT11----------------*/
 #define DHTPIN D3   // what pin we're connected to
@@ -39,6 +44,9 @@ const int WEB_SERVER_STATUS_DIR = 37; //Size: 1---> Value: 1 ENABLED - 0 DISABLE
 const int NTP_SERVER_STATUS_DIR = 38; //Size: 1---> Value: 1 ENABLED - 0 DISABLED
 const int SSID_DIR = 60;        // Size:20
 const int WIFI_PASS_DIR = 80;   //Size: 20
+const int BT_ID_DIR = 100;   //Size: 20
+const int DEVICE_MAC_DIR = 120;   //Size: 20
+
 
 
 /*STRUCT STATUS*/
@@ -55,6 +63,9 @@ struct Status
     int user2_code[4];
     int deviceType;
     String deviceName;
+    String scenario;
+    String bluetoothId;
+    String wifiMac;
     String localIp;
     String ssid;
     boolean STA_connected;

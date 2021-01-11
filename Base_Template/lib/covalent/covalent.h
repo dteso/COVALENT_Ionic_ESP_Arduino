@@ -19,6 +19,8 @@ public:
     const int EEPROM_SIZE = 4096;
     String SSIDreadFromMemory;
     String passReadFromMemory;
+    String deviceNameReadFromMemory;
+    String deviceMacReadFromMemory;
     bool WEB_SERVER_ENABLED;
     bool NTP_SERVER_ENABLED;
     int realHour, realMinute, realSec;
@@ -31,6 +33,7 @@ public:
     
     //Utils
     void verifyCommands(String);
+    void setStoredStatus();
     void getStatus();
 
     // Network

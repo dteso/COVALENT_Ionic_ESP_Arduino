@@ -20,7 +20,7 @@ void callback(char *topic, byte *payload, unsigned int length)
     serialcore.sendInLine("Message arrived [");
     serialcore.sendInLine(topic);
     serialcore.send("] ");
-    for (int i = 0; i < length; i++)
+    for (unsigned int i = 0; i < length; i++)
     {
         char c = ((char)payload[i]);
         response = response + c;
@@ -54,10 +54,10 @@ void Mqtt::reconnect()
             client.publish("medusa/network/connections", WiFi.localIP().toString().c_str());
 
             //Variable de SENSOR que se PUBLICA
-            client.publish("medusa/devices/temperatura", WiFi.localIP().toString().c_str());
-            client.publish("medusa/devices/temperatura", "ha empezado a publicar en TOPIC temperatura\n");
-            client.publish("medusa/devices/humedad", WiFi.localIP().toString().c_str());
-            client.publish("medusa/devices/humedad", "ha empezado a publicar en TOPIC humedad\n");
+            // client.publish("medusa/devices/temperatura", WiFi.localIP().toString().c_str());
+            // client.publish("medusa/devices/temperatura", "ha empezado a publicar en TOPIC temperatura\n");
+            // client.publish("medusa/devices/humedad", WiFi.localIP().toString().c_str());
+            // client.publish("medusa/devices/humedad", "ha empezado a publicar en TOPIC humedad\n");
 
             // ... and resubscribe
             //Variable con conando para ACTUADOR que se SUSCRIBE
@@ -89,6 +89,13 @@ void Mqtt::publishString(char topic[], char value[])
     {
         client.publish(topic, value);
     }
+}
+
+void subscribeTo(char topic[]){
+    if (client.connected())
+    {
+        client.subscribe(topic);
+    } 
 }
 
 void Mqtt::setupMqtt()

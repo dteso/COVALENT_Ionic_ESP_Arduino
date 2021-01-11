@@ -20,6 +20,7 @@ public:
     void reconnect();
     void publishFloatValue(char topic[], float value);
     void publishString(char topic[], char []);
+    void subscribeTo(char topic[]);
     void setupMqtt();
     void mqtt_loop();
     void setData();

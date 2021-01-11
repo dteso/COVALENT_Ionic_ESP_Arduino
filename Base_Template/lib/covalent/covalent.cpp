@@ -27,19 +27,29 @@ SerialCore serialCore;
 Status status;
 Mqtt mqttClient;
 char message[200] = "";
+char topic[100] = "";
 
 Covalent::Covalent() {}
 
-void verifyData(String data){
-    if(data=="SUPERV"){
+void verifyData(String data)
+{
+    String auxTopic = "medusa/" + status.deviceName;
+    auxTopic.toCharArray(topic, 100);
+    if (data == "SUPERV")
+    {
         String deviceData;
-        serialCore.send ( "Supervision request received");
-        deviceData = "{'localIp':" + status.localIp + "," + "'ssid':"+ status.ssid +"}";
-        deviceData.toCharArray(message,200);
-        mqttClient.publishString("medusa/network/connections", message);
-    }else if(data == "OFF"){
+        serialCore.send("Supervision request received");
+        deviceData = "{localIp: '" + status.localIp + "' , ssid: '" + status.ssid + "', name: '" + status.deviceName + "' ,temp: '" + status.temperature + "' , hum: '" + status.humidity + "'}";
+        serialCore.send(deviceData);
+        deviceData.toCharArray(message, 200);
+        mqttClient.publishString(topic, message);
+    }
+    else if (data == "OFF")
+    {
         digitalWrite(D5, LOW);
-    }else if(data == "ON"){
+    }
+    else if (data == "ON")
+    {
         digitalWrite(D5, HIGH);
     }
     data = "";
@@ -48,6 +58,7 @@ void verifyData(String data){
 
 void Covalent::setup()
 {
+    this->setStoredStatus();
     pinMode(D4, OUTPUT);
     pinMode(D5, OUTPUT);
     serialCore.beginBT(serialCore.BT_BAUDRATE, SWSERIAL_8N1, 13, 15, false, 256);
@@ -87,6 +98,25 @@ void Covalent::loop()
         this->renderWebServer();
     }
 
+    if (WiFi.isConnected())
+    {
+        status.localIp = WiFi.localIP().toString();
+        mqttClient.mqtt_loop();
+        verifyData(mqttClient.data);
+    }
+    this->reloj();
+}
+
+/**********************************************************************************************
+ *                                       UTILS
+ **********************************************************************************************/
+
+void blinkBackground()
+{
+    display.clearDisplay();
+    display.clearDisplay();                                         //for Clearing the display
+    display.drawBitmap(0, 0, medusaka_logoBitmap2, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+    display.display();
     if (lastSec != sec)
     {
         lastSec = sec;
@@ -96,7 +126,6 @@ void Covalent::loop()
     {
         blink = false;
     }
-
     if ((blink) && (sec == 2 || sec == 3 || sec == 4 || sec == 10 || sec == 11 || sec == 13 || sec == 16 || sec == 20 || sec == 21 || sec == 25 || sec == 26 || sec == 30 || sec == 34 || sec == 37 || sec == 49 || sec == 51 || sec == 57 || sec == 58 || sec == 59))
     {
         blink = false;
@@ -108,17 +137,7 @@ void Covalent::loop()
         display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
         display.display();
     }
-    if (WiFi.isConnected())
-    {
-        mqttClient.mqtt_loop();
-        verifyData(mqttClient.data);
-    }
-    this->reloj();
 }
-
-/**********************************************************************************************
- *                                       UTILS
- **********************************************************************************************/
 
 void Covalent::reloj()
 {
@@ -128,6 +147,34 @@ void Covalent::reloj()
         currentValue = newValue;
         // +1 SEGUNDO
         sec++;
+
+        if (sec % 9 == 0)
+        {
+            blink = true;
+            lastSec = sec;
+            blinkBackground();
+            display.display();
+        }
+        else if (sec % 6 == 0)
+        {
+            display.clearDisplay();
+            displayPrint(4, 5, 0, status.ntpData);
+            displayPrint(1, 30, 37, "TEMPERATURE");
+            displayPrint(2, 20, 49, status.temperature + ".C");
+        }
+        else if (sec % 3 == 0)
+        {
+            display.clearDisplay();
+            displayPrint(4, 5, 0, status.ntpData);
+            displayPrint(1, 34, 37, "HUMIDITY");
+            displayPrint(2, 25, 49, status.humidity + "%");
+        }
+
+        if (sec == 1)
+        {
+            display.clearDisplay();
+            displayPrint(4, 5, 0, status.ntpData);
+        }
         if (sec == 60)
         {
             sec = 0;
@@ -137,15 +184,21 @@ void Covalent::reloj()
             {
                 Weather currentWeather;
                 currentWeather = this->readWeather();
-                mqttClient.publishFloatValue("medusa/devices/temperatura", currentWeather.temp);
+                String tempTopic = "medusa/devices/temperatura";
+                String humTopic = "medusa/devices/humedad";
+                char topicTemp[100];
+                char topicHum[100];
+                tempTopic.toCharArray(topicTemp, 100);
+                humTopic.toCharArray(topicHum, 100);
+                mqttClient.publishFloatValue(topicTemp, currentWeather.temp);
                 snprintf(message, 50, " %.2f", currentWeather.temp);
-                serialCore.sendInLine(">>> Published message: ");
+                serialCore.sendInLine(">>> Published message on Topic: "+tempTopic+" > ");
                 delay(10);
                 serialCore.send(message);
                 delay(10);
-                mqttClient.publishFloatValue("medusa/devices/humedad", currentWeather.hum);
+                mqttClient.publishFloatValue(topicHum, currentWeather.hum);
                 snprintf(message, 50, " %.2f", currentWeather.hum);
-                serialCore.sendInLine(">>> Published message: ");
+                serialCore.sendInLine(">>> Published message on Topic: "+humTopic+" > ");
                 delay(10);
                 serialCore.send(message);
                 delay(10);
@@ -162,6 +215,18 @@ void Covalent::reloj()
         }
         //-------------EVERY SECOND METHODS---------------
     }
+}
+
+void Covalent::setStoredStatus()
+{
+    status.deviceName = this->readStringFromMemory(DEVICE_NAME_DIR);
+    status.localIp = this->readStringFromMemory(LOCAL_IP_DIR);
+    status.bluetoothId = this->readStringFromMemory(BT_ID_DIR);
+    status.STA_connected = WiFi.isConnected();
+    status.wifiMac = WiFi.macAddress();
+    status.localIp = WiFi.localIP().toString();
+    status.deviceType = this->readStringFromMemory(DEVICE_TYPE).toInt();
+    status.webServerEnabled = this->readStringFromMemory(WEB_SERVER_STATUS_DIR);
 }
 
 void Covalent::verifyCommands(String reading)
@@ -204,89 +269,61 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
+        serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         aux = "";
     }
     delay(10);
     value = EEPROM_RESET;
     if (reading.indexOf(value) > -1)
     {
-        String aux;
-        aux = reading.substring(value.length(), reading.length());
-        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP-EEPROM] - Formatting EEPROM. Please wait...");
         this->clearMemory();
         serialCore.send("[ESP-EEPROM] - Memory formatted");
-        // Decidimos desconectar el WiFi cuando se borre la EEPROM obligando a reconectar
-        // y que no haya parámetros inválidos en memoria
         WiFi.disconnect();
-        serialCore.send("[ESP-NET] - STA_STATUS: KO");
-        aux = "";
+        serialCore.send("[ESP-NET] - STA_STATUS_KO");
     }
     delay(10);
     value = CREATE_WEB_SERVER;
     if (reading.indexOf(value) > -1)
     {
-        String aux;
-        aux = reading.substring(value.length(), reading.length());
-        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP_NET] - WEB SERVER ENABLED");
         WEB_SERVER_ENABLED = true;
         this->saveStringInMemory(WEB_SERVER_STATUS_DIR, "1");
         webServer.begin();
         delay(100);
-        aux = "";
     }
     delay(10);
     value = CLOSE_WEB_SERVER;
     if (reading.indexOf(value) > -1)
     {
-        String aux;
-        aux = reading.substring(value.length(), reading.length());
-        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP_NET] - WEB SERVER CLOSED");
         WEB_SERVER_ENABLED = false;
         this->saveStringInMemory(WEB_SERVER_STATUS_DIR, "0");
         webServer.close();
-        aux = "";
     }
     delay(10);
     value = ENABLE_NTP;
     if (reading.indexOf(value) > -1)
     {
-        String aux;
-        aux = reading.substring(value.length(), reading.length());
-        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP_NTP] - NTP ENABLED");
         NTP_SERVER_ENABLED = true;
         this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1");
-        //webServer.begin();
         delay(100);
-        aux = "";
     }
     delay(10);
     value = DISABLE_NTP;
     if (reading.indexOf(value) > -1)
     {
-        String aux;
-        aux = reading.substring(value.length(), reading.length());
-        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP_NTP] - NTP DISABLED");
         NTP_SERVER_ENABLED = false;
         this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "0");
-        //webServer.close();
-        aux = "";
     }
     delay(10);
     value = READ_STATUS;
     if (reading.indexOf(value) > -1)
     {
-        String aux;
-        aux = reading.substring(value.length(), reading.length());
-        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP_NET] - STATUS_READ_START");
         this->getStatus();
-        aux = "";
     }
     delay(10);
     value = READ_WEATHER;
@@ -294,13 +331,48 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         Weather currentWeather;
-        aux = reading.substring(value.length(), reading.length());
-        // serialCore.send("[ESP_SERIAL] - Message received with content... " + aux);
         serialCore.send("[ESP_NET] - WEATHER_READ_START");
         currentWeather = this->readWeather();
         serialCore.send("[ESP-DHT] - HUM: " + (String)currentWeather.hum);
         serialCore.send("[ESP-DHT] - TEMP: " + (String)currentWeather.temp);
+    }
+    delay(10);
+    value = BLUETOOTH_CONNECTED;
+    if (reading.indexOf(value) > -1)
+    {
+        serialCore.send("[ESP-SYS] - Bluetoth connected");
+        status.btEnabled = true;
+    }
+    delay(10);
+    value = BLUETOOTH_ID;
+    if (reading.indexOf(value) > -1)
+    {
+        String aux;
+        aux = reading.substring(value.length(), reading.length());
+        status.bluetoothId = aux;
+        this->saveStringInMemory(BT_ID_DIR, status.bluetoothId);
+        serialCore.send("[ESP-SYS] - Bluetooth ID is: " + this->readStringFromMemory(BT_ID_DIR));
+    }
+    delay(10);
+    value = DEVICE_NAME;
+    if (reading.indexOf(value) > -1)
+    {
+        String aux;
+        aux = reading.substring(value.length(), reading.length());
+        serialCore.send("[ESP-SYS] - DEVICE NAME: " + aux);
+        this->saveStringInMemory(DEVICE_NAME_DIR, aux);
         aux = "";
+        this->deviceNameReadFromMemory = this->readStringFromMemory(DEVICE_NAME_DIR);
+        serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)DEVICE_NAME_DIR + " ] ::: " + deviceNameReadFromMemory + " - Size: " + deviceNameReadFromMemory.length());
+    }
+    delay(10);
+    value = DEVICE_MAC;
+    if (reading.indexOf(value) > -1)
+    {
+        serialCore.send("[ESP-SYS] - DEVICE_MAC: " + WiFi.macAddress());
+        this->saveStringInMemory(DEVICE_MAC_DIR, WiFi.macAddress());
+        this->deviceMacReadFromMemory = this->readStringFromMemory(DEVICE_MAC_DIR);
+        serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)DEVICE_MAC_DIR + " ] ::: " + deviceMacReadFromMemory + " - Size: " + deviceMacReadFromMemory.length());
     }
     reading = "";
     delay(10);
@@ -317,6 +389,7 @@ void Covalent::getStatus()
     if (status.STA_connected)
     {
         serialCore.send("[ESP-NET] - STA_STATUS_OK");
+        this->saveStringInMemory(LOCAL_IP_DIR, WiFi.localIP().toString());
         status.localIp = this->readStringFromMemory(LOCAL_IP_DIR);
         serialCore.send("[ESP-NET] - LOCAL IP: " + status.localIp);
         status.ssid = this->readStringFromMemory(SSID_DIR);
@@ -354,6 +427,11 @@ void Covalent::getStatus()
     currentWeather = this->readWeather();
     serialCore.send("[ESP-DHT] - HUM: " + (String)currentWeather.hum);
     serialCore.send("[ESP-DHT] - TEMP: " + (String)currentWeather.temp);
+    serialCore.send("[ESP-SYS] - Bluetooth ID is: " + status.bluetoothId);
+    serialCore.send("[ESP-SYS] - DEVICE_MAC: " + WiFi.macAddress());
+    this->saveStringInMemory(DEVICE_MAC_DIR, WiFi.macAddress());
+    status.wifiMac = this->readStringFromMemory(DEVICE_MAC_DIR);
+    serialCore.send("[ESP-SYS] - DEVICE_MAC: " + status.wifiMac);
     serialCore.send("[ESP_NET] - STATUS_READ_END");
 }
 
@@ -386,7 +464,8 @@ void Covalent::ConnectWiFi_STA(bool useStaticIP = false, String ssid = "", Strin
     {
         serialCore.send("[ESP-NET] - STA: " + ssid);
         serialCore.send("[ESP-NET] - LOCAL IP: " + WiFi.localIP().toString()); // TODO: Debe poder pasarse a string
-        this->saveStringInMemory(LOCAL_IP_DIR, WiFi.localIP().toString());
+        status.localIp = WiFi.localIP().toString();
+        this->saveStringInMemory(LOCAL_IP_DIR, status.localIp);
         delay(100);
         serialCore.send("[ESP-NET] - WIFI CONNECTION SUCCESS");
         delay(1000);
@@ -462,8 +541,6 @@ void Covalent::renderWebServer()
         header = "";
         // client.stop();
         // delay(50);
-        // client.stop();
-        // delay(50);
         serialCore.send("Client disconnected.");
         delay(100);
         //this->send("[ESP_NET] - WEB SERVER CLOSED");
@@ -506,7 +583,7 @@ boolean Covalent::saveStringInMemory(int add, String data)
     String dataToSave = data;
     serialCore.send("[ESP-EEPROM] - Data to Save: " + dataToSave + " - size: " + dataToSave.length());
     clearMemoryRange(add, 20);
-    for (int i = 0; i < dataToSave.length(); i++)
+    for (unsigned int i = 0; i < dataToSave.length(); i++)
     {
         EEPROM.write(add + i, dataToSave[i]);
     }
@@ -543,21 +620,27 @@ String Covalent::readStringFromMemory(int pos)
 
 void Covalent::ntp()
 {
-    timeClient.update();                                                  //sincronizamos con el server NTP
-    realHour = timeClient.getFormattedTime().substring(0, 2).toInt() + 5; //+5 para que coja la hora de Madrid
+    timeClient.update();
+    status.ntpData = "";                                                  //sincronizamos con el server NTP
+    realHour = timeClient.getFormattedTime().substring(0, 2).toInt() + 4; //+5 para que coja la hora de Madrid
     realMinute = timeClient.getFormattedTime().substring(3, 5).toInt();
     realSec = timeClient.getFormattedTime().substring(6, 8).toInt();
     serialCore.sendInLine("[ESP-NTP] - TIME: ");
     serialCore.sendInLine((String)realHour);
+    status.ntpData += (String)realHour;
     serialCore.sendInLine(":");
+    status.ntpData += ":";
     if (realMinute < 10)
     {
         serialCore.sendInLine("0");
+        status.ntpData += "0";
         serialCore.send((String)realMinute);
+        status.ntpData += (String)realMinute;
     }
     else
     {
         serialCore.send((String)realMinute);
+        status.ntpData += (String)realMinute;
     }
     delay(10);
 }
@@ -574,6 +657,11 @@ Weather Covalent::readWeather()
     if (isnan(weather.hum) || isnan(weather.temp))
     {
         serialCore.send("Failed to read from DHT sensor!");
+    }
+    else
+    {
+        status.temperature = weather.temp;
+        status.humidity = weather.hum;
     }
     return weather;
 }
