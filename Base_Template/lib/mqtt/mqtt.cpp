@@ -5,7 +5,9 @@ const char *mqtt_server = "test.mosquitto.org";
 WiFiClient espClient;
 PubSubClient client(espClient);
 String response;
+String topicResponse;
 String payloadData;
+String topicData;
 char msg[50];
 
 SerialCore serialcore;
@@ -20,14 +22,18 @@ void callback(char *topic, byte *payload, unsigned int length)
     serialcore.sendInLine("Message arrived [");
     serialcore.sendInLine(topic);
     serialcore.send("] ");
+    
     for (unsigned int i = 0; i < length; i++)
     {
         char c = ((char)payload[i]);
         response = response + c;
     }
+    serialcore.sendInLine("Topic:" + (String)topic);
+    serialcore.send("");
     serialcore.sendInLine("Respuesta:" + response);
     serialcore.send("");
     payloadData = response;
+    topicResponse = (String)topic;
     response="";
 }
 
@@ -91,7 +97,7 @@ void Mqtt::publishString(char topic[], char value[])
     }
 }
 
-void subscribeTo(char topic[]){
+void Mqtt::subscribeTo(char topic[]){
     if (client.connected())
     {
         client.subscribe(topic);
@@ -106,7 +112,9 @@ void Mqtt::setupMqtt()
 
 void Mqtt::mqtt_loop(){
   data = payloadData;
+  lastTopic = topicResponse;
   payloadData = "";
+  topicResponse ="";
   if (!client.connected()) {
     reconnect();
   }

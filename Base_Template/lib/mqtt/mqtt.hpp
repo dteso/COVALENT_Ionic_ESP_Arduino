@@ -13,6 +13,7 @@ class Mqtt
 public:
 
     String data;
+    String lastTopic;
 
     Mqtt();
 

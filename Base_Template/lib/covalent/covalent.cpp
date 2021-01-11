@@ -35,6 +35,14 @@ void verifyData(String data)
 {
     String auxTopic = "medusa/" + status.deviceName;
     auxTopic.toCharArray(topic, 100);
+    if(mqttClient.lastTopic == "medusa/" + status.deviceName +"/set"){
+        serialCore.send("RECEIVED DATA ON TOPÌC SET >" + data);
+        if(data=="D6=1"){
+        digitalWrite(D6, HIGH);
+        }else if(data=="D6=0"){
+        digitalWrite(D6, LOW);
+        }
+    }
     if (data == "SUPERV")
     {
         String deviceData;
@@ -43,6 +51,9 @@ void verifyData(String data)
         serialCore.send(deviceData);
         deviceData.toCharArray(message, 200);
         mqttClient.publishString(topic, message);
+        auxTopic = "medusa/" + status.deviceName +"/set"; 
+        auxTopic.toCharArray(topic, 100);
+        mqttClient.subscribeTo(topic);
     }
     else if (data == "OFF")
     {
@@ -54,6 +65,7 @@ void verifyData(String data)
     }
     data = "";
     mqttClient.data = "";
+    mqttClient.lastTopic = "";
 }
 
 void Covalent::setup()
@@ -61,6 +73,18 @@ void Covalent::setup()
     this->setStoredStatus();
     pinMode(D4, OUTPUT);
     pinMode(D5, OUTPUT);
+    pinMode(D6, OUTPUT);
+    // Initial outputs test
+    digitalWrite(D4, HIGH);
+    delay(500);
+    digitalWrite(D4, LOW);
+    digitalWrite(D5, HIGH);
+    delay(500);
+    digitalWrite(D5, LOW);
+    digitalWrite(D6, HIGH);
+    delay(500);
+    digitalWrite(D6, LOW);
+    //////////////////////
     serialCore.beginBT(serialCore.BT_BAUDRATE, SWSERIAL_8N1, 13, 15, false, 256);
     Serial.begin(serialCore.SERIAL_BAUDRATE);
     EEPROM.begin(this->EEPROM_SIZE);
@@ -69,8 +93,8 @@ void Covalent::setup()
     this->NTP_SERVER_ENABLED = true;
     this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1");
     loadingScreen();
-    display.clearDisplay();                                        //for Clearing the display
-    display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+    display.clearDisplay();                                        
+    display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); 
     display.display();
     mqttClient.setupMqtt();
     if (WiFi.isConnected())
@@ -114,8 +138,8 @@ void Covalent::loop()
 void blinkBackground()
 {
     display.clearDisplay();
-    display.clearDisplay();                                         //for Clearing the display
-    display.drawBitmap(0, 0, medusaka_logoBitmap2, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+    display.clearDisplay();                                         
+    display.drawBitmap(0, 0, medusaka_logoBitmap2, 128, 64, WHITE); 
     display.display();
     if (lastSec != sec)
     {
@@ -129,12 +153,12 @@ void blinkBackground()
     if ((blink) && (sec == 2 || sec == 3 || sec == 4 || sec == 10 || sec == 11 || sec == 13 || sec == 16 || sec == 20 || sec == 21 || sec == 25 || sec == 26 || sec == 30 || sec == 34 || sec == 37 || sec == 49 || sec == 51 || sec == 57 || sec == 58 || sec == 59))
     {
         blink = false;
-        display.clearDisplay();                                         //for Clearing the display
-        display.drawBitmap(0, 0, medusaka_logoBitmap2, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+        display.clearDisplay();                                         
+        display.drawBitmap(0, 0, medusaka_logoBitmap2, 128, 64, WHITE); 
         display.display();
         delay(70);
-        display.clearDisplay();                                        //for Clearing the display
-        display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); // display.drawBitmap(x position, y position, bitmap data, bitmap width, bitmap height, color)
+        display.clearDisplay();                                        
+        display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); 
         display.display();
     }
 }
