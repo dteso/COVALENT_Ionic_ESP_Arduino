@@ -35,4 +35,6 @@ export interface State {
   ntpData: string;
   temperature: string;
   humidity: string;
+  mqttServer: string;
+  mqttPort: string;
 };

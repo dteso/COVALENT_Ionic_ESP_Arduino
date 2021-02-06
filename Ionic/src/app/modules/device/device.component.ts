@@ -3,6 +3,7 @@ import { ToastController } from '@ionic/angular';
 import { SerialData, State } from 'src/app/services/models';
 import { BluetoothService, CustomSerialService, StorageService } from 'src/app/services/services';
 import { StatusService } from '../../services/status.service';
+import { MQTT_SERVICE_OPTIONS } from '../mqtt-client/components/mqtt-options';
 
 @Component({
   selector: 'app-device',
@@ -20,6 +21,8 @@ export class DeviceComponent implements OnInit {
   readingData = false;
   showNameDeviceInput = false;
   deviceName = '';
+
+  options = MQTT_SERVICE_OPTIONS;
 
   serialData: SerialData = {
     data: '',
@@ -130,6 +133,14 @@ export class DeviceComponent implements OnInit {
     }
     if (msg.indexOf('[ESP-NET] - DEVICE_NAME: ') > -1) {
       this.statusService.state.name = msg.substring(msg.indexOf("[ESP-SYS] - DEVICE_NAME: ") + 25, msg.length);
+    }
+    if (msg.indexOf('[ESP-NET] - MQTT_SERVER: ') > -1) {
+      this.statusService.state.mqttServer = msg.substring(msg.indexOf("[ESP-SYS] - MQTT_SERVER: ") + 25, msg.length);
+      this.options.hostname = this.statusService.state.mqttServer;
+    }
+    if (msg.indexOf('[ESP-NET] - MQTT_PORT: ') > -1) {
+      this.statusService.state.mqttPort = msg.substring(msg.indexOf("[ESP-SYS] - MQTT_PORT: ") + 23, msg.length);
+      this.options.port = parseInt(this.statusService.state.mqttPort, 10);
     }
     if (msg.indexOf('[ESP-NET] - WEB_SERVER_STATUS: ') > -1) {
       let webServerStatus = 0;

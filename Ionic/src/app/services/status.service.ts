@@ -23,7 +23,9 @@ export class StatusService {
     ntpEnabled: false,
     ntpData: '',
     temperature: '',
-    humidity: ''  
+    humidity: '',
+    mqttServer: '',
+    mqttPort: '' 
   };
 
   constructor() { }
