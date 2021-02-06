@@ -40,8 +40,13 @@ void callback(char *topic, byte *payload, unsigned int length)
 /*
  * Método de conexión recursiva a Servidor Mosquitto
  */
-void Mqtt::reconnect()
+void Mqtt::reconnect(boolean restart)
 {
+    // Forces restart after change device name which is a part of a topic name to subscribe
+    // this is because we've to reconnect
+    if(restart){
+        client.disconnect();
+    }
     // Loop until we're reconnected
     while (!client.connected())
     {
@@ -90,7 +95,6 @@ void Mqtt::publishString(char topic[], char value[])
     if (client.connected())
     {
         client.publish(topic, value);
-        serialcore.sendInLine("Sent to TOPIC OK!!!");
     }
 }
 
@@ -99,8 +103,6 @@ void Mqtt::subscribeTo(char topic[])
     if (client.connected())
     {
         client.subscribe(topic);
-        serialcore.sendInLine("Subscribed!!!");
-        serialcore.sendInLine(topic);
     }
 }
 
@@ -122,7 +124,7 @@ void Mqtt::mqtt_loop()
     topicResponse = "";
     if (!client.connected())
     {
-        reconnect();
+        reconnect(false);
     }
     client.loop();
 }

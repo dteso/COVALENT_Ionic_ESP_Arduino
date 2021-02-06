@@ -401,7 +401,9 @@ void Covalent::verifyCommands(String reading)
         serialCore.send("[ESP-SYS] - DEVICE NAME:" + aux);
         this->saveStringInMemory(DEVICE_NAME_DIR, aux);
         aux = "";
-        this->deviceNameReadFromMemory = this->readStringFromMemory(DEVICE_NAME_DIR);
+        status.deviceName = this->readStringFromMemory(DEVICE_NAME_DIR);
+        mqttClient.deviceName =  status.deviceName;
+        mqttClient.reconnect(true);
         //serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)DEVICE_NAME_DIR + " ] ::: " + deviceNameReadFromMemory + " - Size: " + deviceNameReadFromMemory.length());
     }
     delay(10);

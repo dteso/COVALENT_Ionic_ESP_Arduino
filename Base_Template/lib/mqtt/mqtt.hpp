@@ -20,7 +20,7 @@ public:
     Mqtt();
 
     //Mqtt methods Communications
-    void reconnect();
+    void reconnect(boolean restart);
     void publishFloatValue(char topic[], float value);
     void publishString(char topic[], char []);
     void subscribeTo(char topic[]);
