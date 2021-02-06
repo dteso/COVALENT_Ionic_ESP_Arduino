@@ -14,6 +14,8 @@ public:
 
     String data;
     String lastTopic;
+    String deviceName;
+    char *mqtt_server= "test.mosquitto.org";
 
     Mqtt();
 

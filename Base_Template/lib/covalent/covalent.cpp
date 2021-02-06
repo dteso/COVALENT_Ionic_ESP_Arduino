@@ -31,43 +31,51 @@ char topic[100] = "";
 
 Covalent::Covalent() {}
 
+/*
+ * lECTURA Y CONTROL DE COMUNICACIÓN EN LOS DISTINTOS CANALES MQTT 
+ */
 void verifyData(String data)
 {
-    String auxTopic = "medusa/" + status.deviceName;
-    auxTopic.toCharArray(topic, 100);
-    if(mqttClient.lastTopic == "medusa/" + status.deviceName +"/set"){
-        serialCore.send("RECEIVED DATA ON TOPÌC SET >" + data);
-        if(data=="D6=1"){
-        digitalWrite(D6, HIGH);
-        }else if(data=="D6=0"){
-        digitalWrite(D6, LOW);
+    String ownTopic = "medusa/set/" + status.deviceName;
+    ownTopic.toCharArray(topic, 100);
+    char main_topic[200] = "medusa/devices/outputs";
+
+    if (mqttClient.lastTopic == ownTopic)
+    {
+        serialCore.send("DEVICE NAME >>>" + status.deviceName);
+        serialCore.send("LAST TOPIC: " + mqttClient.lastTopic);
+
+        serialCore.send("RECEIVED DATA ON TOPIC SET >" + data);
+        if (data == "D6=1")
+        {
+            digitalWrite(D6, HIGH);
+        }
+        else if (data == "D6=0")
+        {
+            digitalWrite(D6, LOW);
         }
     }
-    if (data == "SUPERV")
+    else if (mqttClient.lastTopic == main_topic)
     {
-        String deviceData;
-        serialCore.send("Supervision request received");
-        deviceData = "{localIp: '" + status.localIp + "' , ssid: '" + status.ssid + "', name: '" + status.deviceName + "' ,temp: '" + status.temperature + "' , hum: '" + status.humidity + "'}";
-        serialCore.send(deviceData);
-        deviceData.toCharArray(message, 200);
-        mqttClient.publishString(topic, message);
-        auxTopic = "medusa/" + status.deviceName +"/set"; 
-        auxTopic.toCharArray(topic, 100);
-        mqttClient.subscribeTo(topic);
-    }
-    else if (data == "OFF")
-    {
-        digitalWrite(D5, LOW);
-    }
-    else if (data == "ON")
-    {
-        digitalWrite(D5, HIGH);
+        if (data == "SUPERV")
+        {
+            serialCore.send("LAST TOPIC: " + mqttClient.lastTopic);
+            String deviceData;
+            serialCore.send("SUPERVISION REQUEST RECEIVED FROM DEVICE " + status.deviceName);
+            deviceData = "{localIp: '" + status.localIp + "' , ssid: '" + status.ssid + "', name: '" + status.deviceName + "' ,temp: '" + status.temperature + "' , hum: '" + status.humidity + "'}";
+            deviceData.toCharArray(message, 200);
+            mqttClient.publishString(main_topic, message);
+        }
     }
     data = "";
     mqttClient.data = "";
     mqttClient.lastTopic = "";
 }
 
+
+/*
+ * SETUP COVALENT -> Inicialización de parámetros generales
+ */
 void Covalent::setup()
 {
     this->setStoredStatus();
@@ -93,9 +101,12 @@ void Covalent::setup()
     this->NTP_SERVER_ENABLED = true;
     this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1");
     loadingScreen();
-    display.clearDisplay();                                        
-    display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); 
+    display.clearDisplay();
+    display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE);
     display.display();
+    //this->readStringFromMemory(MQTT_SERVER_DIR).toCharArray(mqttClient.mqtt_server, 100);
+    status.mqttServer = mqttClient.mqtt_server;
+    mqttClient.deviceName = this->readStringFromMemory(DEVICE_NAME_DIR);
     mqttClient.setupMqtt();
     if (WiFi.isConnected())
     {
@@ -104,6 +115,10 @@ void Covalent::setup()
     this->getStatus();
 }
 
+
+/*
+ * LOOP COVALENT :  Ciclo principal
+ */
 void Covalent::loop()
 {
     String serialReading = serialCore.readSerial();
@@ -138,8 +153,8 @@ void Covalent::loop()
 void blinkBackground()
 {
     display.clearDisplay();
-    display.clearDisplay();                                         
-    display.drawBitmap(0, 0, medusaka_logoBitmap2, 128, 64, WHITE); 
+    display.clearDisplay();
+    display.drawBitmap(0, 0, medusaka_logoBitmap2, 128, 64, WHITE);
     display.display();
     if (lastSec != sec)
     {
@@ -153,12 +168,12 @@ void blinkBackground()
     if ((blink) && (sec == 2 || sec == 3 || sec == 4 || sec == 10 || sec == 11 || sec == 13 || sec == 16 || sec == 20 || sec == 21 || sec == 25 || sec == 26 || sec == 30 || sec == 34 || sec == 37 || sec == 49 || sec == 51 || sec == 57 || sec == 58 || sec == 59))
     {
         blink = false;
-        display.clearDisplay();                                         
-        display.drawBitmap(0, 0, medusaka_logoBitmap2, 128, 64, WHITE); 
+        display.clearDisplay();
+        display.drawBitmap(0, 0, medusaka_logoBitmap2, 128, 64, WHITE);
         display.display();
         delay(70);
-        display.clearDisplay();                                        
-        display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE); 
+        display.clearDisplay();
+        display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE);
         display.display();
     }
 }
@@ -208,21 +223,21 @@ void Covalent::reloj()
             {
                 Weather currentWeather;
                 currentWeather = this->readWeather();
-                String tempTopic = "medusa/devices/temperatura";
-                String humTopic = "medusa/devices/humedad";
+                String tempTopic = "medusa/get/"+status.deviceName+"/temperature";
+                String humTopic = "medusa/get/"+status.deviceName+"/humidity";
                 char topicTemp[100];
                 char topicHum[100];
                 tempTopic.toCharArray(topicTemp, 100);
                 humTopic.toCharArray(topicHum, 100);
                 mqttClient.publishFloatValue(topicTemp, currentWeather.temp);
                 snprintf(message, 50, " %.2f", currentWeather.temp);
-                serialCore.sendInLine(">>> Published message on Topic: "+tempTopic+" > ");
+                serialCore.sendInLine(">>> Published on server: " + (String)mqttClient.mqtt_server + " - Topic: " + tempTopic + " > ");
                 delay(10);
                 serialCore.send(message);
                 delay(10);
                 mqttClient.publishFloatValue(topicHum, currentWeather.hum);
                 snprintf(message, 50, " %.2f", currentWeather.hum);
-                serialCore.sendInLine(">>> Published message on Topic: "+humTopic+" > ");
+                serialCore.sendInLine(">>> Published on server: " + (String)mqttClient.mqtt_server + " - Topic: " + humTopic + " > ");
                 delay(10);
                 serialCore.send(message);
                 delay(10);
@@ -383,11 +398,11 @@ void Covalent::verifyCommands(String reading)
     {
         String aux;
         aux = reading.substring(value.length(), reading.length());
-        serialCore.send("[ESP-SYS] - DEVICE NAME: " + aux);
+        serialCore.send("[ESP-SYS] - DEVICE NAME:" + aux);
         this->saveStringInMemory(DEVICE_NAME_DIR, aux);
         aux = "";
         this->deviceNameReadFromMemory = this->readStringFromMemory(DEVICE_NAME_DIR);
-        serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)DEVICE_NAME_DIR + " ] ::: " + deviceNameReadFromMemory + " - Size: " + deviceNameReadFromMemory.length());
+        //serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)DEVICE_NAME_DIR + " ] ::: " + deviceNameReadFromMemory + " - Size: " + deviceNameReadFromMemory.length());
     }
     delay(10);
     value = DEVICE_MAC;
@@ -396,7 +411,32 @@ void Covalent::verifyCommands(String reading)
         serialCore.send("[ESP-SYS] - DEVICE_MAC: " + WiFi.macAddress());
         this->saveStringInMemory(DEVICE_MAC_DIR, WiFi.macAddress());
         this->deviceMacReadFromMemory = this->readStringFromMemory(DEVICE_MAC_DIR);
-        serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)DEVICE_MAC_DIR + " ] ::: " + deviceMacReadFromMemory + " - Size: " + deviceMacReadFromMemory.length());
+        //serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)DEVICE_MAC_DIR + " ] ::: " + deviceMacReadFromMemory + " - Size: " + deviceMacReadFromMemory.length());
+    }
+    delay(10);
+    value = MQTT_SERVER;
+    if (reading.indexOf(value) > -1)
+    {
+        String aux;
+        aux = reading.substring(value.length(), reading.length());
+        serialCore.send("[ESP-SYS] - MQTT_SERVER: " + aux);
+        this->saveStringInMemory(MQTT_SERVER_DIR, aux);
+        this->readStringFromMemory(MQTT_SERVER_DIR).toCharArray(mqttClient.mqtt_server, 100);
+        status.mqttServer = this->readStringFromMemory(MQTT_SERVER_DIR);
+        mqttClient.setupMqtt();
+        //serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)MQTT_SERVER_DIR + " ] ::: " + deviceMacReadFromMemory + " - Size: " + deviceMacReadFromMemory.length());
+    }
+    delay(10);
+    value = MQTT_PORT;
+    if (reading.indexOf(value) > -1)
+    {
+        String aux;
+        aux = reading.substring(value.length(), reading.length());
+        serialCore.send("[ESP-SYS] - MQTT_PORT: " + aux);
+        this->saveStringInMemory(MQTT_PORT_DIR, aux);
+        status.mqttPort = this->readStringFromMemory(MQTT_PORT_DIR);
+        mqttClient.setupMqtt();
+        //serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)MQTT_SERVER_DIR + " ] ::: " + deviceMacReadFromMemory + " - Size: " + deviceMacReadFromMemory.length());
     }
     reading = "";
     delay(10);
@@ -418,6 +458,16 @@ void Covalent::getStatus()
         serialCore.send("[ESP-NET] - LOCAL IP: " + status.localIp);
         status.ssid = this->readStringFromMemory(SSID_DIR);
         serialCore.send("[ESP-NET] - STA: " + status.ssid);
+        status.mqttServer = this->readStringFromMemory(MQTT_SERVER_DIR);
+        if (status.mqttServer = "")
+        {
+            status.mqttServer = mqttClient.mqtt_server;
+            this->saveStringInMemory(MQTT_SERVER_DIR, status.mqttServer);
+        }
+        serialCore.send("[ESP-NET] - MQTT_SERVER: " + status.mqttServer);
+        status.mqttPort = this->readStringFromMemory(MQTT_PORT_DIR);
+        serialCore.send("[ESP-NET] - MQTT_PORT: " + status.mqttPort);
+        mqttClient.setupMqtt();
     }
     else
     {

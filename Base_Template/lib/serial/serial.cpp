@@ -11,7 +11,6 @@ void SerialCore::beginBT(int baudRate, SoftwareSerialConfig config, int rx, int 
 
 String SerialCore::readBT()
 {
-    //digitalWrite(D4, HIGH);
     String btReading;
     while (BTserial.available()) //Check if there is an available byte to read
     {

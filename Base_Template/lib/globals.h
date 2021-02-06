@@ -21,6 +21,8 @@ const String MCU = "NodeMCU v3.0 - ESP8266";
 #define READ_WEATHER ">>>READ_WEATHER"
 #define READ_BT_ID "[ESP-SYS] - BT_ID QUERY"
 #define BLUETOOTH_ID ">>>BLUETOOTH_ID: " 
+#define MQTT_SERVER ">>>MQTT_SERVER: " 
+#define MQTT_PORT ">>>MQTT_PORT: " 
 
 /*-------------VARIABLES DE CLIMA DHT11----------------*/
 #define DHTPIN D3   // what pin we're connected to
@@ -46,6 +48,8 @@ const int SSID_DIR = 60;        // Size:20
 const int WIFI_PASS_DIR = 80;   //Size: 20
 const int BT_ID_DIR = 100;   //Size: 20
 const int DEVICE_MAC_DIR = 120;   //Size: 20
+const int MQTT_SERVER_DIR = 140;   //Size: 30
+const int MQTT_PORT_DIR = 170;   //Size: 4
 
 
 
@@ -75,6 +79,8 @@ struct Status
     String ntpData;
     String temperature;
     String humidity;
+    String mqttServer;
+    String mqttPort;
 };
 
 
