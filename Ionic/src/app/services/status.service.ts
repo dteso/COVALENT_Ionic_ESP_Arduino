@@ -25,7 +25,9 @@ export class StatusService {
     temperature: '',
     humidity: '',
     mqttServer: '',
-    mqttPort: '' 
+    mqttPort: '' ,
+    online: false,
+    bluetoothOnline: false
   };
 
   constructor() { }

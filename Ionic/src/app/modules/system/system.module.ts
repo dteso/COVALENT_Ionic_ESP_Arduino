@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SystemRoutingModule } from './system-routing.module';
 import { IonicModule } from '@ionic/angular';
 import { SystemComponent } from './pages/system.component';
+import { GaugeModule } from 'angular-gauge';
 
 
 
@@ -11,7 +12,8 @@ import { SystemComponent } from './pages/system.component';
   imports: [
     CommonModule,
     SystemRoutingModule,
-    IonicModule
+    IonicModule,
+    GaugeModule.forRoot()
   ]
 })
 export class SystemModule { }

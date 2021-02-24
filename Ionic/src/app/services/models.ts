@@ -37,4 +37,6 @@ export interface State {
   humidity: string;
   mqttServer: string;
   mqttPort: string;
+  online?: false;
+  bluetoothOnline?: false;
 };

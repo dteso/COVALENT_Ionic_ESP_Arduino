@@ -176,4 +176,14 @@ export class BluetoothService {
       });
     });
   }
+
+  getCurrentDevice(): Promise<any>{
+    return new Promise((resolve, reject) => {
+      this.bluetoothSerial.list().then(bluetoothId => {
+          resolve(bluetoothId);
+        }, fail => {
+          reject(fail);
+        });
+      });
+  }
 }

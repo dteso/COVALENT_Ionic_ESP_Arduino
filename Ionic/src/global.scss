@@ -70,6 +70,13 @@
     width: 100%;
 }
 
+.h-100{
+  height: 100%;
+}
+
+.h-60{
+  height: 60%;
+}
 
 .terminal{
     color: white;
@@ -85,6 +92,23 @@
     font-family: 'Abel', sans-serif;
 }
 
+.custom-mwl-gauge {
+  width: 100%;
+  height: 100%;
+  display: block;
+  padding: 3px;
+  font-size: 1.5rem;
+  .gauge{
+    .value{
+      stroke:rgb(127, 130, 131) !important;
+      stroke-width: 15 !important;
+      fill: rgba(66, 62, 62, 0) !important;
+    }
+    .value-text{
+      fill: rgb(10, 140, 184)
+    }
+  }
+}
 
   mwl-gauge {
     width: 150px;
@@ -116,7 +140,7 @@
     display: block;
     padding: 10px;
   }
-  .theatwo > .gauge > .dial {
+  .heat > .gauge > .dial {
     stroke: #eee;
     stroke-width: 2;
     fill: rgba(0, 0, 0, 0);

@@ -56,6 +56,8 @@ export class DeviceComponent implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.sendMessageByBluetooth(">>>READ_STATUS");
+    this.customSerialService.sendData(">>>READ_STATUS");
     if (this.statusService.state.bluetoothConnected) {
       this.readingData = true;
       setTimeout(()=>{
@@ -64,9 +66,9 @@ export class DeviceComponent implements OnInit {
           this.sendMessageByBluetooth(" ");
         }
       }, 10000);
+    }else if(this.statusService.state.serialConnected){
+      this.readingData = true;
     }
-    this.sendMessageByBluetooth(">>>READ_STATUS");
-    this.customSerialService.sendData(">>>READ_STATUS");
     this.deviceName = this.statusService.state.name;
   }
 
@@ -83,13 +85,13 @@ export class DeviceComponent implements OnInit {
         }
       } else {
         this.statusService.state.bluetoothConnected = false;
-        this.presentToast('NO DEVICES CONNECTED', "danger");
+        //this.presentToast('NO DEVICES CONNECTED', "danger");
       }
     });
   }
 
   decodeData(msg: string) {
-    if(msg!=='' && this.statusService.state.bluetoothConnected){
+    if(msg!=='' && (this.statusService.state.bluetoothConnected)){
       //this.statusService.state.bluetoothConnected = true;
       this.storage.getBluetoothId().then( res => {
         this.statusService.state.bluetoothId = res;
@@ -133,6 +135,7 @@ export class DeviceComponent implements OnInit {
     }
     if (msg.indexOf('[ESP-NET] - DEVICE_NAME: ') > -1) {
       this.statusService.state.name = msg.substring(msg.indexOf("[ESP-SYS] - DEVICE_NAME: ") + 25, msg.length);
+      this.deviceName = this.statusService.state.name;
     }
     if (msg.indexOf('[ESP-NET] - MQTT_SERVER: ') > -1) {
       this.statusService.state.mqttServer = msg.substring(msg.indexOf("[ESP-SYS] - MQTT_SERVER: ") + 25, msg.length);
