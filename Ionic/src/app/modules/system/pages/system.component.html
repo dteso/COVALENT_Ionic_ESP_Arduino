@@ -26,7 +26,7 @@
     </ion-card-header>
     <ion-card-content class="text-center">
       <ion-row *ngIf="device.online" class="text-center">
-        <ion-col size='6'>
+        <ion-col size='6' style="padding-top: 1.5rem;">
           <div>IP: {{device.localIp}}</div>
           <p>WiFi: {{device.wifiSSID}}</p>
           <ion-row>
@@ -49,15 +49,23 @@
           <ion-button color="warning" fill="outline" class="w-100 h-60" (click)="onAction1(i, device)">
             <ion-icon name="bulb-outline" style="font-size: 3rem;"></ion-icon>
           </ion-button>
-          <ion-button *ngIf="getBluetoothActiveStatus(device.bluetoothId) && !device.connectingBluetooth && !getActiveBluetooth(device.bluetoothId)"
-            (click)="bluetoothConnection(device.bluetoothId)" fill="outline" color="secondary" class="w-100">
+
+          <!-- botón bluetooth disponible -->
+          <ion-button *ngIf="getBluetoothActiveStatus(device.bluetoothId) &&
+           !device.searchingBluetooth && 
+           !getActiveBluetooth(device.bluetoothId) &&
+           !device.connectingByBluetooth" (click)="bluetoothConnection(device.bluetoothId)" fill="outline"
+            color="secondary" class="w-100">
             <ion-icon name="bluetooth-outline" style="font-size: 2rem;"></ion-icon>
           </ion-button>
-          <ion-button *ngIf="getActiveBluetooth(device.bluetoothId)"
-            (click)="bluetoothConnection(device.bluetoothId)" color="secondary" class="w-100">
+
+          <!-- botón bluetooth conectado -->
+          <ion-button *ngIf="getActiveBluetooth(device.bluetoothId) &&
+          !device.connectingByBluetooth" (click)="bluetoothConnection(device.bluetoothId)" color="secondary"
+            class="w-100">
             <ion-icon name="bluetooth-outline" style="font-size: 2rem;"></ion-icon>
           </ion-button>
-          <ion-row class="text-center" *ngIf="device.connectingBluetooth && !getActiveBluetooth(device.bluetoothId)">
+          <ion-row class="text-center" *ngIf="device.searchingBluetooth && !getActiveBluetooth(device.bluetoothId)">
             <ion-col size="7" style="color: rgb(12, 188, 219);">
               Searching
             </ion-col>
@@ -65,6 +73,22 @@
               <ion-spinner name="dots" color="secondary"></ion-spinner>
             </ion-col>
           </ion-row>
+
+          <!-- botón bluetooth conectando -->
+          <ion-row class="text-center" *ngIf="device.connectingByBluetooth">
+            <ion-col size="7" style="color: orange;">
+              Connecting
+            </ion-col>
+            <ion-col size='5'>
+              <ion-spinner name="dots" color="warning"></ion-spinner>
+            </ion-col>
+          </ion-row>
+
+          <!-- mensaje bluetooth error -->
+            <ion-col size="12" class="text-center" *ngIf="device.connectionError" style="color: rgb(192, 9, 88);">
+              Error.Please retry
+            </ion-col>
+
         </ion-col>
       </ion-row>
     </ion-card-content>

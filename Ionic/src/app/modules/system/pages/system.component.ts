@@ -62,14 +62,14 @@ export class SystemComponent implements OnInit {
 
   exploreBluetoothDevices(){
     this.storedDevices.map(dev => {
-      dev.connectingBluetooth = true;
+      dev.searchingBluetooth = true;
     });
     this.bluetooth.searchBluetooth().then((successMessage: Array<Object>) => {
       this.bluetoothDevices = [];
       this.bluetoothDevices = successMessage;
       console.info('Bluetooth Devices', this.bluetoothDevices);
       this.storedDevices.map(dev => {
-        dev.connectingBluetooth = false;
+        dev.searchingBluetooth = false;
       });
     }, fail => {
       //this.presentToast("Activate bluetooth first", 'primary');
@@ -121,9 +121,21 @@ export class SystemComponent implements OnInit {
 
   bluetoothConnection(btId: string){
     this.bluetooth.disconnect();
+    let currentDevice = this.storedDevices.filter( dev => dev.bluetoothId === btId)[0];
+    currentDevice.connectingByBluetooth = true;
+    currentDevice.connectionError = false;
     this.bluetooth.deviceConnection(btId).then(res => {
+      this.activeBluetooth = btId;
+      currentDevice.connectingByBluetooth = false;
+      currentDevice.connectionError = false;
       this.router.navigate(['/device']);
       this.statusService.state.bluetoothConnected = true;
+    }).catch( err => {
+      currentDevice.connectingByBluetooth = false;
+      currentDevice.connectionError = true;
+      this.activeBluetooth = '';
+      this.storage.setBluetoothId('');
+      console.log(`E R R O R ----> ${err}`)
     });
   }
 
