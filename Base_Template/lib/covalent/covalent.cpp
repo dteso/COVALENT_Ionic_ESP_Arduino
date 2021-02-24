@@ -26,7 +26,7 @@ int lastSec = 0;
 SerialCore serialCore;
 Status status;
 Mqtt mqttClient;
-char message[200] = "";
+char message[500] = "";
 char topic[100] = "";
 
 Covalent::Covalent() {}
@@ -62,8 +62,8 @@ void verifyData(String data)
             serialCore.send("LAST TOPIC: " + mqttClient.lastTopic);
             String deviceData;
             serialCore.send("SUPERVISION REQUEST RECEIVED FROM DEVICE " + status.deviceName);
-            deviceData = "{localIp: '" + status.localIp + "' , ssid: '" + status.ssid + "', name: '" + status.deviceName + "' ,temp: '" + status.temperature + "' , hum: '" + status.humidity + "'}";
-            deviceData.toCharArray(message, 200);
+            deviceData = "{\"localIp\": \"" + status.localIp + "\" , \"ssid\": \""+ status.ssid + "\", \"name\": \"" + status.deviceName + "\" ,\"temp\": \""+ status.temperature + "\" , \"hum\": \"" + status.humidity + "\"}";
+            deviceData.toCharArray(message, 500);
             mqttClient.publishString(main_topic, message);
         }
     }
