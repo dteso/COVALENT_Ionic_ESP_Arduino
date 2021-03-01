@@ -57,7 +57,7 @@
           </ion-button>
 
           <!-- botón bluetooth conectado -->
-          <ion-button *ngIf="getActiveBluetooth(device.bluetoothId) && !device.connectingByBluetooth" (click)="bluetoothConnection(device.bluetoothId)" color="secondary"
+          <ion-button *ngIf="getActiveBluetooth(device.bluetoothId) && (!device.connectingByBluetooth || !device.searchingBluetooth)" (click)="bluetoothConnection(device.bluetoothId)" color="secondary"
             class="w-100">
             <ion-icon name="bluetooth-outline" style="font-size: 2rem;"></ion-icon>
           </ion-button>
