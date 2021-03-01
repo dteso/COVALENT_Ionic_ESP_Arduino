@@ -72,7 +72,6 @@ export class SystemComponent implements OnInit {
         dev.searchingBluetooth = false;
       });
     }, fail => {
-      //this.presentToast("Activate bluetooth first", 'primary');
       console.info("Error de conexión");
     });
   }
@@ -83,7 +82,6 @@ export class SystemComponent implements OnInit {
   }
 
   sendmsg(topic:string, msg: string): void {
-    // use unsafe publish for non-ssl websockets
     this._mqttService.unsafePublish(topic, msg, { qos: 1, retain: true });
   }
 

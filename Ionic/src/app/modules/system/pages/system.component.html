@@ -6,17 +6,15 @@
 <ion-content>
   <ion-card *ngFor="let device of storedDevices" class="abel" style="border: 3px solid white ">
     <ion-card-header style="display: flex !important; border-bottom: 0.5px solid white;">
-      <ion-col size='8'>
+      <ion-col size='9'>
         <div style="font-size: 1.5rem; color: white !important;"><strong>{{device.name | uppercase}}</strong></div>
         <div>Device MAC: {{device.deviceMAC}}</div>
         <div>BT MAC: {{device.bluetoothId}}</div>
       </ion-col>
-      <ion-col size='4' style="font-size: larger !important;" class="text-center">
-        <!-- <ion-icon name="hardware-chip"></ion-icon> -->
-        <!-- <img width="50%" height="60%" src="../../../../assets/images/medusa_2.png"> -->
+      <ion-col size='3' style="font-size: larger !important;" class="text-center">
         <div *ngIf="device.online else offline">
-          <ion-icon name="wifi-outline" color="success" style="font-size: 3rem;"></ion-icon>
           <div style="color: #2dd36f;"><strong>ONLINE</strong></div>
+          <ion-icon name="wifi-outline" color="success" style="font-size: 3rem;"></ion-icon>
         </div>
         <ng-template #offline>
           <ion-icon name="close-outline" color="light" style="font-size: 3rem;"></ion-icon>
@@ -30,17 +28,19 @@
           <div>IP: {{device.localIp}}</div>
           <p>WiFi: {{device.wifiSSID}}</p>
           <ion-row>
-            <ion-col size='6' class="text-center">
-              <ion-icon name="thermometer-outline" style="font-size: 1rem;"></ion-icon>
+            <ion-col size='6' class="text-center text-white">
+              <ion-icon name="thermometer-outline" style="font-size: 1.625rem;"></ion-icon>
               <mwl-gauge class="custom-mwl-gauge" [max]="50" [dialStartAngle]="180" [dialEndAngle]="0"
                 [value]="device.temperature" [animated]="true" [animationDuration]="2">
               </mwl-gauge>
+              ºC
             </ion-col>
-            <ion-col size='6' class="text-center">
-              <ion-icon name="water-outline" style="font-size: 1rem;"></ion-icon>
+            <ion-col size='6' class="text-center text-white">
+              <ion-icon name="water-outline" style="font-size: 1.625rem;"></ion-icon>
               <mwl-gauge class="custom-mwl-gauge" [max]="100" [dialStartAngle]="-90" [dialEndAngle]="-90.001"
                 [showValue]="true" [value]="device.humidity" [animated]="true" [animationDuration]="1">
               </mwl-gauge>
+              %
             </ion-col>
           </ion-row>
         </ion-col>
@@ -51,21 +51,19 @@
           </ion-button>
 
           <!-- botón bluetooth disponible -->
-          <ion-button *ngIf="getBluetoothActiveStatus(device.bluetoothId) &&
-           !device.searchingBluetooth && 
-           !getActiveBluetooth(device.bluetoothId) &&
-           !device.connectingByBluetooth" (click)="bluetoothConnection(device.bluetoothId)" fill="outline"
+          <ion-button *ngIf="getBluetoothActiveStatus(device.bluetoothId) && !getActiveBluetooth(device.bluetoothId) && !device.connectingByBluetooth" (click)="bluetoothConnection(device.bluetoothId)" fill="outline"
             color="secondary" class="w-100">
             <ion-icon name="bluetooth-outline" style="font-size: 2rem;"></ion-icon>
           </ion-button>
 
           <!-- botón bluetooth conectado -->
-          <ion-button *ngIf="getActiveBluetooth(device.bluetoothId) &&
-          !device.connectingByBluetooth" (click)="bluetoothConnection(device.bluetoothId)" color="secondary"
+          <ion-button *ngIf="getActiveBluetooth(device.bluetoothId) && !device.connectingByBluetooth" (click)="bluetoothConnection(device.bluetoothId)" color="secondary"
             class="w-100">
             <ion-icon name="bluetooth-outline" style="font-size: 2rem;"></ion-icon>
           </ion-button>
-          <ion-row class="text-center" *ngIf="device.searchingBluetooth && !getActiveBluetooth(device.bluetoothId)">
+
+          <!-- buscando bluetooth -->
+          <ion-row class="text-center" *ngIf="device.searchingBluetooth">
             <ion-col size="7" style="color: rgb(12, 188, 219);">
               Searching
             </ion-col>

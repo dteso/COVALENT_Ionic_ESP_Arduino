@@ -97,15 +97,16 @@
   height: 100%;
   display: block;
   padding: 3px;
-  font-size: 1.5rem;
+  font-size: 2rem;
   .gauge{
     .value{
-      stroke:rgb(127, 130, 131) !important;
-      stroke-width: 15 !important;
+      stroke:rgb(6, 218, 147) !important;
+      stroke-width: 10 !important;
       fill: rgba(66, 62, 62, 0) !important;
     }
     .value-text{
-      fill: rgb(10, 140, 184)
+      fill: rgb(252, 251, 252);
+      font-family: 'Abel', sans-serif !important;
     }
   }
 }
