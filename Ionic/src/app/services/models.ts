@@ -39,4 +39,6 @@ export interface State {
   mqttPort: string;
   online?: false;
   bluetoothOnline?: false;
+  system?: string;
+  type?: string;
 };

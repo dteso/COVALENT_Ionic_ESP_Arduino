@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Console } from 'console';
 import { IMqttMessage, MqttService, MQTT_SERVICE_OPTIONS } from 'ngx-mqtt';
 import { Subscription } from 'rxjs';
 import { BluetoothService, StorageService } from 'src/app/services/services';
@@ -12,7 +11,7 @@ import { MQTT_SERVERS } from '../../mqtt-client/components/mqtt-servers';
   templateUrl: './system.component.html',
   styleUrls: ['./system.component.scss'],
 })
-export class SystemComponent implements OnInit {
+export class SystemComponent implements OnInit{
 
   storedDevices  = [];
   connectedDevices = [];
@@ -53,7 +52,12 @@ export class SystemComponent implements OnInit {
     });
     this.exploreBluetoothDevices();
     this.sendmsg(`medusa/devices/outputs`, 'SUPERV');
-    this.bluetooth.getCurrentDevice().then( res => console.log("RES:" + JSON.stringify(res)));
+    await this.bluetooth.getCurrentDevice().then( res => console.log("RES:" + JSON.stringify(res)));
+  }
+
+  ionViewWillEnter(){
+    this.sendmsg(`medusa/devices/outputs`, 'SUPERV');
+    this.exploreBluetoothDevices();
   }
 
   ionViewDidLeave(){
@@ -109,7 +113,7 @@ export class SystemComponent implements OnInit {
   });
   }
 
-  getBluetoothActiveStatus(btId: string): boolean{
+  getBluetoothAvailable(btId: string): boolean{
     return this.bluetoothDevices.find( bt => bt.address === btId);
   }
 
@@ -131,7 +135,7 @@ export class SystemComponent implements OnInit {
     }).catch( err => {
       currentDevice.connectingByBluetooth = false;
       currentDevice.connectionError = true;
-      this.activeBluetooth = '';
+      //this.activeBluetooth = '';
       this.storage.setBluetoothId('');
       console.log(`E R R O R ----> ${err}`)
     });

@@ -27,7 +27,9 @@ export class StatusService {
     mqttServer: '',
     mqttPort: '' ,
     online: false,
-    bluetoothOnline: false
+    bluetoothOnline: false,
+    system: '',
+    type: ''
   };
 
   constructor() { }

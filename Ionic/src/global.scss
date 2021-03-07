@@ -94,9 +94,10 @@
 
 .custom-mwl-gauge {
   width: 100%;
-  height: 100%;
+  height: 50%;
+  margin-top: 0.5rem;
   display: block;
-  padding: 3px;
+  padding: 0.125rem;
   font-size: 2rem;
   .gauge{
     .value{

@@ -2,44 +2,71 @@
   <!-- <pre style="color: white;">{{ state | json}}</pre>
   <h4 style="color: white;">Count: {{count}}</h4> -->
   <ion-row>
-    <ion-card class="abel w-100" style="background: transparent;">
+    <ion-card class="abel w-100" style="background: transparent !important;">
       <ion-card-header>
         <div class="text-center p-2">
           <h1 style="font-size: 4rem; font-weight: bolder; color: whitesmoke; margin-top: 1.250rem"> C0V4L3N7 </h1>
         </div>
       </ion-card-header>
-
       <ion-card-content>
         <!-- <div class="text-center">
           <img src="../../../assets/images/medusa_2.png" width="100rem" height="100rem">
         </div> -->
-        <div class="mt-5" style="background: transparent !important; vertical-align: middle !important; padding-top: 1.5rem;">
-            <ion-button color="light"
-              [routerLink]="['/system']" fill="outline" routerLinkActive="router-link-active" class="w-100">
-              SYSTEM
-            </ion-button>
 
-            <ion-button color="light"
-              [routerLink]="['/device']" fill="outline" routerLinkActive="router-link-active" class="w-100 mb-5">
+        <ion-card class="abel text-center txt-white"
+          style="background: transparent !important; border: solid 0.1px rgb(200, 31, 100);">
+          <ion-card-header style="background-color: rgb(189, 31, 144); color: black; opacity: 40%;">
+            <h1><strong>SYSTEMS</strong></h1>
+          </ion-card-header>
+          <ion-card-content style="padding: 1rem;">
+            <ion-icon name="home-outline" style="font-size: 4rem; color: rgb(200, 31, 100)"></ion-icon>
+            <ion-button color="light" [routerLink]="['/system']" fill="outline" routerLinkActive="router-link-active"
+              class="w-100">
+              VIEW SYSTEMS
+            </ion-button>
+            <ion-button color="light" [routerLink]="['/system']" fill="outline" routerLinkActive="router-link-active"
+            class="w-100">
+            ADD SYSTEM
+          </ion-button>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="abel text-center txt-white"
+          style="background: transparent !important; border: solid 1px rgb(10, 245, 143);">
+          <ion-card-header style="background-color: rgb(10, 245, 143); color: black;  opacity: 40%;">
+            <h1><strong>DEVICE CONFIG</strong></h1>
+          </ion-card-header>
+          <ion-card-content style="padding: 1rem;">
+            <ion-icon name="hardware-chip-outline" style="font-size: 4rem; color: rgb(10, 245, 143);"></ion-icon>
+            <ion-button color="light" [routerLink]="['/device']" fill="outline" routerLinkActive="router-link-active"
+              class="w-100 mb-5">
               DEVICE
             </ion-button>
+          </ion-card-content>
+        </ion-card>
 
-            <ion-button color="light"
-              [routerLink]="['/terminal-tabs']" fill="outline" routerLinkActive="router-link-active" class="w-100 mb-5">
+        <ion-card class="abel text-center txt-white"
+          style="background: transparent !important; border: solid 1px rgb(81, 116, 233);">
+          <ion-card-header style="background-color: rgb(81, 116, 233); color: black;  opacity: 40%;">
+            <h1><strong>TOOLS</strong></h1>
+          </ion-card-header>
+          <ion-card-content style="padding: 1rem;">
+            <ion-icon name="build-outline" style="font-size: 4rem; color: rgb(81, 116, 233);"></ion-icon>
+            <ion-button color="light" [routerLink]="['/terminal-tabs']" fill="outline"
+              routerLinkActive="router-link-active" class="w-100 mb-5">
               SERIAL TERMINAL
             </ion-button>
-
-
-            <ion-button color="light"
-              [routerLink]="['/setup']" fill="outline" routerLinkActive="router-link-active" class="w-100 mb-5">
+            <ion-button color="light" [routerLink]="['/setup']" fill="outline" routerLinkActive="router-link-active"
+              class="w-100 mb-5">
               BLUETOOTH TERMINAL
             </ion-button>
-
-            <ion-button color="light"
-              [routerLink]="['/mqtt-client']" fill="outline" routerLinkActive="router-link-active" class="w-100 mb-5">
+            <ion-button color="light" [routerLink]="['/mqtt-client']" fill="outline"
+              routerLinkActive="router-link-active" class="w-100 mb-5">
               MQTT CLIENT
             </ion-button>
-        </div>
+          </ion-card-content>
+        </ion-card>
+
       </ion-card-content>
     </ion-card>
   </ion-row>
