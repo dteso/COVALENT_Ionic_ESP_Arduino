@@ -1,0 +1,16 @@
+ion-content{
+    --background: url('../../../../assets/images/bg-squares.jpg') no-repeat center/cover fixed;
+   }
+   
+   ion-item{
+     --background: transparent;
+     border: 0.1rem solid rgb(10, 183, 226);
+     border-radius: 2%;
+     padding: 0.125rem;
+     margin-bottom: 0.5rem;
+   }
+
+   .txt-white{
+    --ion-text-color: white !important;
+    color: white !important;
+  }

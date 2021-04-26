@@ -1,104 +1,31 @@
-<ion-content>
-  <ion-card *ngFor="let device of storedDevices" class="abel" style="border: 3px solid white ">
-    <ion-card-header style="display: flex !important; border-bottom: 0.5px solid white;">
-      <ion-col size='9'>
-        <div style="font-size: 1.5rem; color: white !important;"><strong>{{device.name | uppercase}}</strong></div>
-        <div>Device MAC: {{device.deviceMAC}}</div>
-        <div>BT MAC: {{device.bluetoothId}}</div>
-      </ion-col>
-      <ion-col size='3' style="font-size: larger !important;" class="text-center">
-        <div *ngIf="device.online else offline">
-          <div style="color: #2dd36f;"><strong>ONLINE</strong></div>
-          <ion-icon name="wifi-outline" color="success" style="font-size: 3rem;"></ion-icon>
+<ion-content class="abel">
+    <ion-card *ngFor="let system of storedSystems" style="border: 0.1rem solid rgb(7, 162, 235); border-radius: 2%; overflow: unset; margin-bottom: 3rem;">
+      <ion-card-header class="abel" style="border-bottom: 0.1rem solid lightgray; background-color: black;">
+        <div style="display: flex;">
+          <!-- <h2>[ {{system.id}} ] </h2> -->
+          <h1 style="color: rgb(7, 162, 235); font-weight: bolder;">{{system.name}}</h1>
         </div>
-        <ng-template #offline>
-          <ion-icon name="close-outline" color="light" style="font-size: 3rem;"></ion-icon>
-          <div style="color: lightgray;">OFFLINE</div>
-        </ng-template>
-      </ion-col>
-    </ion-card-header>
-    <ion-card-content class="text-center">
-      <ion-row *ngIf="!device.online" class="text-center" style="padding-top: 1rem;">
-        <ion-button fill="outline" color="danger" style="width: 50%;">
-          <ion-icon name="trash-outline" style="font-size: 2rem;"></ion-icon>
-        </ion-button>
-      </ion-row>
-      <ion-row *ngIf="device.online" class="text-center">
-        <ion-col size='7' style="padding-top: 1.5rem;">
-          <div>IP: {{device.localIp}}</div>
-          <p>WiFi: {{device.wifiSSID}}</p>
-          <ion-row style="padding-top: 1rem;">
-            <ion-col size='6' class="text-center">
-              <div>
-                <ion-icon name="thermometer-outline" style="font-size: 2.5rem;"></ion-icon>
-              </div>
-              <div>
-                <mwl-gauge class="custom-mwl-gauge" [max]="50" [dialStartAngle]="180" [dialEndAngle]="0"
-                  [value]="device.temperature" [animated]="true" [animationDuration]="2">
-                </mwl-gauge>
-              </div>
-            </ion-col>
-
-
-            <ion-col size='6' class="text-center">
-              <div>
-                <ion-icon name="water-outline" style="font-size: 2.5rem;"></ion-icon>
-              </div>
-              <div>
-                <mwl-gauge class="custom-mwl-gauge" [max]="100" [dialStartAngle]="-90" [dialEndAngle]="-90.001"
-                  [showValue]="true" [value]="device.humidity" [animated]="true" [animationDuration]="1">
-                </mwl-gauge>
-              </div>
-            </ion-col>
-          </ion-row>
-        </ion-col>
-
-        <ion-col size='5' style="padding-top: 3rem;">
-
-          <ion-icon color="warning" class="w-100 h-60" (click)="onAction1(i, device)" name="bulb-outline"
-            style="font-size: 3rem;"></ion-icon>
-
-          <!-- botón bluetooth disponible -->
-          <ion-button *ngIf="(getBluetoothAvailable(device.bluetoothId)) && !device.connectingByBluetooth"
-            (click)="bluetoothConnection(device.bluetoothId)" fill="outline" style="border-radius: 50%;"
-            color="secondary" class="w-100">
-            <ion-icon name="bluetooth-outline" style="font-size: 2rem;"></ion-icon>
-          </ion-button>
-
-          <!-- botón bluetooth conectado -->
-          <ion-button *ngIf="getActiveBluetooth(device.bluetoothId) && !getBluetoothAvailable(device.bluetoothId)"
-            (click)="bluetoothConnection(device.bluetoothId)" color="secondary" class="w-100">
-            <ion-icon name="bluetooth-outline" style="font-size: 2rem;"></ion-icon>
-          </ion-button>
-
-          <!-- buscando bluetooth -->
-          <ion-row class="text-center"
-            *ngIf="device.searchingBluetooth && !getBluetoothAvailable(device.bluetoothId) && !getActiveBluetooth(device.bluetoothId)">
-            <ion-col size="7" style="color: rgb(12, 188, 219);">
-              <h3>Searching</h3>
-            </ion-col>
-            <ion-col size='5'>
-              <ion-spinner name="dots" color="secondary"></ion-spinner>
-            </ion-col>
-          </ion-row>
-
-          <!-- botón bluetooth conectando -->
-          <ion-row class="text-center" *ngIf="device.connectingByBluetooth">
-            <ion-col size="7" style="color: orange;">
-              Linking
-            </ion-col>
-            <ion-col size='5'>
-              <ion-spinner name="dots" color="warning"></ion-spinner>
-            </ion-col>
-          </ion-row>
-
-          <!-- mensaje bluetooth error -->
-          <ion-col size="12" class="text-center" *ngIf="device.connectionError" style="color: rgb(192, 9, 88);">
-            Error.Please retry
-          </ion-col>
-
-        </ion-col>
-      </ion-row>
-    </ion-card-content>
-  </ion-card>
+        <p>{{system.location | uppercase}}</p>
+        <!-- <p>{{system.ssid}}</p> -->
+        <ion-fab horizontal="end" vertical="top" edge style="top:1rem;">
+          <ion-fab-button>
+            <ion-icon name="cog-outline"></ion-icon>
+          </ion-fab-button>
+          <ion-fab-list>
+            <ion-fab-button color="light">
+              <ion-icon name="eye-outline"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button color="light" (click)="toSystemDetail(system.id)">
+              <ion-icon name="list-outline"></ion-icon>
+            </ion-fab-button>
+            <ion-fab-button color="light">
+              <ion-icon name="power-outline"></ion-icon>
+            </ion-fab-button>
+          </ion-fab-list>
+        </ion-fab>
+      </ion-card-header>
+      <ion-card-content class="text-center abel" style="padding: 1rem; color: black; background-color: rgb(84, 188, 236); opacity: 50%;">
+        <p style="font-size: 1rem; font-weight: bolder;">{{system.description}}</p>
+      </ion-card-content>
+    </ion-card>
 </ion-content>

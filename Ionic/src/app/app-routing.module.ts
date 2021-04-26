@@ -50,6 +50,14 @@ const routes: Routes = [
   {
     path: 'system',
     loadChildren: () => import('./modules/system/system.module').then( m => m.SystemModule)
+  },
+  {
+    path: 'add-system',
+    loadChildren: () => import('./modules/add-system/add-system.module').then( m => m.AddSystemModule)
+  },
+  {
+    path: 'system-detail/:id',
+    loadChildren: () => import('./modules/system-detail/system-detail.module').then( m => m.SystemDetailModule)
   }
 ];
 

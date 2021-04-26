@@ -9,7 +9,18 @@ export class StorageService {
   BLUETOOTH_ID = 'bluetoothId';
   LANG = 'lang';
   DEVICES = 'devices';
+  SYSTEMS = 'systems';
   devices = [];
+  // Siempre debe haber un sistema por defecto
+  systems = [
+    {
+      id: 0,
+      name: 'General',
+      ssid: 'Unknown',
+      location: 'Not defined',
+      description: 'DEFAULT SYSTEM'
+    }
+  ];
 
   constructor(
     //public events: Events,
@@ -59,6 +70,23 @@ export class StorageService {
       }
       this.devices.push(device);
       return this.storage.set(this.DEVICES, this.devices);
+    });
+  }
+
+  async getSystems(): Promise<any>{
+    return await this.storage.get(this.SYSTEMS);
+  }
+
+  async setSystem(system: any): Promise<any>{
+    this.getSystems().then(systems =>{
+      if (systems){
+        this.systems = systems;
+        system.id = systems.length;
+      }else{
+        system.id = 1;
+      }
+      this.systems.push(system);
+      return this.storage.set(this.SYSTEMS, this.systems);
     });
   }
 }

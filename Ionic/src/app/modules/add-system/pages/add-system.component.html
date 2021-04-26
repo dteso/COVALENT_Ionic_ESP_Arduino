@@ -1,0 +1,35 @@
+<ion-content scrollY="true" class="abel custom-bg">
+  <ion-row>
+    <ion-card class="abel w-100" style="background: transparent !important;">
+      <ion-card-header>
+        <div class="text-center p-2">
+          <ion-icon name="add-circle-outline" class="txt-white" style="font-size: 4rem;"></ion-icon>
+          <h1 style="font-weight: bolder; color: whitesmoke; font-size: 2.5rem;">New System</h1>
+        </div>
+      </ion-card-header>
+      <ion-card-content class="txt-white abel">
+        <form [formGroup]="newSystemForm" (ngSubmit)="saveSystem()"> 
+          <div>
+            <ion-item>
+              <ion-input type="text" placeholder=" Name" formControlName="name"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input type="text" placeholder=" SSID" formControlName="ssid"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input type="text" placeholder=" Location" formControlName="location"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-textarea rows="6" cols="20" type="text" placeholder="Description" formControlName="description"></ion-textarea>
+            </ion-item>
+          </div>
+          <hr>
+          <div class="text-center">
+            <ion-button type="submit" expand="block" color="tertiary" class="set-button-style" [disabled]="!newSystemForm.valid">
+              CREATE</ion-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </ion-row>
+</ion-content>
