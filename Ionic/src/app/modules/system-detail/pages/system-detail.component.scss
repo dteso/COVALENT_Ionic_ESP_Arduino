@@ -1,5 +1,5 @@
 ion-content{
-    --background: url('../../../../assets/images/bg-squares.jpg') no-repeat center/cover fixed;
+    --background: url('../../../../assets/images/white_hexagons.jpg') no-repeat center/cover fixed;
    }
    
    ion-item{
@@ -7,12 +7,8 @@ ion-content{
    }
 
    ion-card{
-       color: white;
-       --background: transparent !important;
+       color: black;
+       --background: transparent;
    }
    
-   .txt-white{
-    --ion-text-color: white !important;
-    color: white !important;
-  }
 

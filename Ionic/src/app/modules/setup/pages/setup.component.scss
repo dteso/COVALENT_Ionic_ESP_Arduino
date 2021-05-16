@@ -5,17 +5,35 @@
   }
 
   ion-content{
-    --ion-background-color: -webkit-linear-gradient(-55deg, #02062c 50%, #041e57 100%);
+    // --ion-background-color: -webkit-linear-gradient(-55deg, #02062c 50%, #041e57 100%);
+    --background: url('../../../../assets/images/white_hexagons.jpg') no-repeat center/cover fixed;
+  }
+
+  .active-bt{
+    border-right: 5px solid rgb(68, 0, 255) !important;
   }
 
   ion-item{
-    color: white !important;
+    color: black;
+    --background: transparent;
+    // --border-color: rgb(3, 131, 170);
+    // --border-style: none solid none solid;
+    // --border-width: 3rem;
+    // .active-bt{
+    //   --border-color: blueviolet;
+    //   --border-style: none none none solid;
+    // }
+  }
+
+  ion-list {
+    background: transparent;
   }
 
   .connected-style{
     color: white;
     background-color:rgb(71, 71, 212);
   }
+
 
   .not-connected-style{
       color: lightgray;
@@ -99,5 +117,9 @@
   .txt-white{
     --ion-text-color: white !important;
     color: white !important;
+}
+
+.background-transparent{
+  background: transparent;
 }
 

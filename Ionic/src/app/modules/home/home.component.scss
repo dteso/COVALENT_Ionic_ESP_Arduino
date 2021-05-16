@@ -1,5 +1,5 @@
 ion-content{
-    --background: url('../../../assets/images/bg-squares.jpg') no-repeat center/cover fixed;
+    --background: url('../../../assets/images/white_hexagons.jpg') no-repeat center/cover fixed;
    }
    
    ion-item{
@@ -10,4 +10,9 @@ ion-content{
    .txt-white{
     --ion-text-color: white !important;
     color: white !important;
+  }
+
+
+  --ion-buttton{
+    --background: rgb(94, 91, 91) !important;
   }

@@ -1,5 +1,5 @@
 ion-content{
-    --background: url('../../../../assets/images/bg-squares.jpg') no-repeat center/cover fixed;
+    --background: url('../../../../assets/images/white_hexagons.jpg') no-repeat center/cover fixed;
    }
    
    ion-item{
@@ -11,11 +11,30 @@ ion-content{
        --background: transparent !important;
    }
    
-   .txt-white{
-    --ion-text-color: white !important;
-    color: white !important;
-  }
+.system-card{
+  border: 0.1rem solid rgb(7, 162, 235); 
+  border-radius: 2%; 
+  overflow: unset; 
+  margin-bottom: 1.5rem;
+}
 
 
+.bottom-lightgray{
+  border-bottom: 0.1rem solid lightgray;
+}
 
+
+.semi-white-bold{
+  color: rgb(237, 249, 253); font-weight: bolder;
+}
+
+.system-card-content{
+  padding: 1rem; color: black;
+  background-color: rgb(84, 188, 236);
+  opacity: 50%;
+}
+
+.one-rem-bolder{
+  font-size: 1rem; font-weight: bolder;
+}
 

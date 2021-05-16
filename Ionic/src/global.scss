@@ -106,7 +106,7 @@
       fill: rgba(66, 62, 62, 0) !important;
     }
     .value-text{
-      fill: rgb(252, 251, 252);
+      fill: rgb(104, 103, 104);
       font-family: 'Abel', sans-serif !important;
     }
   }
@@ -119,7 +119,7 @@
     padding: 10px;
   }
   mwl-gauge > .gauge > .dial {
-    stroke: #eee;
+    stroke: rgb(104, 103, 104);
     stroke-width: 2;
     fill: rgba(0, 0, 0, 0);
   }
@@ -210,3 +210,24 @@
   }
 
 
+//CUSTOM STYLES
+
+.degradation-one-to-four{
+  background: -webkit-linear-gradient(-90deg, #1f2420 25%, transparent 100%);
+}
+
+.display-flex{
+  display: flex;
+}
+
+.color-white{
+  color:white;
+}
+
+.color-black{
+  color:black;
+}
+
+.top-position{
+  top:1rem;
+}
