@@ -69,7 +69,7 @@ export class DeviceComponent implements OnInit {
     }else if(this.statusService.state.serialConnected){
       this.readingData = true;
     }
-    this.deviceName = this.statusService.state.name;
+    this.deviceName = this.statusService.state.name.trimLeft();
   }
 
   /**
@@ -78,6 +78,7 @@ export class DeviceComponent implements OnInit {
   sendMessageByBluetooth(message: string) {
     this.bluetooth.dataInOut(`${message}\n`).subscribe(data => {
       if (data !== 'BLUETOOTH.NOT_CONNECTED') {
+        this.statusService.state.bluetoothConnected = true;
         this.serialData.fullStr += data;
         this.serialData.lastStr = data;
         if(data){
@@ -137,6 +138,9 @@ export class DeviceComponent implements OnInit {
       this.statusService.state.name = msg.substring(msg.indexOf("[ESP-SYS] - DEVICE_NAME: ") + 25, msg.length);
       this.deviceName = this.statusService.state.name;
     }
+    if (msg.indexOf('[ESP-SYS] - DEVICE_TYPE: ') > -1) {
+      this.statusService.state.type = msg.substring(msg.indexOf("[ESP-SYS] - DEVICE_TYPE: ") + 25, msg.length);
+    }
     if (msg.indexOf('[ESP-NET] - MQTT_SERVER: ') > -1) {
       this.statusService.state.mqttServer = msg.substring(msg.indexOf("[ESP-SYS] - MQTT_SERVER: ") + 25, msg.length);
       this.options.hostname = this.statusService.state.mqttServer;
@@ -174,11 +178,12 @@ export class DeviceComponent implements OnInit {
   }
 
   async storeConfig() {
-    this.statusService.state.name = this.deviceName;
     this.showNameDeviceInput = !this.showNameDeviceInput;
     this.statusService.state.name = this.deviceName;
     this.sendMessageByBluetooth(">>>DEVICE_NAME: "+ this.deviceName);
     this.customSerialService.sendData(">>>DEVICE_NAME: " + this.deviceName);
+    //TODO. Debe asignarse el sistema que se elija desde el dispositivo
+    delete this.statusService.state.system;
     await this.storage.setDevice(this.statusService.state).then(res => 
       {
         console.log(res);

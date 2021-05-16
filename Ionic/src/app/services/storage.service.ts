@@ -60,6 +60,10 @@ export class StorageService {
     return await this.storage.get(this.DEVICES);
   }
 
+  async setDevices(devices): Promise<any>{
+    return await this.storage.set(this.DEVICES, devices);
+  }
+
   async setDevice(device: any): Promise<any>{
     this.getBluetoothId().then(id => {
       device.bluetoothId = id;

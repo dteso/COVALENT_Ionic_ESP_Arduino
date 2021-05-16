@@ -3,11 +3,11 @@
 <ion-content>
 
   <!--REFRESHER-->
-  <ion-refresher slot="fixed" class="p-2 abel" (ionRefresh)="refreshBluetooth($event)">
+  <!-- <ion-refresher slot="fixed" class="p-2 abel" (ionRefresh)="refreshBluetooth($event)">
     <ion-refresher-content refreshingText=" R e f r e s h i n g  . . . " pullingIcon="chevron-down-circle-outline"
       pullingText="Pull to refresh" refreshingSpinner="circles">
     </ion-refresher-content>
-  </ion-refresher>
+  </ion-refresher> -->
 
 
   <!-- MUESTRA EL ESTADO DE LA CONEXIÓN -->
@@ -19,7 +19,7 @@
           <h2><strong>CONNECTED</strong></h2>
           <!-- <ion-icon size="large" name="flash-outline"></ion-icon> -->
           <div class="ion-text-center">
-            <ion-label *ngIf="statusService.getBluetoothConnectionStatus()" style="color: white">
+            <ion-label *ngIf="statusService.getBluetoothConnectionStatus()" class="txt-white">
               <h2><strong>{{selectedDevice? selectedDevice.name : 'No name'}}</strong></h2>
               <ion-icon size="large" name="hardware-chip"></ion-icon>
             </ion-label>
@@ -46,19 +46,15 @@
   <ion-list lines="full" *ngIf="devices.length > 0 && !statusService.getBluetoothConnectionStatus()">
     <ion-item *ngFor="let device of devices" class='bt-item-style mb-1' (click)="checkConnection(device)">
       <ion-row>
-        <p><strong>{{device.name? device.name: 'No Name'}}</strong></p>
+        <ion-col size='12'>
+          <div>
+            <strong>{{device.name? device.name: 'No Name'}}</strong>
+          </div>
+        </ion-col>
+        <ion-col size = '12'>
+          <div>{{device.address}}</div>
+        </ion-col>
       </ion-row>
-      <!-- 
-      <p>Bluetooth Adress
-        <span [hidden]="device.address == undefined">mac</span>
-        <span [hidden]="device.uuid == undefined">uuid</span>
-        {{device.address}} {{device.uuid}}
-      </p>
-      <p>
-        <span [hidden]="device.class == undefined">Class</span>
-        <span [hidden]="device.rssi == undefined">Rssi</span>
-        {{device.class}} {{device.rssi}}
-      </p> -->
     </ion-item>
   </ion-list>
 
@@ -67,7 +63,7 @@
   <form *ngIf="statusService.getBluetoothConnectionStatus()" [formGroup]="btForm" (ngSubmit)="onSubmit()">
     <ion-row>
       <ion-col size='10'>
-        <ion-item style="background: white; background-color: white !important;">
+        <ion-item>
           <ion-input type="text" formControlName="message" name="message"></ion-input>
         </ion-item>
       </ion-col>
@@ -86,27 +82,15 @@
     </ion-row>
   </form>
 
-  <!-- MUESTRA EL DISPOSITVO AL QUE SE ENCUENTRA CONECTADO -->
-  <!-- <ion-row *ngIf="statusService.getBluetoothConnectionStatus()">
-    <ion-col>
-      <div class="ion-text-center">
-        <ion-label *ngIf="statusService.getBluetoothConnectionStatus()" style="color: white">
-          <h2><strong>{{selectedDevice? selectedDevice.name : 'No name'}}</strong></h2>
-          <ion-icon size="large" name="hardware-chip"></ion-icon>
-        </ion-label>
-      </div>
-    </ion-col>
-  </ion-row> -->
-
   <!-- <p *ngFor="let item of messages">{{ item }}</p> -->
 
   <!-- MUESTRA HABILITAR EL BLUETOOTH CUANDO NO LO ESTÁ -->
   <div *ngIf="!isEnabled && !showSpinner && !statusService.getBluetoothConnectionStatus()">
     <ion-row>
-      <ion-card class="abel">
-        <ion-card-header>
-          <ion-card-subtitle class="text-center">Bluetooth not enabled</ion-card-subtitle>
-          <ion-card-title class="text-center txt-white">Bluetooth connection</ion-card-title>
+      <ion-card class="abel" class="background-transparent">
+        <ion-card-header class="color-black text-center">
+          <ion-card-subtitle class="color-black">Bluetooth not enabled</ion-card-subtitle>
+          <ion-card-title>Bluetooth connection</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <div class="text-center">
@@ -122,12 +106,12 @@
   <div [hidden]="(!isEnabled && !showSpinner) || statusService.getBluetoothConnectionStatus() || devices.length > 0">
     <ion-row class="w-100">
       <ion-col size='12'>
-        <ion-card class="abel">
+        <ion-card class="abel" class="background-transparent text-center">
           <ion-card-header>
-            <ion-card-subtitle class="text-center">Checking availbale devices</ion-card-subtitle>
-            <ion-card-title class="text-center txt-white">Bluetooth connection</ion-card-title>
+            <ion-card-subtitle class="color-black">Checking availbale devices</ion-card-subtitle>
+            <ion-card-title>Bluetooth connection</ion-card-title>
           </ion-card-header>
-          <ion-card-content>
+          <ion-card-content class="color-black">
             <div class="text-center">
               <ion-spinner name="dots" color="secondary"></ion-spinner>
             </div>
@@ -140,11 +124,14 @@
 
   <ion-row *ngIf="statusService.getBluetoothConnectionStatus()">
     <ion-col size='12'>
-        <ion-card>
-            <ion-card-content class="terminal">
-                <ion-textarea class="terminal"> {{fullData}} </ion-textarea>
-            </ion-card-content>
-        </ion-card>
+      <div #terminal style="overflow: scroll;">
+        <ion-textarea>
+          <div *ngFor="let msg of fullData" class="abel" style="color: white; background: rgb(61, 60, 60); margin-bottom: 0.1rem; padding: 0.5rem; border: solid 0.3px lightblue; border-radius: 2%;">
+            <strong>{{getNow() | date : 'shortTime' }}</strong>
+            {{msg}}
+          </div>
+        </ion-textarea>
+      </div>
     </ion-col>
   </ion-row>
 

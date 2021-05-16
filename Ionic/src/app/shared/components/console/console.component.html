@@ -5,7 +5,7 @@
           <ion-icon name="earth" style="color: white"></ion-icon>
       </ion-button>
   </ion-col> -->
-    <ion-col size='6'>
+    <!-- <ion-col size='6'>
         <ion-button type="button" expand="block" color="warning" class="set-button-style" (click)="clearConsole()">
             <ion-icon name="trash-bin" style="color: white"></ion-icon>
         </ion-button>
@@ -24,4 +24,9 @@
           </ion-card-content>
       </ion-card>
   </ion-col>
-</ion-row>
+</ion-row> -->
+
+<div #terminal *ngFor="let msg of fullStr" class="abel" style="color: white; background: rgb(61, 60, 60); margin-bottom: 0.1rem; padding: 0.5rem; border: solid 0.3px lightblue; border-radius: 2%;">
+    <strong>{{getNow() | date : 'shortTime' }}</strong>
+    {{msg}}
+</div>

@@ -1,31 +1,31 @@
 <ion-content class="abel">
-    <ion-card *ngFor="let system of storedSystems" style="border: 0.1rem solid rgb(7, 162, 235); border-radius: 2%; overflow: unset; margin-bottom: 3rem;">
-      <ion-card-header class="abel" style="border-bottom: 0.1rem solid lightgray; background-color: black;">
-        <div style="display: flex;">
+    <ion-card *ngFor="let system of storedSystems" class="system-card">
+      <ion-card-content class="abel degradation-one-to-four bottom-lightgray">
+        <div class="display-flex">
           <!-- <h2>[ {{system.id}} ] </h2> -->
-          <h1 style="color: rgb(7, 162, 235); font-weight: bolder;">{{system.name}}</h1>
+          <h1 class="semi-white-bold">{{system.name}}</h1>
         </div>
-        <p>{{system.location | uppercase}}</p>
+        <p class="color-white">{{system.location | uppercase}}</p>
         <!-- <p>{{system.ssid}}</p> -->
-        <ion-fab horizontal="end" vertical="top" edge style="top:1rem;">
-          <ion-fab-button>
+        <ion-fab horizontal="end" vertical="top" edge class="top-position">
+          <ion-fab-button color="tertiary">
             <ion-icon name="cog-outline"></ion-icon>
           </ion-fab-button>
-          <ion-fab-list>
-            <ion-fab-button color="light">
+          <ion-fab-list side="start">
+            <ion-fab-button color="secondary">
               <ion-icon name="eye-outline"></ion-icon>
             </ion-fab-button>
-            <ion-fab-button color="light" (click)="toSystemDetail(system.id)">
+            <ion-fab-button color="secondary" (click)="toSystemDetail(system.id)">
               <ion-icon name="list-outline"></ion-icon>
             </ion-fab-button>
-            <ion-fab-button color="light">
+            <ion-fab-button color="secondary">
               <ion-icon name="power-outline"></ion-icon>
             </ion-fab-button>
           </ion-fab-list>
         </ion-fab>
-      </ion-card-header>
-      <ion-card-content class="text-center abel" style="padding: 1rem; color: black; background-color: rgb(84, 188, 236); opacity: 50%;">
-        <p style="font-size: 1rem; font-weight: bolder;">{{system.description}}</p>
       </ion-card-content>
+      <!-- <ion-card-content class="text-center abel system-card-content">
+        <p class="one-rem-bolder">{{system.description}}</p>
+      </ion-card-content> -->
     </ion-card>
 </ion-content>

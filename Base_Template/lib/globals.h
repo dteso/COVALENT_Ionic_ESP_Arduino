@@ -3,7 +3,7 @@
 // debe ser modificable desde la aplicación y por eso no se habilita campo en eeprom para él,
 // puesto que se encuentra en la memoria de programa
 const String MCU = "NodeMCU v3.0 - ESP8266";
-#define _GMT 1
+#define _GMT 2
 
 /* MENSAJES */
 #define APP_DATA "APP-DATA >>>"
@@ -23,6 +23,7 @@ const String MCU = "NodeMCU v3.0 - ESP8266";
 #define BLUETOOTH_ID ">>>BLUETOOTH_ID: " 
 #define MQTT_SERVER ">>>MQTT_SERVER: " 
 #define MQTT_PORT ">>>MQTT_PORT: " 
+#define DEVICE_TYPE ">>>DEVICE_TYPE: " 
 
 /*-------------VARIABLES DE CLIMA DHT11----------------*/
 #define DHTPIN D3   // what pin we're connected to
@@ -31,7 +32,6 @@ const String MCU = "NodeMCU v3.0 - ESP8266";
 /* DIRECCIONES DE MEMORIA EEEPROM */
 const int USER1_CODE_DIR = 0;
 const int USER2_CODE_DIR = 4;
-const int DEVICE_TYPE = 8; // Size 2
 /**
  *                 DIR8 DIR9 TYPE
  *                  0    0   BASE (No peripherals)
@@ -50,8 +50,32 @@ const int BT_ID_DIR = 100;   //Size: 20
 const int DEVICE_MAC_DIR = 120;   //Size: 20
 const int MQTT_SERVER_DIR = 140;   //Size: 30
 const int MQTT_PORT_DIR = 170;   //Size: 4
+const int DEVICE_TYPE_DIR = 174; // Size 16
+const int D0_BH_DIR = 190; // Size 1
+const int D1_BH_DIR = 191; // Size 1
+const int D2_BH_DIR = 192; // Size 1
+const int D3_BH_DIR = 193; // Size 1
+const int D4_BH_DIR = 194; // Size 1
+const int D5_BH_DIR = 195; // Size 1
+const int D6_BH_DIR = 196; // Size 1
+const int D7_BH_DIR = 197; // Size 1
+const int D8_BH_DIR = 198; // Size 1
+const int D9_BH_DIR = 199; // Size 1
+const int D10_BH_DIR = 200; // Size 1
 
+// Not used from 201 - 209 ()
 
+const int D0_STATUS_DIR = 210; // Size 1
+const int D1_STATUS_DIR = 211; // Size 1
+const int D2_STATUS_DIR = 212; // Size 1
+const int D3_STATUS_DIR = 213; // Size 1
+const int D4_STATUS_DIR = 214; // Size 1
+const int D5_STATUS_DIR = 215; // Size 1
+const int D6_STATUS_DIR = 216; // Size 1
+const int D7_STATUS_DIR = 217; // Size 1
+const int D8_STATUS_DIR = 218; // Size 1
+const int D9_STATUS_DIR = 219; // Size 1
+const int D10_STATUS_DIR = 220; // Size 1
 
 /*STRUCT STATUS*/
 
@@ -65,7 +89,8 @@ struct Status
 {
     int user1_code[4];
     int user2_code[4];
-    int deviceType;
+    String deviceType;
+    int deviceTypeCode;
     String deviceName;
     String scenario;
     String bluetoothId;
@@ -81,6 +106,17 @@ struct Status
     String humidity;
     String mqttServer;
     String mqttPort;
+    boolean D6;
+    boolean D5;
+    boolean D4;
+    boolean D6_behaviour;
+    boolean D5_behaviour;
+    boolean D4_behaviour;
 };
 
+
+enum deviceTypes {
+  Volumetrico,
+  Custom
+};
 

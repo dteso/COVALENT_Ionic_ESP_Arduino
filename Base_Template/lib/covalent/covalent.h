@@ -32,6 +32,7 @@ public:
     void reloj();
     
     //Utils
+    void verifyData(String);
     void verifyCommands(String);
     void setStoredStatus();
     void getStatus();
@@ -52,6 +53,10 @@ public:
 
     //DHT
     Weather readWeather();
+
+    //Covalent
+    void applyDeviceTypeSetup();
+    void applyDeviceTypeLoop();
 
 private:
 
