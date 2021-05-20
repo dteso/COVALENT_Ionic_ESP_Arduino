@@ -93,4 +93,8 @@ export class StorageService {
       return this.storage.set(this.SYSTEMS, this.systems);
     });
   }
+
+  async setSystems(systems: any[]): Promise<any>{
+    return this.storage.set(this.SYSTEMS, systems);
+  }
 }

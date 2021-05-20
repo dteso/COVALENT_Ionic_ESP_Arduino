@@ -16,11 +16,14 @@ ion-content{
   border-radius: 2%; 
   overflow: unset; 
   margin-bottom: 1.5rem;
+  min-height: 7rem;
 }
 
-
-.bottom-lightgray{
-  border-bottom: 0.1rem solid lightgray;
+.system-card-armed{
+  border: 0.1rem solid rgb(7, 162, 235); 
+  border-radius: 2%; 
+  overflow: unset; 
+  margin-bottom: 1.5rem;
 }
 
 

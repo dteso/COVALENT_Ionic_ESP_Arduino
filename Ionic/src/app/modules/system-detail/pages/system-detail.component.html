@@ -1,12 +1,12 @@
 <ion-content>
-  <div *ngIf="systemDevices.length === 0" class="text-center txt-white">
+  <div *ngIf="systemDevices.length === 0" class="text-center txt-white" style="margin-top: 3rem;">
     No devices added to this system.
   </div>
   <ion-card *ngFor="let device of systemDevices; index as i;" class="abel" style="border: 3px solid white;">
 
     <ion-card-header class="degradation-one-to-four" style="display: flex !important; border-bottom: 0.5px solid black;">    
       <ion-col size='9'>
-        <div *ngIf="device.online" style="margin-bottom: 0.625rem;">
+        <div *ngIf="device && device.online" style="margin-bottom: 0.625rem;">
           <ion-button *ngIf="device.connectingByBluetooth"
           (click)="bluetoothConnection(device.bluetoothId)" color="secondary" size="small" fill="outline" shape="round">
           <ion-spinner name="dots" color="secondary"></ion-spinner>
@@ -87,26 +87,15 @@
         <ion-col size='6' style="padding-top: 3rem;">
   
           <!-- LÁMPARA -->
-          <ion-icon *ngIf="device.type === 'Switch' && device.d6_status === '0'" color="dark" style="font-size: 9rem !important;" (click)="onAction1(i, device)" name="bulb-outline"></ion-icon>
-          <ion-icon *ngIf="device.type === 'Switch' && device.d6_status === '1'" color="warning" style="font-size: 9rem !important;" (click)="onAction1(i, device)" name="bulb-outline"></ion-icon>
+          <ion-icon *ngIf="device.type === 'Switch' && device.d6_status === '0'" color="lightgray" style="font-size: 9rem !important;" (click)="onAction1(i, device)" name="bulb-outline"></ion-icon>
+          <ion-icon *ngIf="device.type === 'Switch' && device.d6_status === '1'" color="warning" style="font-size: 9rem !important;" (click)="onAction1(i, device)" name="bulb"></ion-icon>
 
           <!-- VOLUMETRICO -->
-          <ion-icon *ngIf="device.type === 'Movement' && device.d6_status === '0'" color="success" style="font-size: 9rem !important;" (click)="onAction1(i, device)" name="man-outline"></ion-icon>
-          <ion-icon *ngIf="device.type === 'Movement' && device.d6_status === '1'" color="warning" style="font-size: 9rem !important;" (click)="onAction1(i, device)" name="walk-outline"></ion-icon>
-          <!-- <ion-icon color="warning" class="w-100 h-60" (click)="onAction1(i, device)" name="walk-outline"></ion-icon> -->
-  
-          <!-- botón bluetooth disponible -->
-          <!-- <ion-button *ngIf="(getBluetoothAvailable(device.bluetoothId)) && !device.connectingByBluetooth"
-            (click)="bluetoothConnection(device.bluetoothId)" fill="outline" shape="round" color="secondary" class="w-100">
-            <ion-icon name="bluetooth-outline" style="font-size: 2rem;"></ion-icon>
-          </ion-button> -->
-  
-          <!-- botón bluetooth conectado -->
-          <!-- <ion-button *ngIf="getActiveBluetooth(device.bluetoothId) && !getBluetoothAvailable(device.bluetoothId) && !device.connectingByBluetooth"
-            (click)="bluetoothConnection(device.bluetoothId)" shape="round" color="secondary" class="w-100">
-            <ion-icon name="bluetooth-outline" style="font-size: 2rem;"></ion-icon>
-          </ion-button> -->
-  
+          <ion-icon *ngIf="device.type === 'Movement' && device.d6_status === '0'  && device.alarm_triggered === '0'" color="lightgray" style="font-size: 9rem !important;" name="man"></ion-icon>
+          <ion-icon *ngIf="device.type === 'Movement' && device.d6_status === '1' && device.alarm_triggered === '0'" color="warning" style="font-size: 9rem !important;" name="walk"></ion-icon>
+          <ion-icon *ngIf="device.type === 'Movement' && device.d6_status === '0' && device.alarm_triggered === '1'" color="danger" style="font-size: 9rem !important;" name="man"></ion-icon>
+          <ion-icon *ngIf="device.type === 'Movement' && device.d6_status === '1' && device.alarm_triggered === '1'" color="danger" style="font-size: 9rem !important;" name="walk"></ion-icon>
+            
           <!-- buscando bluetooth -->
           <ion-row class="text-center"
             *ngIf="device.searchingBluetooth && !getBluetoothAvailable(device.bluetoothId) && !getActiveBluetooth(device.bluetoothId)">
@@ -117,16 +106,6 @@
               <ion-spinner name="dots" color="secondary"></ion-spinner>
             </ion-col>
           </ion-row>
-  
-          <!-- botón bluetooth conectando -->
-          <!-- <ion-row class="text-center" *ngIf="device.connectingByBluetooth">
-            <ion-col size="7" style="color: orange;">
-              Linking
-            </ion-col>
-            <ion-col size='5'>
-              <ion-spinner name="dots" color="warning"></ion-spinner>
-            </ion-col>
-          </ion-row> -->
   
           <!-- mensaje bluetooth error -->
           <ion-col size="12" class="text-center" *ngIf="device.connectionError" style="color: rgb(192, 9, 88);">

@@ -45,6 +45,8 @@ export class SystemDetailComponent implements OnInit {
     this.options.hostname = this.mqttServers[this.serverSelected].hostname;
     this.options.port = this.mqttServers[this.serverSelected].port;
     this.options.path = this.mqttServers[this.serverSelected].path;
+    this._mqttService.connect(this.options);
+    this.sendmsg(`medusa/devices/outputs`, "SUPERV");
   }
 
   async ngOnInit() {
@@ -63,12 +65,10 @@ export class SystemDetailComponent implements OnInit {
         this.systemDevices = this.storedDevices.filter(
           (stored) => stored.system === parseInt(this.systemId, 10)
         );
-        this.systemDevices = this.storedDevices;
         this.systemDevices.map((dev) => {
           dev.online = false;
         });
         console.log("System Devices: ", this.systemDevices);
-        this._mqttService.connect(this.options);
         this.subscribeTo(`medusa/devices/outputs`);
       })
       .catch((err) => console.log("error ", err));
@@ -76,14 +76,14 @@ export class SystemDetailComponent implements OnInit {
       this.activeBluetooth = res;
     });
     this.exploreBluetoothDevices();
-    this.sendmsg(`medusa/devices/outputs`, "SUPERV");
+    //this.sendmsg(`medusa/devices/outputs`, "SUPERV");
     await this.bluetooth
       .getCurrentDevice()
       .then((res) => console.log("RES:" + JSON.stringify(res)));
   }
 
   ionViewWillEnter() {
-    this.sendmsg(`medusa/devices/outputs`, "SUPERV");
+  this.sendmsg(`medusa/devices/outputs`, "SUPERV");
     this.exploreBluetoothDevices();
   }
 
@@ -113,10 +113,10 @@ export class SystemDetailComponent implements OnInit {
   onAction1(i, device) {
     if(device.d6_status === "1"){
       this.sendmsg(`medusa/set/${device.name}`, "TOGGLE_SWITCH_OFF");
-      device.d6_status = "0";
+      //device.d6_status = "0";
     }else{
       this.sendmsg(`medusa/set/${device.name}`, "TOGGLE_SWITCH_ON");
-      device.d6_status = "1";
+      //device.d6_status = "1";
     }      
   }
 
@@ -143,13 +143,18 @@ export class SystemDetailComponent implements OnInit {
             let index = this.systemDevices.findIndex(
               (dev) => dev.name === data.name
             );
-            this.systemDevices[index].online = true;
-            this.systemDevices[index].temperature = data.temp;
-            this.systemDevices[index].humidity = data.hum;
-            this.systemDevices[index].type = data.type.trimLeft();
-            this.systemDevices[index].d6_status = data.d6_status;
-            if (!data.system) {
-              this.systemDevices[index].system = 0;
+            if(this.systemDevices[index]){
+              this.systemDevices[index].online = true;
+              this.systemDevices[index].temperature = data.temp;
+              this.systemDevices[index].humidity = data.hum;
+              this.systemDevices[index].type = data.type.trimLeft();
+              this.systemDevices[index].d6_status = data.d6_status;
+              this.systemDevices[index].alarm_status = data.alarm_status;
+              this.systemDevices[index].alarm_triggered = data.alarm_triggered;
+
+              if (!data.system) {
+                this.systemDevices[index].system = 0;
+              }
             }
             this.connectedDevices.push(data);
           }
