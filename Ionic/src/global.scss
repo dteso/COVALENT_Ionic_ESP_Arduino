@@ -231,3 +231,13 @@
 .top-position{
   top:1rem;
 }
+
+
+.ion-color-lightgray {
+  --ion-color-base: var(--ion-color-lightgray, #c7ccdd) !important;
+  --ion-color-base-rgb: var(--ion-color-lightgray-rgb, 146, 148, 156) !important;
+  --ion-color-contrast: var(--ion-color-lightgray-contrast, #ffffff) !important;
+  --ion-color-contrast-rgb: var(--ion-color-lightgray-contrast-rgb, 255, 255, 255) !important;
+  --ion-color-shade: var(--ion-color-lightgray-shade, #d7dcec) !important;
+  --ion-color-tint: var(--ion-color-lightgray-tint, #9697a0) !important
+}
