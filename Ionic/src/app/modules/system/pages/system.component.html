@@ -1,41 +1,53 @@
 <ion-content class="abel">
-    <ion-card *ngFor="let system of storedSystems" [ngClass]="{'system-card':!system.fullAlarmStatus , 'system-card-armed':system.fullAlarmStatus }">
-      <ion-card-content class="abel degradation-one-to-four">
-        <div class="display-flex text-center" style="margin-bottom: 0.5rem;">
-          <!-- <h2>[ {{system.id}} ] </h2> -->
-          <h1 class="semi-white-bold">{{system.name}}</h1>
-        </div>
-        <p class="color-white">{{system.location | uppercase}}</p>
-        <div *ngIf="system.fullAlarmStatus" style="color: rgb(231, 9, 58);">
-          <h2><strong>ALARM IS ON</strong></h2>
-        </div>
-        <p *ngIf="system.fullAlarmStatus" class="color-white">Connected time: {{ system.armedTimestamp }}</p>
-        <!-- <p>{{system.ssid}}</p> -->
-        <ion-fab horizontal="end" vertical="top" edge class="top-position" style="margin-top: 1.5rem;">
-          <ion-fab-button color="tertiary">
-            <ion-icon name="cog-outline"></ion-icon>
+
+  <ion-button color="lightgray" expand="block" size="large" [routerLink]="['/add-system']" routerLinkActive="router-link-active">
+      <ion-icon name="add-circle-outline" color="dark"></ion-icon>
+  </ion-button>
+
+  <ion-card *ngFor="let system of storedSystems"
+    [ngClass]="{'system-card':!system.fullAlarmStatus , 'system-card-armed':system.fullAlarmStatus }">
+    <ion-card-header class="abel degradation-one-to-four">
+      <div class="text-center" style="margin-bottom: 0.5rem;">
+        <!-- <h2>[ {{system.id}} ] </h2> -->
+        <ion-card-title class="semi-white-bold">{{system.name}}</ion-card-title>
+        <ion-card-subtitle class="color-white">{{system.location | uppercase}}</ion-card-subtitle>
+      </div>
+
+      <!-- <p>{{system.ssid}}</p> -->
+      <ion-fab horizontal="start" vertical="top" edge class="top-position">
+        <ion-fab-button color="light">
+          <ion-icon name="cog-outline"></ion-icon>
+        </ion-fab-button>
+        <ion-fab-list side="bottom">
+          <ion-fab-button color="secondary">
+            <ion-icon name="eye-outline"></ion-icon>
           </ion-fab-button>
-          <ion-fab-list side="start">
-            <ion-fab-button color="secondary">
-              <ion-icon name="eye-outline"></ion-icon>
-            </ion-fab-button>
-            <ion-fab-button color="secondary" (click)="toSystemDetail(system.id)">
-              <ion-icon name="list-outline"></ion-icon>
-            </ion-fab-button>
+          <ion-fab-button color="secondary" (click)="toSystemDetail(system.id)">
+            <ion-icon name="list-outline"></ion-icon>
+          </ion-fab-button>
 
 
-            <ion-fab-button *ngIf="!system.fullAlarmStatus" color="secondary" (click)="manageAlarmStatus(system.id)">
-              <ion-icon name="power-outline"></ion-icon>
-            </ion-fab-button>
-            <ion-fab-button *ngIf="system.fullAlarmStatus" color="danger" (click)="manageAlarmStatus(system.id)">
-              <ion-icon name="power-outline"></ion-icon>
-            </ion-fab-button>
+          <ion-fab-button *ngIf="!system.fullAlarmStatus" color="secondary" (click)="manageAlarmStatus(system.id)">
+            <ion-icon name="power-outline"></ion-icon>
+          </ion-fab-button>
+          <ion-fab-button *ngIf="system.fullAlarmStatus" color="danger" (click)="manageAlarmStatus(system.id)">
+            <ion-icon name="power-outline"></ion-icon>
+          </ion-fab-button>
 
-          </ion-fab-list>
-        </ion-fab>
-      </ion-card-content>
-      <!-- <ion-card-content class="text-center abel system-card-content">
-        <p class="one-rem-bolder">{{system.description}}</p>
-      </ion-card-content> -->
-    </ion-card>
+        </ion-fab-list>
+      </ion-fab>
+    </ion-card-header>
+    <ion-card-content class="text-center abel" style="color: black;">
+      <div *ngIf="system.fullAlarmStatus else notConnectedBlock" style="color: rgb(231, 9, 58);">
+        <ion-icon name="power-outline" color="danger" style="font-size: 9rem;"></ion-icon>
+      </div>
+      <ng-template #notConnectedBlock>
+        <div>
+          <ion-icon name="power-outline" color="success" style="font-size: 9rem;"></ion-icon>
+        </div>
+      </ng-template>
+      <p *ngIf="system.fullAlarmStatus" style="color:rgb(8, 2, 14)">Connected since: {{ system.armedTimestamp }}</p>
+      <p class="one-rem-bolder">{{system.description}}</p>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
