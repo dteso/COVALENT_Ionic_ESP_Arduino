@@ -45,7 +45,9 @@ boolean toBoolean(String value)
 String booleanToString(boolean val)
 {
     if (val)
+    {
         return "1";
+    }
     return "0";
 }
 
@@ -55,8 +57,7 @@ void sendJsonDeviceData(char *topic)
     String deviceData;
     serialCore.send("STATUS PUBLISHED BY DEVICE [ " + status.deviceName + " ]");
     deviceData = "{\"localIp\": \"" + status.localIp + "\" , \"ssid\": \"" + status.ssid + "\", \"name\": \"" + status.deviceName + "\" ,\"temp\": \"" + status.temperature + "\" , \"hum\": \"" + status.humidity + "\", \"type\": \"" + status.deviceType +
-                 +"\", \"d6_status\": \"" + status.D6 +
-                 +"\"}";
+                 +"\", \"d6_status\": \"" + status.D6 + "\", \"alarm_status\": \"" + status.alarmStatus + "\", \"alarm_triggered\": \"" + status.alarmTriggered + "\"}";
     deviceData.toCharArray(message, 500);
     mqttClient.publishString(topic, message);
 }
@@ -75,13 +76,25 @@ void Covalent::verifyData(String data)
         serialCore.send("LAST TOPIC: " + mqttClient.lastTopic);
 
         serialCore.send("RECEIVED DATA ON TOPIC SET >" + data);
-        boolean currentOutputStatus = toBoolean(this->readStringFromMemory(D6_STATUS_DIR));
-        if (data == "TOGGLE_SWITCH_ON")
+        status.D6 = toBoolean(this->readStringFromMemory(D6_STATUS_DIR));
+
+        /* ALARMA */
+        if (data.indexOf("SWITCH_ALARM_ON")>-1)
+        {
+            status.alarmStatus = true;
+        }
+        else if (data.indexOf("SWITCH_ALARM_OFF")>-1)
+        {
+            status.alarmStatus = false;
+            status.alarmTriggered = false;
+        }
+        /* SWITCH */ 
+        else if (data.indexOf("TOGGLE_SWITCH_ON")>-1)
         {
             status.D6 = true;
             digitalWrite(D6, HIGH);
         }
-        else if (data == "TOGGLE_SWITCH_OFF")
+        else if (data.indexOf("TOGGLE_SWITCH_OFF")>-1)
         {
             status.D6 = false;
             digitalWrite(D6, LOW);
@@ -101,6 +114,7 @@ void Covalent::verifyData(String data)
     mqttClient.lastTopic = "";
 }
 
+/** SETUP DE PINES ESPECÍFICOS ATENDIENDO A CONFIGURACIÓN POR TIPO DE DISPOSITIVO */
 void Covalent::applyDeviceTypeSetup()
 {
     pinMode(D4, OUTPUT);
@@ -124,6 +138,7 @@ void Covalent::applyDeviceTypeSetup()
     status.D6 = toBoolean(this->readStringFromMemory(D6_STATUS_DIR));
 }
 
+/** LOOP PROPIO PARA CADA TIPO DE DISPOSITIVO  */
 void Covalent::applyDeviceTypeLoop()
 {
     // 0. MOVEMENT DETECTOR [ESP-PIR]
@@ -133,9 +148,22 @@ void Covalent::applyDeviceTypeLoop()
         detection = digitalRead(D6);
         detection ? digitalWrite(D5, HIGH) : digitalWrite(D5, LOW);
         status.D6 = detection;
+        if (status.alarmStatus)
+        {
+            digitalWrite(D4, HIGH);
+        }
+        else
+        {
+            digitalWrite(D4, LOW);
+        }
         if (detection != lastDetection)
         {
             detection ? serialCore.send("[ESP-PIR] - Movement detected") : serialCore.send("[ESP-PIR] - END of DETECTION");
+            if (detection && status.alarmStatus)
+            {
+                serialCore.send("[ESP-PIR] - ALARM!!!!");
+                status.alarmTriggered = true;
+            }
             sendJsonDeviceData(main_topic);
             lastDetection = detection;
         }

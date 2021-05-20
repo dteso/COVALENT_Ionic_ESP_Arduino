@@ -112,6 +112,8 @@ struct Status
     boolean D6_behaviour;
     boolean D5_behaviour;
     boolean D4_behaviour;
+    boolean alarmStatus;
+    boolean alarmTriggered;
 };
 
 
