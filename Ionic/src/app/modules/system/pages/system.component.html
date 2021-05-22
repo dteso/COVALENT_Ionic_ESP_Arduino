@@ -37,13 +37,13 @@
         </ion-fab-list>
       </ion-fab>
     </ion-card-header>
-    <ion-card-content class="text-center abel" style="color: black;">
+    <ion-card-content class="text-center abel" style="color: black;" (click)="manageAlarmStatus(system.id)">
       <div *ngIf="system.fullAlarmStatus else notConnectedBlock" style="color: rgb(231, 9, 58);">
-        <ion-icon name="power-outline" color="danger" style="font-size: 9rem;"></ion-icon>
+        <ion-icon name="power-outline" color="primary" style="font-size: 9rem;"></ion-icon>
       </div>
       <ng-template #notConnectedBlock>
         <div>
-          <ion-icon name="power-outline" color="success" style="font-size: 9rem;"></ion-icon>
+          <ion-icon name="power-outline" color="medium" style="font-size: 9rem;"></ion-icon>
         </div>
       </ng-template>
       <p *ngIf="system.fullAlarmStatus" style="color:rgb(8, 2, 14)">Connected since: {{ system.armedTimestamp }}</p>

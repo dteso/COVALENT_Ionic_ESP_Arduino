@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MqttService, IMqttMessage } from "ngx-mqtt";
 import { Subscription } from "rxjs";
+import { connectableObservableDescriptor } from "rxjs/internal/observable/ConnectableObservable";
 import { StorageService, BluetoothService } from "src/app/services/services";
 import { StatusService } from "src/app/services/status.service";
 import { MQTT_SERVICE_OPTIONS } from "../../mqtt-client/components/mqtt-options";
@@ -21,6 +22,7 @@ export class SystemDetailComponent implements OnInit {
   mcuOutputStatus = false;
   activeBluetooth;
   systemId;
+  searching = true;
 
   private subscription: Subscription;
   options = MQTT_SERVICE_OPTIONS;
@@ -46,7 +48,8 @@ export class SystemDetailComponent implements OnInit {
     this.options.port = this.mqttServers[this.serverSelected].port;
     this.options.path = this.mqttServers[this.serverSelected].path;
     this._mqttService.connect(this.options);
-    this.sendmsg(`medusa/devices/outputs`, "SUPERV");
+    console.log('connecting...');   
+    this.subscribeTo(`medusa/devices/outputs`);
   }
 
   async ngOnInit() {
@@ -60,7 +63,10 @@ export class SystemDetailComponent implements OnInit {
     await this.storage
       .getDevices()
       .then((devs) => {
-        devs.map((dev) => (dev.system = !dev.system ? 0 : dev.system));
+        devs.map((dev) =>{
+          dev.system = !dev.system ? 0 : dev.system;  
+          dev.collapsed = true;
+        });
         this.storedDevices = devs;
         this.systemDevices = this.storedDevices.filter(
           (stored) => stored.system === parseInt(this.systemId, 10)
@@ -69,25 +75,24 @@ export class SystemDetailComponent implements OnInit {
           dev.online = false;
         });
         console.log("System Devices: ", this.systemDevices);
-        this.subscribeTo(`medusa/devices/outputs`);
       })
       .catch((err) => console.log("error ", err));
     await this.storage.getBluetoothId().then((res) => {
       this.activeBluetooth = res;
     });
     this.exploreBluetoothDevices();
-    //this.sendmsg(`medusa/devices/outputs`, "SUPERV");
+    this.sendmsg(`medusa/devices/outputs`, "SUPERV");
     await this.bluetooth
       .getCurrentDevice()
       .then((res) => console.log("RES:" + JSON.stringify(res)));
   }
 
   ionViewWillEnter() {
-  this.sendmsg(`medusa/devices/outputs`, "SUPERV");
+    this.sendmsg(`medusa/devices/outputs`, "SUPERV");
     this.exploreBluetoothDevices();
   }
 
-  ionViewDidLeave() {
+  ionViewWillLeave() {
     this.subscription.unsubscribe();
   }
 
@@ -120,6 +125,10 @@ export class SystemDetailComponent implements OnInit {
     }      
   }
 
+  onChangeDeviceView(index){
+    this.systemDevices[index].collapsed = this.systemDevices[index].collapsed ? false : true;
+  }
+
   async deleteDevice(index) {
     this.systemDevices.splice(index, 1);
     await this.storage.setDevices(this.systemDevices);
@@ -144,6 +153,7 @@ export class SystemDetailComponent implements OnInit {
               (dev) => dev.name === data.name
             );
             if(this.systemDevices[index]){
+              this.searching = false;
               this.systemDevices[index].online = true;
               this.systemDevices[index].temperature = data.temp;
               this.systemDevices[index].humidity = data.hum;

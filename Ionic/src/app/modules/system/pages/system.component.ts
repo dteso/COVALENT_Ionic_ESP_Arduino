@@ -28,12 +28,17 @@ export class SystemComponent implements OnInit{
     private readonly _mqttService: MqttService,
     private readonly router: Router
   ) { 
-    this._mqttService.disconnect();
+    //this._mqttService.disconnect();
     this.options.hostname = this.mqttServers[this.serverSelected].hostname;
     this.options.port = this.mqttServers[this.serverSelected].port;
     this.options.path = this.mqttServers[this.serverSelected].path;
     this._mqttService.connect(this.options);
-    //this.sendmsg(`medusa/devices/outputs`, "SUPERV");
+    console.log('connecting...');
+    console.log(this._mqttService.state);
+    setTimeout(()=>{
+      this.sendmsg(`medusa/devices/outputs`, "SUPERV");
+      console.log('supervision requested');
+    }, 500);
   }
   
 

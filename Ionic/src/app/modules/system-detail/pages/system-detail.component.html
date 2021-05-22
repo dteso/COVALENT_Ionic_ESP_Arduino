@@ -2,14 +2,48 @@
   <div *ngIf="systemDevices.length === 0" class="text-center txt-white" style="margin-top: 3rem;">
     No devices added to this system.
   </div>
+
+  <ion-row class="text-center abel" *ngIf="searching" style="color: white; background: rgb(63, 63, 63); border-radius: 2%;text-align: center;">
+    <ion-col size="12" >
+      <strong>Searching devices</strong>
+    </ion-col>
+    <ion-col size="12" >
+      <ion-spinner name="dots" color="secondary" class="devs-spinner" style="margin-right: 1rem;"></ion-spinner>
+    </ion-col>
+  </ion-row>
+
   <ion-card *ngFor="let device of systemDevices; index as i;" class="abel" style="border: 3px solid white;">
 
-    <ion-card-header class="degradation-one-to-four" style="display: flex !important; border-bottom: 0.5px solid black;">    
+    <ion-card-header class="degradation-one-to-four" style="display: flex !important; border-bottom: 0.5px solid black;" (click)="onChangeDeviceView(i)">    
       <ion-col size='9'>
         <div *ngIf="device && device.online" style="margin-bottom: 0.625rem;">
+
+          <ion-button *ngIf="device.type === 'Movement' && device.alarm_status === '1' && device.alarm_triggered === '0' && device.collapsed" color="danger" size="small" fill="outline" shape="round">
+            <ion-icon name="power-outline"></ion-icon>
+          </ion-button>
+          <ion-button *ngIf="device.type === 'Movement' && device.alarm_triggered === '1' && device.collapsed" color="danger" size="small" shape="round">
+            <ion-icon name="notifications" ></ion-icon>
+          </ion-button>
+          <ion-button *ngIf="device.type === 'Movement' && device.d6_status === '0'  && device.alarm_status === '0' &&  device.collapsed" color="lightgray" size="small" fill="outline" shape="round">
+            <ion-icon name="man"></ion-icon>
+          </ion-button>
+          <ion-button *ngIf="device.type === 'Movement' && device.d6_status === '1'  && device.alarm_status === '0' && device.collapsed" color="warning" size="small" shape="round">
+            <ion-icon name="walk" ></ion-icon>
+          </ion-button>
+          
+
+          <ion-button *ngIf="device.type === 'Switch' && device.d6_status === '0' && device.collapsed" color="lightgray" size="small" fill="outline" shape="round" (click)="onAction1(i, device)">
+            <ion-icon name="bulb" ></ion-icon>
+          </ion-button>
+          <ion-button *ngIf="device.type === 'Switch' && device.d6_status === '1' && device.collapsed" color="warning" size="small" fill="outline" shape="round" (click)="onAction1(i, device)">
+            <ion-icon name="bulb" ></ion-icon>
+          </ion-button>
+
+
+          <!-- connectivity buttons -->
           <ion-button *ngIf="device.connectingByBluetooth"
           (click)="bluetoothConnection(device.bluetoothId)" color="secondary" size="small" fill="outline" shape="round">
-          <ion-spinner name="dots" color="secondary"></ion-spinner>
+          <ion-spinner name="dots" color="secondary" class="bt-spinner"></ion-spinner>
           </ion-button>
           <ion-button *ngIf="(getBluetoothAvailable(device.bluetoothId)) && !device.connectingByBluetooth"
           (click)="bluetoothConnection(device.bluetoothId)" color="secondary" size="small" fill="outline" shape="round">
@@ -48,7 +82,7 @@
         </ng-template>
       </ion-col>
     </ion-card-header>
-    <ion-card-content class="text-center" style="background: -webkit-linear-gradient(-90deg, #f9fafc 70%, transparent 100%);">
+    <ion-card-content *ngIf="device.collapsed!==undefined && device.collapsed===false" class="text-center" style="background: -webkit-linear-gradient(-90deg, #f9fafc 70%, transparent 100%);">
       
       <ion-row *ngIf="!device.online" class="text-center" style="padding-top: 1rem;" (click)="deleteDevice(i)">
         <ion-button fill="outline" color="danger" style="width: 50%;">
@@ -103,7 +137,7 @@
               <h3>Searching</h3>
             </ion-col>
             <ion-col size='5'>
-              <ion-spinner name="dots" color="secondary"></ion-spinner>
+              <ion-spinner name="dots" color="secondary" class="bt-spinner"></ion-spinner>
             </ion-col>
           </ion-row>
   

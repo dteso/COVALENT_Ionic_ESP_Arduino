@@ -3,6 +3,7 @@
 #include <serial.hpp>
 #include <mqtt.hpp>
 #include "myoled.cpp"
+#include "http-client.hpp"
 
 /*-------------VARIABLES DE TIEMPO---------------------*/
 int newValue;
@@ -30,6 +31,7 @@ char message[500] = "";
 char topic[100] = "";
 char main_topic[200] = "medusa/devices/outputs";
 boolean lastDetection = false;
+boolean alarmConfirmed;
 
 Covalent::Covalent() {}
 
@@ -87,6 +89,7 @@ void Covalent::verifyData(String data)
         {
             status.alarmStatus = false;
             status.alarmTriggered = false;
+            alarmConfirmed = false;
         }
         /* SWITCH */ 
         else if (data.indexOf("TOGGLE_SWITCH_ON")>-1)
@@ -130,6 +133,7 @@ void Covalent::applyDeviceTypeSetup()
     if (status.deviceType == "Movement")
     {
         pinMode(D6, INPUT);
+        alarmConfirmed = false;
     }
     else if (status.deviceType == "Switch")
     {
@@ -159,9 +163,11 @@ void Covalent::applyDeviceTypeLoop()
         if (detection != lastDetection)
         {
             detection ? serialCore.send("[ESP-PIR] - Movement detected") : serialCore.send("[ESP-PIR] - END of DETECTION");
-            if (detection && status.alarmStatus)
+            if (detection && status.alarmStatus && ! alarmConfirmed)
             {
                 serialCore.send("[ESP-PIR] - ALARM!!!!");
+                alarmConfirmed = true;
+                post();
                 status.alarmTriggered = true;
             }
             sendJsonDeviceData(main_topic);

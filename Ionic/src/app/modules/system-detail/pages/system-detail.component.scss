@@ -12,3 +12,15 @@ ion-content{
    }
    
 
+   ion-spinner {
+
+     .bt-spinner{
+      transform: scale(3);
+     }
+
+     .devs-spinner{
+      transform: scale(15);
+     }
+    
+  }
+
