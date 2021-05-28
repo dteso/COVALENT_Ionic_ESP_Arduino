@@ -1,14 +1,14 @@
-<ion-item style="background: -webkit-linear-gradient(-90deg, black 20%, transparent 100%);">
-  <ion-col size='1'>
-    <ion-icon name="arrow-back-outline" style="color: white; font-size: 1.5rem;"></ion-icon>
+<ion-item style="background: -webkit-linear-gradient(-90deg, black 20%, purple 100%);">
+  <ion-col size='2'>
+    <ion-icon name="arrow-back-outline" style="color: white; font-size: 3rem;" [routerLink]="['/system']" routerLinkActive="router-link-active"></ion-icon>
   </ion-col>
-    <ion-col size='10' class="text-center">
+    <ion-col size='8' class="text-center">
       <ion-label style="color: white; display: inline-flex;">
         <h1 class="abel"><strong>{{statusService.state.name}}</strong></h1>
       </ion-label>
     </ion-col>
-    <ion-col size='1'>
-      <ion-icon name="save-outline" style="color: white; font-size: 1.5rem;" (click)="showNameDeviceInput = !showNameDeviceInput"></ion-icon>
+    <ion-col size='2'>
+      <ion-icon name="save-outline" style="color: white; font-size: 3rem;" (click)="showNameDeviceInput = !showNameDeviceInput"></ion-icon>
     </ion-col>
 
 </ion-item>
@@ -155,7 +155,7 @@
 
           <!-- NTP -->
           <ion-item lines="none">
-            <ion-button *ngIf="!statusService.state.ntpEnabled" fill="outline" shape="round" [routerLink]="['/device']"
+            <ion-button *ngIf="!statusService.state.ntpEnabled || !statusService.state.bluetoothConnected" fill="outline" shape="round" [routerLink]="['/device']"
               color="dark" routerLinkActive="router-link-active">
               <ion-icon name="time"></ion-icon>
             </ion-button>
@@ -164,7 +164,7 @@
               <ion-icon name="time"></ion-icon>
             </ion-button>
 
-            <ion-button fill="outline" *ngIf="!statusService.state.ntpEnabled || !statusService.state.wifiConnected" shape="round" [routerLink]="['/device']"
+            <ion-button fill="outline" *ngIf="!statusService.state.ntpEnabled || !statusService.state.bluetoothConnected || !statusService.state.wifiConnected" shape="round" [routerLink]="['/device']"
               color="dark" routerLinkActive="router-link-active" class="w-100">
               NTP
             </ion-button>
@@ -173,7 +173,7 @@
               {{statusService.state.ntpData}}
             </ion-button>
 
-            <ion-button fill="outline" *ngIf="!statusService.state.ntpEnabled" color="dark" shape="round">
+            <ion-button fill="outline" *ngIf="!statusService.state.ntpEnabled || !statusService.state.bluetoothConnected" color="dark" shape="round">
               <ion-icon name="infinite-outline"></ion-icon>
             </ion-button>
             <ion-button *ngIf="statusService.state.ntpEnabled && statusService.state.bluetoothConnected" color="secondary" shape="round">
@@ -247,34 +247,34 @@
           <!-- WEATHER -->
           <ion-item lines="none">
             <ion-button
-              *ngIf="statusService.state.temperature.length === 0 && statusService.state.temperature.length === 0"
+              *ngIf="statusService.state.temperature.length === 0 || !statusService.state.bluetoothConnected"
               fill="outline" shape="round" color="dark" [routerLink]="['/weather']"
               routerLinkActive="router-link-active">
               <ion-icon name="thermometer"></ion-icon>
             </ion-button>
-            <ion-button *ngIf="statusService.state.temperature.length > 0 && statusService.state.temperature.length > 0 && statusService.state.bluetoothConnected"
+            <ion-button *ngIf="statusService.state.temperature.length > 0 && statusService.state.bluetoothConnected"
               shape="round" color="secondary" [routerLink]="['/weather']" routerLinkActive="router-link-active">
               <ion-icon name="thermometer"></ion-icon>
             </ion-button>
 
             <ion-button
-              *ngIf="statusService.state.temperature.length === 0 && statusService.state.temperature.length === 0"
+              *ngIf="statusService.state.temperature.length === 0 || !statusService.state.bluetoothConnected"
               fill="outline" shape="round" color="dark" [routerLink]="['/weather']"
               routerLinkActive="router-link-active" class="w-100">
               Weather
             </ion-button>
-            <ion-button *ngIf="statusService.state.temperature.length > 0 && statusService.state.temperature.length > 0 && statusService.state.bluetoothConnected"
+            <ion-button *ngIf="statusService.state.temperature.length > 0 && statusService.state.bluetoothConnected"
               shape="round" color="secondary" [routerLink]="['/weather']" routerLinkActive="router-link-active"
               class="w-100">
               {{statusService.state.temperature}} ºC - {{statusService.state.humidity}} %
             </ion-button>
 
             <ion-button
-              *ngIf="statusService.state.temperature.length === 0 && statusService.state.temperature.length === 0"
+              *ngIf="statusService.state.temperature.length === 0 || !statusService.state.bluetoothConnected"
               fill="outline" shape="round" color="dark">
               <ion-icon name="infinite-outline"></ion-icon>
             </ion-button>
-            <ion-button *ngIf="statusService.state.temperature.length > 0 && statusService.state.temperature.length > 0 && statusService.state.bluetoothConnected"
+            <ion-button *ngIf="statusService.state.temperature.length > 0 && statusService.state.bluetoothConnected"
               shape="round" color="secondary">
               <ion-icon name="infinite-outline"></ion-icon>
             </ion-button>
@@ -301,7 +301,7 @@
               routerLinkActive="router-link-active">
               <ion-icon name="pulse"></ion-icon>
             </ion-button>
-            <ion-button fill="outline" shape="round" color="dark" [routerLink]="['/device']"
+            <ion-button fill="outline" shape="round" color="dark" [routerLink]="['/device-configuration']"
               routerLinkActive="router-link-active" class="w-100">
               Configuration
             </ion-button>
@@ -310,7 +310,6 @@
             </ion-button>
           </ion-item>
         </div>
-
       </ion-card-content>
     </ion-card>
   </ion-row>

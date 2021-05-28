@@ -1,9 +1,18 @@
+<ion-item style="background: -webkit-linear-gradient(-90deg, black 20%, rgb(252, 17, 111) 100%);">
+  <ion-col size='2'>
+    <ion-icon name="arrow-back-outline" style="color: white; font-size: 3rem;" [routerLink]="['/home']" routerLinkActive="router-link-active"></ion-icon>
+  </ion-col>
+    <ion-col size='8' class="text-center">
+      <ion-label style="color: white; display: inline-flex;">
+        <h1 class="abel"><strong>SYSTEMS</strong></h1>
+      </ion-label>
+    </ion-col>
+    <ion-col size='2'>
+      <ion-icon name="add-circle-outline" style="color: white; font-size: 3rem;" (click)="showNameDeviceInput = !showNameDeviceInput" [routerLink]="['/add-system']" routerLinkActive="router-link-active"></ion-icon>
+    </ion-col>
+</ion-item>
+
 <ion-content class="abel">
-
-  <ion-button color="lightgray" expand="block" size="large" [routerLink]="['/add-system']" routerLinkActive="router-link-active">
-      <ion-icon name="add-circle-outline" color="dark"></ion-icon>
-  </ion-button>
-
   <ion-card *ngFor="let system of storedSystems"
     [ngClass]="{'system-card':!system.fullAlarmStatus , 'system-card-armed':system.fullAlarmStatus }">
     <ion-card-header class="abel degradation-one-to-four">
@@ -14,7 +23,7 @@
       </div>
 
       <!-- <p>{{system.ssid}}</p> -->
-      <ion-fab horizontal="start" vertical="top" edge class="top-position">
+      <!-- <ion-fab horizontal="start" vertical="top" edge class="top-position">
         <ion-fab-button color="light">
           <ion-icon name="cog-outline"></ion-icon>
         </ion-fab-button>
@@ -35,15 +44,15 @@
           </ion-fab-button>
 
         </ion-fab-list>
-      </ion-fab>
+      </ion-fab> -->
     </ion-card-header>
-    <ion-card-content class="text-center abel" style="color: black;" (click)="manageAlarmStatus(system.id)">
+    <ion-card-content class="text-center abel" style="color: black;" (click)="toSystemDetail(system.id)">
       <div *ngIf="system.fullAlarmStatus else notConnectedBlock" style="color: rgb(231, 9, 58);">
-        <ion-icon name="power-outline" color="primary" style="font-size: 9rem;"></ion-icon>
+        <ion-icon name="lock-closed-outline" color="primary" style="font-size: 9rem;"></ion-icon>
       </div>
       <ng-template #notConnectedBlock>
         <div>
-          <ion-icon name="power-outline" color="medium" style="font-size: 9rem;"></ion-icon>
+          <ion-icon name="lock-open-outline" color="medium" style="font-size: 9rem;"></ion-icon>
         </div>
       </ng-template>
       <p *ngIf="system.fullAlarmStatus" style="color:rgb(8, 2, 14)">Connected since: {{ system.armedTimestamp }}</p>

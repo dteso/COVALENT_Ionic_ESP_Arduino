@@ -67,7 +67,7 @@ export class EepromComponent implements OnInit {
     this.bluetooth.dataInOut(`${message}\n`).subscribe(data => {
       if (data !== 'BLUETOOTH.NOT_CONNECTED') {
         this.serialData.fullStr+= data;
-        let percentagePos
+        let percentagePos;
         if(percentagePos = data.indexOf('%')>-1){
           this.serialData.lastStr = data;
           this.percentageLoad =  parseInt(data.substring(0,data.length-1),10);

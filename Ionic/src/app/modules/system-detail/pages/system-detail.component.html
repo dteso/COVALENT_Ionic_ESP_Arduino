@@ -1,9 +1,36 @@
-<ion-content>
-  <div *ngIf="systemDevices.length === 0" class="text-center txt-white" style="margin-top: 3rem;">
-    No devices added to this system.
-  </div>
+<ion-item style="background: -webkit-linear-gradient(-90deg, black 20%, purple 100%);" >
+  <ion-col size='3' class="text-center">
+    <ion-icon name="arrow-back" style="color: white; font-size: 3rem;" [routerLink]="['/system']" routerLinkActive="router-link-active"></ion-icon>
+    <div class="text-white">BACK</div>
+  </ion-col>
 
-  <ion-row class="text-center abel" *ngIf="searching" style="color: white; background: rgb(63, 63, 63); border-radius: 2%;text-align: center;">
+    <ion-col size='3' class="text-center">
+      <ion-icon name="add-circle-outline" style="color: white; font-size: 3rem;" [routerLink]="['/system']" routerLinkActive="router-link-active"></ion-icon>
+      <div class="text-white">ADD</div>
+    </ion-col>
+
+    <ion-col size='3' class="text-center">
+      <ion-icon name="bulb-outline" style="color: white; font-size: 3rem;" [routerLink]="['/system']" routerLinkActive="router-link-active"></ion-icon>
+      <div class="text-white">SWITCH</div>
+    </ion-col>
+
+
+    <ion-col size='3' class="text-center text-white" *ngIf="getSystemStatusById(systemId) && getSystemStatusById(systemId).fullAlarmStatus else notConnectedBlock">
+      <ion-icon name="lock-closed-outline" style="color: rgb(4, 252, 169); font-size: 3rem;" (click)="manageAlarmStatus(systemId)"></ion-icon>
+      <div class="text-white">ALARM</div>
+    </ion-col>
+    <ng-template #notConnectedBlock>
+      <ion-col size='3' class="text-center">
+        <ion-icon name="lock-open-outline" style="color: white; font-size: 3rem;" (click)="manageAlarmStatus(systemId)"></ion-icon>
+        <div class="text-white">ALARM</div>
+      </ion-col>
+    </ng-template>
+</ion-item>
+
+<ion-content>
+
+
+  <ion-row class="text-center abel" *ngIf="searching" style="color: white; background: rgb(63, 63, 63); text-align: center; padding-top: 1rem;">
     <ion-col size="12" >
       <strong>Searching devices</strong>
     </ion-col>
@@ -12,22 +39,26 @@
     </ion-col>
   </ion-row>
 
+  <div *ngIf="systemDevices.length === 0" class="text-center txt-white" style="margin-top: 3rem;">
+    No devices added to this system.
+  </div>
+
   <ion-card *ngFor="let device of systemDevices; index as i;" class="abel" style="border: 3px solid white;">
 
-    <ion-card-header class="degradation-one-to-four" style="display: flex !important; border-bottom: 0.5px solid black;" (click)="onChangeDeviceView(i)">    
+    <ion-card-header class="degradation-one-to-four" style="display: flex !important; border-bottom: 0.5px solid black;">    
       <ion-col size='9'>
         <div *ngIf="device && device.online" style="margin-bottom: 0.625rem;">
 
-          <ion-button *ngIf="device.type === 'Movement' && device.alarm_status === '1' && device.alarm_triggered === '0' && device.collapsed" color="danger" size="small" fill="outline" shape="round">
+          <ion-button *ngIf="device.type === 'Movement' && device.alarm_status === '1' && device.alarm_triggered === '0'" color="danger" size="small" fill="outline" shape="round">
             <ion-icon name="power-outline"></ion-icon>
           </ion-button>
           <ion-button *ngIf="device.type === 'Movement' && device.alarm_triggered === '1' && device.collapsed" color="danger" size="small" shape="round">
             <ion-icon name="notifications" ></ion-icon>
           </ion-button>
-          <ion-button *ngIf="device.type === 'Movement' && device.d6_status === '0'  && device.alarm_status === '0' &&  device.collapsed" color="lightgray" size="small" fill="outline" shape="round">
+          <ion-button *ngIf="device.type === 'Movement' && device.d6_status === '0' && device.alarm_status === '0' &&  device.collapsed" color="lightgray" size="small" fill="outline" shape="round">
             <ion-icon name="man"></ion-icon>
           </ion-button>
-          <ion-button *ngIf="device.type === 'Movement' && device.d6_status === '1'  && device.alarm_status === '0' && device.collapsed" color="warning" size="small" shape="round">
+          <ion-button *ngIf="device.type === 'Movement' && device.d6_status === '1' && device.alarm_status === '0' && device.collapsed" color="warning" size="small" shape="round">
             <ion-icon name="walk" ></ion-icon>
           </ion-button>
           
@@ -54,7 +85,7 @@
             <ion-icon name="bluetooth-outline" ></ion-icon>
           </ion-button>
 
-          <ion-button color="tertiary" size="small" shape="round">
+          <ion-button color="tertiary" size="small" shape="round" (click)="showNetworkStatus(i)">
             <ion-icon name="wifi-outline" ></ion-icon>
           </ion-button>
 
@@ -63,12 +94,15 @@
           </ion-button>
         </div>
 
-        <div style="font-size: 1.5rem; color: white !important;"><strong>{{device.name | uppercase}}</strong></div>
-        <div class="color-white">Device MAC: {{device.deviceMAC}}</div>
-        <div class="color-white">BT MAC: {{device.bluetoothId}}</div>
+        <div (click)="onChangeDeviceView(i)">
+          <div style="font-size: 1.5rem; color: white !important;"><strong>{{device.name | uppercase}}</strong></div>
+          <div class="color-white">Device MAC: {{device.deviceMAC}}</div>
+          <div class="color-white">BT MAC: {{device.bluetoothId}}</div>
+        </div>
+
 
       </ion-col>
-      <ion-col size='3' style="font-size: larger !important;" class="text-center">
+      <ion-col size='3' style="font-size: larger !important;" class="text-center" (click)="onChangeDeviceView(i)">
         <div *ngIf="device.online else offline">
           <ion-button color="medium" size="small" fill="outline" shape="round" (click)="deleteDevice(i)">
             <ion-icon name="close-outline"></ion-icon>
@@ -92,8 +126,9 @@
 
       <ion-row *ngIf="device.online" class="text-center">
         <ion-col size='6' style="padding-top: 1.5rem;">
-          <div><strong>IP: {{device.localIp}}</strong></div>
+          <!-- <div><strong>IP: {{device.localIp}}</strong></div>
           <p><strong>WiFi: {{device.wifiSSID}}</strong></p>
+          <p><strong>Signal: - {{device.signal_strength}} dB</strong></p> -->
           <ion-row style="padding-top: 1rem;">
             <ion-col size='6' class="text-center">
               <div>

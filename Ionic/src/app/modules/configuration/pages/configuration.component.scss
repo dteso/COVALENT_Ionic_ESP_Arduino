@@ -1,0 +1,30 @@
+ion-content{
+    // --ion-background-color: -webkit-linear-gradient(-55deg, #02062c 50%, #041e57 100%);
+    --background: url('../../../../assets/images/white_hexagons.jpg') no-repeat center/cover fixed;
+}
+
+ion-item{
+    color: black;
+    --background: transparent;
+}
+
+/* Set the placeholder color and opacity */
+ion-select::part(placeholder) {
+    color: #4d0346;
+    opacity: 1;
+}
+
+ion-card-header{
+    --color: white !important;
+    --background: -webkit-linear-gradient(-90deg, #4d0346 25%, transparent 100%);
+}
+
+ion-card-title {
+    color: lightgrey;
+    opacity: 1;
+}
+
+ion-card-subtitle {
+    color: white;
+    opacity: 1;
+}

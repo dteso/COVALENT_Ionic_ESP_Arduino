@@ -45,7 +45,7 @@ public:
     int getMemorySize();
     void clearMemoryRange(int, int);
     void clearMemory();
-    boolean saveStringInMemory(int, String);
+    boolean saveStringInMemory(int, String, int);
     String readStringFromMemory(int);
 
     // NTP

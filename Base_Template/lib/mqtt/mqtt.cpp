@@ -9,6 +9,7 @@ String topicResponse;
 String payloadData;
 String topicData;
 String deviceName;
+String wifiMAC;
 char msg[50];
 
 SerialCore serialcore;
@@ -63,10 +64,11 @@ void Mqtt::reconnect(boolean restart)
             // GENERAL TOPIC SUBSCRIPTION
             client.subscribe("medusa/devices/outputs");
             // DEVICE SUBSCRIPTION ( topic where we'll get commands to manage )
-            if (deviceName != "")
+            if (wifiMAC != "")
             {
                 char commandsTopic[200] = "";
-                String ownTopic = "medusa/set/" + deviceName;
+                String ownTopic = "medusa/set/" + wifiMAC;
+                Serial.print("MQTT topic: "); Serial.println(ownTopic);
                 ownTopic.toCharArray(commandsTopic, 100);
                 client.subscribe(commandsTopic);
             }

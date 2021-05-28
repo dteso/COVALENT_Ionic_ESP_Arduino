@@ -27,7 +27,7 @@ int lastSec = 0;
 SerialCore serialCore;
 Status status;
 Mqtt mqttClient;
-char message[500] = "";
+char message[800] = "";
 char topic[100] = "";
 char main_topic[200] = "medusa/devices/outputs";
 boolean lastDetection = false;
@@ -55,12 +55,25 @@ String booleanToString(boolean val)
 
 void sendJsonDeviceData(char *topic)
 {
-    //serialCore.send("LAST TOPIC: " + mqttClient.lastTopic);
+    String signalStrength = String(WiFi.RSSI()); 
+    signalStrength = signalStrength.substring(1, signalStrength.length());
+    serialCore.send(signalStrength);
     String deviceData;
     serialCore.send("STATUS PUBLISHED BY DEVICE [ " + status.deviceName + " ]");
-    deviceData = "{\"localIp\": \"" + status.localIp + "\" , \"ssid\": \"" + status.ssid + "\", \"name\": \"" + status.deviceName + "\" ,\"temp\": \"" + status.temperature + "\" , \"hum\": \"" + status.humidity + "\", \"type\": \"" + status.deviceType +
-                 +"\", \"d6_status\": \"" + status.D6 + "\", \"alarm_status\": \"" + status.alarmStatus + "\", \"alarm_triggered\": \"" + status.alarmTriggered + "\"}";
-    deviceData.toCharArray(message, 500);
+    deviceData = "{\"rssi\": \"" + signalStrength 
+                + "\" , \"ip\": \"" + status.localIp 
+                + "\" , \"ssid\": \"" + status.ssid 
+                + "\", \"name\": \"" + status.deviceName 
+                + "\" ,\"temp\": \"" + status.temperature 
+                + "\" , \"hum\": \"" + status.humidity 
+                + "\", \"type\": \"" + status.deviceType 
+                +"\", \"d6\": \"" + status.D6 
+                + "\", \"mac\": \"" + status.wifiMac 
+                + "\", \"alrm_stat\": \"" + status.alarmStatus 
+                + "\", \"alrm_trig\": \"" + status.alarmTriggered 
+                + "\"}";
+    //Serial.print(deviceData);
+    deviceData.toCharArray(message, 800);
     mqttClient.publishString(topic, message);
 }
 
@@ -69,8 +82,10 @@ void sendJsonDeviceData(char *topic)
  */
 void Covalent::verifyData(String data)
 {
-    String ownTopic = "medusa/set/" + status.deviceName;
+    String ownTopic = "medusa/set/" + status.wifiMac;
     ownTopic.toCharArray(topic, 100);
+    // Serial.print("Own Topic: ");
+    // Serial.println(ownTopic);
 
     if (mqttClient.lastTopic == ownTopic)
     {
@@ -90,6 +105,8 @@ void Covalent::verifyData(String data)
             status.alarmStatus = false;
             status.alarmTriggered = false;
             alarmConfirmed = false;
+            //TODO: PENDIENTE DE PROBAR.
+            status.D6 = false;
         }
         /* SWITCH */ 
         else if (data.indexOf("TOGGLE_SWITCH_ON")>-1)
@@ -102,7 +119,7 @@ void Covalent::verifyData(String data)
             status.D6 = false;
             digitalWrite(D6, LOW);
         }
-        this->saveStringInMemory(D6_STATUS_DIR, booleanToString(status.D6));
+        this->saveStringInMemory(D6_STATUS_DIR, booleanToString(status.D6), D6_STATUS_SIZE);
         sendJsonDeviceData(main_topic);
     }
     else if (mqttClient.lastTopic == main_topic)
@@ -196,13 +213,14 @@ void Covalent::setup()
     dht.begin();
     this->WEB_SERVER_ENABLED = this->readStringFromMemory(WEB_SERVER_STATUS_DIR).indexOf("1") > -1 ? true : false;
     this->NTP_SERVER_ENABLED = true;
-    this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1");
+    this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1", NTP_SERVER_STATUS_SIZE);
     loadingScreen();
     display.clearDisplay();
     display.drawBitmap(0, 0, medusaka_logoBitmap, 128, 64, WHITE);
     display.display();
     status.mqttServer = mqttClient.mqtt_server;
     mqttClient.deviceName = this->readStringFromMemory(DEVICE_NAME_DIR);
+    mqttClient.wifiMAC = WiFi.macAddress();
     mqttClient.setupMqtt();
     if (WiFi.isConnected())
     {
@@ -318,25 +336,8 @@ void Covalent::reloj()
             mn++;
             if (WiFi.isConnected())
             {
-                Weather currentWeather;
-                currentWeather = this->readWeather();
-                String tempTopic = "medusa/get/" + status.deviceName + "/temperature";
-                String humTopic = "medusa/get/" + status.deviceName + "/humidity";
-                char topicTemp[100];
-                char topicHum[100];
-                tempTopic.toCharArray(topicTemp, 100);
-                humTopic.toCharArray(topicHum, 100);
-                mqttClient.publishFloatValue(topicTemp, currentWeather.temp);
-                snprintf(message, 50, " %.2f", currentWeather.temp);
-                serialCore.sendInLine(">>> Published on server: " + (String)mqttClient.mqtt_server + " - Topic: " + tempTopic + " > ");
-                delay(10);
-                serialCore.send(message);
-                delay(10);
-                mqttClient.publishFloatValue(topicHum, currentWeather.hum);
-                snprintf(message, 50, " %.2f", currentWeather.hum);
-                serialCore.sendInLine(">>> Published on server: " + (String)mqttClient.mqtt_server + " - Topic: " + humTopic + " > ");
-                delay(10);
-                serialCore.send(message);
+                sendJsonDeviceData("medusa/devices/outputs");
+                serialCore.send("Periodic I'm alive + Status message sent...");
                 delay(10);
             }
             this->ntp();
@@ -377,7 +378,7 @@ void Covalent::verifyCommands(String reading)
         String aux;
         aux = reading.substring(value.length(), reading.length());
         serialCore.send("[ESP_SERIAL] - WiFi SSID is " + aux);
-        this->saveStringInMemory(SSID_DIR, aux);
+        this->saveStringInMemory(SSID_DIR, aux, SSID_SIZE);
         aux = "";
         this->SSIDreadFromMemory = this->readStringFromMemory(SSID_DIR);
         serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)SSID_DIR + " ] ::: " + SSIDreadFromMemory + " - Size: " + SSIDreadFromMemory.length());
@@ -390,7 +391,7 @@ void Covalent::verifyCommands(String reading)
         boolean readCompleted = false;
         aux = reading.substring(value.length(), reading.length());
         serialCore.send("[ESP_SERIAL] - WiFi Password is " + aux);
-        readCompleted = this->saveStringInMemory(WIFI_PASS_DIR, aux);
+        readCompleted = this->saveStringInMemory(WIFI_PASS_DIR, aux, WIFI_PASS_SIZE);
         if (!readCompleted)
         {
             serialCore.send("[ESP-EEPROM] - " + aux + " >>> Saved in eeprom");
@@ -425,7 +426,7 @@ void Covalent::verifyCommands(String reading)
     {
         serialCore.send("[ESP_NET] - WEB SERVER ENABLED");
         WEB_SERVER_ENABLED = true;
-        this->saveStringInMemory(WEB_SERVER_STATUS_DIR, "1");
+        this->saveStringInMemory(WEB_SERVER_STATUS_DIR, "1", WEB_SERVER_STATUS_SIZE);
         webServer.begin();
         delay(100);
     }
@@ -435,7 +436,7 @@ void Covalent::verifyCommands(String reading)
     {
         serialCore.send("[ESP_NET] - WEB SERVER CLOSED");
         WEB_SERVER_ENABLED = false;
-        this->saveStringInMemory(WEB_SERVER_STATUS_DIR, "0");
+        this->saveStringInMemory(WEB_SERVER_STATUS_DIR, "0", WEB_SERVER_STATUS_SIZE);
         webServer.close();
     }
     delay(10);
@@ -444,7 +445,7 @@ void Covalent::verifyCommands(String reading)
     {
         serialCore.send("[ESP_NTP] - NTP ENABLED");
         NTP_SERVER_ENABLED = true;
-        this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1");
+        this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1", NTP_SERVER_STATUS_SIZE);
         delay(100);
     }
     delay(10);
@@ -453,7 +454,7 @@ void Covalent::verifyCommands(String reading)
     {
         serialCore.send("[ESP_NTP] - NTP DISABLED");
         NTP_SERVER_ENABLED = false;
-        this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "0");
+        this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "0", NTP_SERVER_STATUS_SIZE);
     }
     delay(10);
     value = READ_STATUS;
@@ -487,7 +488,7 @@ void Covalent::verifyCommands(String reading)
         String aux;
         aux = reading.substring(value.length(), reading.length());
         status.bluetoothId = aux;
-        this->saveStringInMemory(BT_ID_DIR, status.bluetoothId);
+        this->saveStringInMemory(BT_ID_DIR, status.bluetoothId, BT_ID_SIZE);
         serialCore.send("[ESP-SYS] - Bluetooth ID is: " + this->readStringFromMemory(BT_ID_DIR));
     }
     delay(10);
@@ -497,7 +498,7 @@ void Covalent::verifyCommands(String reading)
         String aux;
         aux = reading.substring(value.length(), reading.length());
         serialCore.send("[ESP-SYS] - DEVICE NAME:" + aux);
-        this->saveStringInMemory(DEVICE_NAME_DIR, aux);
+        this->saveStringInMemory(DEVICE_NAME_DIR, aux, DEVICE_NAME_SIZE);
         aux = "";
         status.deviceName = this->readStringFromMemory(DEVICE_NAME_DIR);
         mqttClient.deviceName = status.deviceName;
@@ -509,7 +510,7 @@ void Covalent::verifyCommands(String reading)
     if (reading.indexOf(value) > -1)
     {
         serialCore.send("[ESP-SYS] - DEVICE_MAC: " + WiFi.macAddress());
-        this->saveStringInMemory(DEVICE_MAC_DIR, WiFi.macAddress());
+        this->saveStringInMemory(DEVICE_MAC_DIR, WiFi.macAddress(), DEVICE_MAC_SIZE);
         this->deviceMacReadFromMemory = this->readStringFromMemory(DEVICE_MAC_DIR);
         //serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)DEVICE_MAC_DIR + " ] ::: " + deviceMacReadFromMemory + " - Size: " + deviceMacReadFromMemory.length());
     }
@@ -520,7 +521,7 @@ void Covalent::verifyCommands(String reading)
         String aux;
         aux = reading.substring(value.length(), reading.length());
         serialCore.send("[ESP-SYS] - MQTT_SERVER: " + aux);
-        this->saveStringInMemory(MQTT_SERVER_DIR, aux);
+        this->saveStringInMemory(MQTT_SERVER_DIR, aux, MQTT_SERVER_SIZE);
         this->readStringFromMemory(MQTT_SERVER_DIR).toCharArray(mqttClient.mqtt_server, 100);
         status.mqttServer = this->readStringFromMemory(MQTT_SERVER_DIR);
         mqttClient.setupMqtt();
@@ -533,7 +534,7 @@ void Covalent::verifyCommands(String reading)
         String aux;
         aux = reading.substring(value.length(), reading.length());
         serialCore.send("[ESP-SYS] - MQTT_PORT: " + aux);
-        this->saveStringInMemory(MQTT_PORT_DIR, aux);
+        this->saveStringInMemory(MQTT_PORT_DIR, aux, MQTT_PORT_SIZE);
         status.mqttPort = this->readStringFromMemory(MQTT_PORT_DIR);
         mqttClient.setupMqtt();
         //serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)MQTT_SERVER_DIR + " ] ::: " + deviceMacReadFromMemory + " - Size: " + deviceMacReadFromMemory.length());
@@ -545,7 +546,7 @@ void Covalent::verifyCommands(String reading)
         String aux;
         aux = reading.substring(value.length(), reading.length());
         status.deviceType = aux;
-        this->saveStringInMemory(DEVICE_TYPE_DIR, status.deviceType);
+        this->saveStringInMemory(DEVICE_TYPE_DIR, status.deviceType, DEVICE_TYPE_SIZE);
         serialCore.send("[ESP-SYS] - Device Type is: " + this->readStringFromMemory(DEVICE_TYPE_DIR));
     }
     reading = "";
@@ -558,12 +559,12 @@ void Covalent::getStatus()
     Weather currentWeather;
     serialCore.send("[ESP-NET] - BOARD: " + MCU);
     status.deviceName = this->readStringFromMemory(DEVICE_NAME_DIR);
-    serialCore.send("[ESP-NET] - DEVICE_NAME: " + status.deviceName);
+    serialCore.send("[ESP-SYS] - DEVICE_NAME: " + status.deviceName);
     status.STA_connected = WiFi.isConnected();
     if (status.STA_connected)
     {
         serialCore.send("[ESP-NET] - STA_STATUS_OK");
-        this->saveStringInMemory(LOCAL_IP_DIR, WiFi.localIP().toString());
+        this->saveStringInMemory(LOCAL_IP_DIR, WiFi.localIP().toString(), LOCAL_IP_SIZE);
         status.localIp = this->readStringFromMemory(LOCAL_IP_DIR);
         serialCore.send("[ESP-NET] - LOCAL IP: " + status.localIp);
         status.ssid = this->readStringFromMemory(SSID_DIR);
@@ -572,7 +573,7 @@ void Covalent::getStatus()
         if (status.mqttServer = "")
         {
             status.mqttServer = mqttClient.mqtt_server;
-            this->saveStringInMemory(MQTT_SERVER_DIR, status.mqttServer);
+            this->saveStringInMemory(MQTT_SERVER_DIR, status.mqttServer, MQTT_SERVER_SIZE);
         }
         serialCore.send("[ESP-NET] - MQTT_SERVER: " + status.mqttServer);
         status.mqttPort = this->readStringFromMemory(MQTT_PORT_DIR);
@@ -613,7 +614,7 @@ void Covalent::getStatus()
     serialCore.send("[ESP-DHT] - TEMP: " + (String)currentWeather.temp);
     serialCore.send("[ESP-SYS] - Bluetooth ID is: " + status.bluetoothId);
     serialCore.send("[ESP-SYS] - DEVICE_MAC: " + WiFi.macAddress());
-    this->saveStringInMemory(DEVICE_MAC_DIR, WiFi.macAddress());
+    this->saveStringInMemory(DEVICE_MAC_DIR, WiFi.macAddress(), DEVICE_MAC_SIZE);
     status.wifiMac = this->readStringFromMemory(DEVICE_MAC_DIR);
     serialCore.send("[ESP-SYS] - DEVICE_MAC: " + status.wifiMac);
     status.deviceType = this->readStringFromMemory(DEVICE_TYPE_DIR);
@@ -652,7 +653,7 @@ void Covalent::ConnectWiFi_STA(bool useStaticIP = false, String ssid = "", Strin
         serialCore.send("[ESP-NET] - STA: " + ssid);
         serialCore.send("[ESP-NET] - LOCAL IP: " + WiFi.localIP().toString()); // TODO: Debe poder pasarse a string
         status.localIp = WiFi.localIP().toString();
-        this->saveStringInMemory(LOCAL_IP_DIR, status.localIp);
+        this->saveStringInMemory(LOCAL_IP_DIR, status.localIp, LOCAL_IP_SIZE);
         delay(100);
         serialCore.send("[ESP-NET] - WIFI CONNECTION SUCCESS");
         delay(1000);
@@ -765,11 +766,11 @@ void Covalent::clearMemoryRange(int initPos, int rangeSize)
     serialCore.send("[ESP-EEPROM] - Register ready to write at pos " + (String)initPos + "...");
 }
 
-boolean Covalent::saveStringInMemory(int add, String data)
+boolean Covalent::saveStringInMemory(int add, String data, int fieldSize)
 {
     String dataToSave = data;
     serialCore.send("[ESP-EEPROM] - Data to Save: " + dataToSave + " - size: " + dataToSave.length());
-    clearMemoryRange(add, 20);
+    clearMemoryRange(add, fieldSize);
     for (unsigned int i = 0; i < dataToSave.length(); i++)
     {
         EEPROM.write(add + i, dataToSave[i]);

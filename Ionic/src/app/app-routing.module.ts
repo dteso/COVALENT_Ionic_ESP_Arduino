@@ -16,6 +16,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/device/device.module').then( m => m.DeviceModule)
   },
   {
+    path: 'device-configuration',
+    loadChildren: () => import('./modules/configuration/configuration.module').then( m => m.ConfigurationModule)
+  },
+  {
     path: 'touchscreen',
     loadChildren: () => import('./modules/touchscreen/touchscreen.module').then( m => m.TouchscreenModule)
   },

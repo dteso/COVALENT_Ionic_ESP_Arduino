@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { AlertController, LoadingController } from "@ionic/angular";
 import { MqttService, IMqttMessage } from "ngx-mqtt";
 import { Subscription } from "rxjs";
 import { connectableObservableDescriptor } from "rxjs/internal/observable/ConnectableObservable";
@@ -31,6 +32,7 @@ export class SystemDetailComponent implements OnInit {
   // TODO: Seleccionado mosquitto por defecto
   serverSelected = 1;
   device;
+  alert;
 
   constructor(
     private readonly storage: StorageService,
@@ -38,7 +40,8 @@ export class SystemDetailComponent implements OnInit {
     private readonly bluetooth: BluetoothService,
     private readonly statusService: StatusService,
     private readonly route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public alertController: AlertController
   ) {
     this.route.params.subscribe((data) => {
       this.systemId = data.id;
@@ -116,11 +119,12 @@ export class SystemDetailComponent implements OnInit {
   }
 
   onAction1(i, device) {
+    let deviceMAC = device.deviceMAC.substring(0, device.deviceMAC.length - 2);
     if(device.d6_status === "1"){
-      this.sendmsg(`medusa/set/${device.name}`, "TOGGLE_SWITCH_OFF");
+      this.sendmsg(`medusa/set/${deviceMAC}`, "TOGGLE_SWITCH_OFF");
       //device.d6_status = "0";
     }else{
-      this.sendmsg(`medusa/set/${device.name}`, "TOGGLE_SWITCH_ON");
+      this.sendmsg(`medusa/set/${deviceMAC}`, "TOGGLE_SWITCH_ON");
       //device.d6_status = "1";
     }      
   }
@@ -150,7 +154,7 @@ export class SystemDetailComponent implements OnInit {
           console.log("Device: ", data);
           if (this.systemDevices) {
             let index = this.systemDevices.findIndex(
-              (dev) => dev.name === data.name
+              (dev) => (dev.deviceMAC).substring(0, dev.deviceMAC.length - 2) === data.mac
             );
             if(this.systemDevices[index]){
               this.searching = false;
@@ -158,9 +162,10 @@ export class SystemDetailComponent implements OnInit {
               this.systemDevices[index].temperature = data.temp;
               this.systemDevices[index].humidity = data.hum;
               this.systemDevices[index].type = data.type.trimLeft();
-              this.systemDevices[index].d6_status = data.d6_status;
-              this.systemDevices[index].alarm_status = data.alarm_status;
-              this.systemDevices[index].alarm_triggered = data.alarm_triggered;
+              this.systemDevices[index].d6_status = data.d6;
+              this.systemDevices[index].alarm_status = data.alrm_stat;
+              this.systemDevices[index].alarm_triggered = data.alrm_trig;
+              this.systemDevices[index].signal_strength = data.rssi;
 
               if (!data.system) {
                 this.systemDevices[index].system = 0;
@@ -204,4 +209,58 @@ export class SystemDetailComponent implements OnInit {
         console.log(`E R R O R ----> ${err}`);
       });
   }
+
+
+  manageAlarmStatus(id){
+    let devicesToActivate = [];
+    let index = this.storedSystems.findIndex( stsys => stsys.id === parseInt(id,10));
+    if(this.storedSystems[index].fullAlarmStatus !== undefined && this.storedSystems[index].fullAlarmStatus === true){
+      this.storedSystems[index].fullAlarmStatus = false;
+      this.storedSystems[index].armedTimestamp = "";
+      // TODO: Filtrar por sistema cuando los dispositivos tengan Status.system
+      devicesToActivate = this.storedDevices;
+      devicesToActivate.map( dev => {
+        let deviceMAC = dev.deviceMAC.substring(0, dev.deviceMAC.length - 2);
+        this.sendmsg(`medusa/set/${deviceMAC}`, "SWITCH_ALARM_OFF");
+      });
+    }else{
+      let date = new Date();
+      this.storedSystems[index].fullAlarmStatus = true;
+      this.storedSystems[index].armedTimestamp = `${date.toLocaleDateString()} ${date.getHours()}: ${date.getMinutes()} :${date.getSeconds()}`;
+      // TODO: Filtrar por sistema cuando los dispositivos tengan Status.system
+      devicesToActivate = this.storedDevices;
+      devicesToActivate.map( dev => {
+        let deviceMAC = dev.deviceMAC.substring(0, dev.deviceMAC.length - 2);
+        this.sendmsg(`medusa/set/${deviceMAC}`, "SWITCH_ALARM_ON");
+      });
+    }
+    this.storage.setSystems(this.storedSystems);
+  }
+
+  showNetworkStatus(i){
+    let msg = {
+      subheader: this.systemDevices[i].signal_strength,
+      msg: this.systemDevices[i].localIp,
+      header: this.systemDevices[i].wifiSSID
+    }
+    this.presentAlert(msg);
+  }
+
+  getSystemStatusById(id){
+    let index = this.storedSystems.findIndex ( sys => sys.id === parseInt(id,10));
+    return this.storedSystems[index];
+  }
+
+  async presentAlert(msg) {
+    this.alert = await this.alertController.create({
+      cssClass: 'text-center abel',
+      header: msg.header,
+      subHeader: `-${msg.subheader}dB`,
+      message: msg.msg,
+      buttons: ['OK'],
+      backdropDismiss: true
+    });
+    await this.alert.present();
+  }
+
 }

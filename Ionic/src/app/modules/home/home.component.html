@@ -49,7 +49,7 @@
 
           <ion-card-content style="padding: 1rem;">
             <!-- <ion-icon name="hardware-chip-outline" style="font-size: 4rem; color: rgb(10, 245, 143);"></ion-icon> -->
-            <ion-button color="dark" [routerLink]="['/device']" routerLinkActive="router-link-active"
+            <ion-button color="dark" [routerLink]="statusService.state.bluetoothConnected? ['/device'] : ['/setup']" routerLinkActive="router-link-active"
               class="w-100 mb-5">
               DEVICE
             </ion-button>

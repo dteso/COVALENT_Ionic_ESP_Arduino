@@ -4,6 +4,7 @@ import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ToastController, AlertController } from "@ionic/angular";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Observable } from "rxjs";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-setup",
@@ -30,7 +31,8 @@ export class SetupComponent implements OnInit {
     private bluetooth: BluetoothService,
     private statusService: StatusService,
     private storage: StorageService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private router: Router
   ) {
     this.btForm = this.formBuilder.group({
       message: ["", Validators.required],
@@ -63,6 +65,7 @@ export class SetupComponent implements OnInit {
       this.statusService.state.bluetoothConnected = false;
       this.bluetooth.disconnect().then((response) => {
         result(response);
+        this.router.navigate(['/home']);
       });
     });
   }

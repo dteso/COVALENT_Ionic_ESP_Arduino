@@ -1,0 +1,40 @@
+<ion-content>
+  <ion-card style="background: transparent;" class="abel">
+    <ion-card-header>
+<ion-card-title>
+  Device Type
+</ion-card-title>
+<ion-card-subtitle>
+  Choose your device type or select custom to create your own type
+</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label class="abel">Type</ion-label>
+        <ion-select placeholder="Custom" class="abel">
+          <ion-select-option *ngFor="let type of deviceTypes" [value]="type.id">{{type.value}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+
+  <ion-card style="background: transparent;" class="abel">
+    <ion-card-header>
+<ion-card-title>
+  System
+</ion-card-title>
+<ion-card-subtitle>
+  Select a system from availables. Or create a new one
+</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label class="abel">System</ion-label>
+        <ion-select placeholder="None" class="abel">
+          <ion-select-option *ngFor="let type of deviceTypes" [value]="type.id">{{type.value}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -77,6 +77,56 @@ const int D8_STATUS_DIR = 218; // Size 1
 const int D9_STATUS_DIR = 219; // Size 1
 const int D10_STATUS_DIR = 220; // Size 1
 
+
+/*************FIELD SIZES***************/
+
+const int USER1_CODE_SIZE = 4;
+const int USER2_CODE_SIZE = 6;
+/**
+ *                 DIR8 DIR9 TYPE
+ *                  0    0   BASE (No peripherals)
+ *                  0    1   MOVEMENT_DETECTOR
+ *                  0    2   SINGLE RELAY OUTPUT
+ *                  0    3   DOUBLE RELAY + 12V OUTPUT 
+ *                  0    4   CAMERA
+ */
+const int DEVICE_NAME_SIZE = 10; //Size: 10
+const int LOCAL_IP_SIZE = 16;    //Size: 16
+const int WEB_SERVER_STATUS_SIZE = 1; //Size: 1---> Value: 1 ENABLED - 0 DISABLED
+const int NTP_SERVER_STATUS_SIZE = 1; //Size: 1---> Value: 1 ENABLED - 0 DISABLED
+const int SSID_SIZE = 20;        // Size:20
+const int WIFI_PASS_SIZE = 20;   //Size: 20
+const int BT_ID_SIZE = 20;   //Size: 20
+const int DEVICE_MAC_SIZE = 20;   //Size: 20
+const int MQTT_SERVER_SIZE = 30;   //Size: 30
+const int MQTT_PORT_SIZE = 4;   //Size: 4
+const int DEVICE_TYPE_SIZE = 16; // Size 16
+const int D0_BH_SIZE = 1; // Size 1
+const int D1_BH_SIZE = 1; // Size 1
+const int D2_BH_SIZE = 1; // Size 1
+const int D3_BH_SIZE = 1; // Size 1
+const int D4_BH_SIZE = 1; // Size 1
+const int D5_BH_SIZE = 1; // Size 1
+const int D6_BH_SIZE = 1; // Size 1
+const int D7_BH_SIZE = 1; // Size 1
+const int D8_BH_SIZE = 1; // Size 1
+const int D9_BH_SIZE = 1; // Size 1
+const int D10_BH_SIZE = 1; // Size 1
+
+// Not used from 201 - 209 ()
+
+const int D0_STATUS_SIZE = 1; // Size 1
+const int D1_STATUS_SIZE = 1; // Size 1
+const int D2_STATUS_SIZE = 1; // Size 1
+const int D3_STATUS_SIZE = 1; // Size 1
+const int D4_STATUS_SIZE = 1; // Size 1
+const int D5_STATUS_SIZE = 1; // Size 1
+const int D6_STATUS_SIZE = 1; // Size 1
+const int D7_STATUS_SIZE = 1; // Size 1
+const int D8_STATUS_SIZE = 1; // Size 1
+const int D9_STATUS_SIZE = 1; // Size 1
+const int D10_STATUS_SIZE = 1; // Size 1
+
 /*STRUCT STATUS*/
 
 struct Weather

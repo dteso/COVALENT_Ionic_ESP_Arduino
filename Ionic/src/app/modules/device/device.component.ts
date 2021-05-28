@@ -134,7 +134,7 @@ export class DeviceComponent implements OnInit {
     if (msg.indexOf('[ESP-SYS] - DEVICE_MAC: ') > -1) {
       this.statusService.state.deviceMAC = msg.substring(msg.indexOf("[ESP-SYS] - DEVICE_MAC: ") + 24, msg.length);
     }
-    if (msg.indexOf('[ESP-NET] - DEVICE_NAME: ') > -1) {
+    if (msg.indexOf('[ESP-SYS] - DEVICE_NAME: ') > -1) {
       this.statusService.state.name = msg.substring(msg.indexOf("[ESP-SYS] - DEVICE_NAME: ") + 25, msg.length);
       this.deviceName = this.statusService.state.name;
     }
@@ -179,7 +179,7 @@ export class DeviceComponent implements OnInit {
 
   async storeConfig() {
     this.showNameDeviceInput = !this.showNameDeviceInput;
-    this.statusService.state.name = this.deviceName;
+    this.statusService.state.name = this.deviceName.trimLeft();
     this.sendMessageByBluetooth(">>>DEVICE_NAME: "+ this.deviceName);
     this.customSerialService.sendData(">>>DEVICE_NAME: " + this.deviceName);
     //TODO. Debe asignarse el sistema que se elija desde el dispositivo
