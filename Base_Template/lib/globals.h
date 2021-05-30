@@ -24,6 +24,7 @@ const String MCU = "NodeMCU v3.0 - ESP8266";
 #define MQTT_SERVER ">>>MQTT_SERVER: " 
 #define MQTT_PORT ">>>MQTT_PORT: " 
 #define DEVICE_TYPE ">>>DEVICE_TYPE: " 
+#define TKNZD_TPC ">>>TOKENIZED_TOPIC: "
 
 /*-------------VARIABLES DE CLIMA DHT11----------------*/
 #define DHTPIN D3   // what pin we're connected to
@@ -63,7 +64,9 @@ const int D8_BH_DIR = 198; // Size 1
 const int D9_BH_DIR = 199; // Size 1
 const int D10_BH_DIR = 200; // Size 1
 
-// Not used from 201 - 209 ()
+const int TKNZD_TPC_DIR = 201; // Size 8
+
+// Not used 209 ()
 
 const int D0_STATUS_DIR = 210; // Size 1
 const int D1_STATUS_DIR = 211; // Size 1
@@ -114,6 +117,7 @@ const int D9_BH_SIZE = 1; // Size 1
 const int D10_BH_SIZE = 1; // Size 1
 
 // Not used from 201 - 209 ()
+const int TKNZD_TPC_SIZE = 8; // Size 8
 
 const int D0_STATUS_SIZE = 1; // Size 1
 const int D1_STATUS_SIZE = 1; // Size 1
@@ -164,6 +168,7 @@ struct Status
     boolean D4_behaviour;
     boolean alarmStatus;
     boolean alarmTriggered;
+    String tokenizedTopic;
 };
 
 

@@ -29,7 +29,7 @@ Status status;
 Mqtt mqttClient;
 char message[800] = "";
 char topic[100] = "";
-char main_topic[200] = "medusa/devices/outputs";
+char main_topic[200] = "/medusa/devices/outputs";
 boolean lastDetection = false;
 boolean alarmConfirmed;
 
@@ -56,6 +56,7 @@ String booleanToString(boolean val)
 void sendJsonDeviceData(char *topic)
 {
     String signalStrength = String(WiFi.RSSI()); 
+    String finalTopic = status.tokenizedTopic + "/medusa/devices/outputs";
     signalStrength = signalStrength.substring(1, signalStrength.length());
     serialCore.send(signalStrength);
     String deviceData;
@@ -74,7 +75,10 @@ void sendJsonDeviceData(char *topic)
                 + "\"}";
     //Serial.print(deviceData);
     deviceData.toCharArray(message, 800);
-    mqttClient.publishString(topic, message);
+    finalTopic.toCharArray(main_topic, 800);
+    mqttClient.publishString(main_topic, message);
+    serialCore.send(message);
+    serialCore.send(main_topic);
 }
 
 /*
@@ -82,7 +86,7 @@ void sendJsonDeviceData(char *topic)
  */
 void Covalent::verifyData(String data)
 {
-    String ownTopic = "medusa/set/" + status.wifiMac;
+    String ownTopic = status.tokenizedTopic+"/medusa/set/" + status.wifiMac;
     ownTopic.toCharArray(topic, 100);
     // Serial.print("Own Topic: ");
     // Serial.println(ownTopic);
@@ -221,6 +225,7 @@ void Covalent::setup()
     status.mqttServer = mqttClient.mqtt_server;
     mqttClient.deviceName = this->readStringFromMemory(DEVICE_NAME_DIR);
     mqttClient.wifiMAC = WiFi.macAddress();
+    mqttClient.tokenizedTopic = status.tokenizedTopic;
     mqttClient.setupMqtt();
     if (WiFi.isConnected())
     {
@@ -336,7 +341,7 @@ void Covalent::reloj()
             mn++;
             if (WiFi.isConnected())
             {
-                sendJsonDeviceData("medusa/devices/outputs");
+                sendJsonDeviceData("/medusa/devices/outputs");
                 serialCore.send("Periodic I'm alive + Status message sent...");
                 delay(10);
             }
@@ -540,6 +545,19 @@ void Covalent::verifyCommands(String reading)
         //serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)MQTT_SERVER_DIR + " ] ::: " + deviceMacReadFromMemory + " - Size: " + deviceMacReadFromMemory.length());
     }
     delay(10);
+    value = TKNZD_TPC;
+    if (reading.indexOf(value) > -1)
+    {
+        String aux;
+        aux = reading.substring(value.length(), reading.length());
+        serialCore.send("[ESP-SYS] - TOKENIZED_TOPIC: " + aux);
+        this->saveStringInMemory(TKNZD_TPC_DIR, aux, TKNZD_TPC_SIZE);
+        status.tokenizedTopic = this->readStringFromMemory(TKNZD_TPC_DIR);
+        mqttClient.tokenizedTopic = aux;
+        mqttClient.setupMqtt();
+        //serialCore.send("[ESP-EEPROM] - EEPROM read at dir [ " + (String)MQTT_SERVER_DIR + " ] ::: " + deviceMacReadFromMemory + " - Size: " + deviceMacReadFromMemory.length());
+    }
+    delay(10);
     value = DEVICE_TYPE;
     if (reading.indexOf(value) > -1)
     {
@@ -561,6 +579,9 @@ void Covalent::getStatus()
     status.deviceName = this->readStringFromMemory(DEVICE_NAME_DIR);
     serialCore.send("[ESP-SYS] - DEVICE_NAME: " + status.deviceName);
     status.STA_connected = WiFi.isConnected();
+    serialCore.send("[ESP-NET] - TOKENIZED_TOPIC: " + status.tokenizedTopic);
+    status.tokenizedTopic = this->readStringFromMemory(TKNZD_TPC_DIR);
+    mqttClient.tokenizedTopic = status.tokenizedTopic;
     if (status.STA_connected)
     {
         serialCore.send("[ESP-NET] - STA_STATUS_OK");
@@ -620,7 +641,6 @@ void Covalent::getStatus()
     status.deviceType = this->readStringFromMemory(DEVICE_TYPE_DIR);
     serialCore.send("[ESP-SYS] - DEVICE_TYPE: " + status.deviceType);
     serialCore.send("[ESP_NET] - STATUS_READ_END");
-    status.deviceType = this->readStringFromMemory(DEVICE_TYPE_DIR);
 }
 
 /**********************************************************************************************

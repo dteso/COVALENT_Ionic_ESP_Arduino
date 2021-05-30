@@ -10,6 +10,7 @@ String payloadData;
 String topicData;
 String deviceName;
 String wifiMAC;
+String tokenizedTopic;
 char msg[50];
 
 SerialCore serialcore;
@@ -29,9 +30,9 @@ void callback(char *topic, byte *payload, unsigned int length)
         char c = ((char)payload[i]);
         response = response + c;
     }
-    serialcore.sendInLine("Topic:" + (String)topic);
+    serialcore.sendInLine("Topic: " + (String)topic);
     serialcore.send("");
-    serialcore.sendInLine("Respuesta:" + response);
+    serialcore.sendInLine("Respuesta: " + response);
     serialcore.send("");
     payloadData = response;
     topicResponse = (String)topic;
@@ -57,17 +58,19 @@ void Mqtt::reconnect(boolean restart)
         clientId += String(random(0xffff), HEX);
         if (client.connect(clientId.c_str()))
         {
-            serialcore.send("connected");
             // SUCCESSFULLY CONNECTION ADVICE
-            client.publish("medusa/network/status", ">>>...M E D U S A  is now  A L I V E...>>> \n");
-            client.publish("medusa/network/connections", WiFi.localIP().toString().c_str());
+            serialcore.send("connected");
             // GENERAL TOPIC SUBSCRIPTION
-            client.subscribe("medusa/devices/outputs");
+            char generalTopic[200] = "";
+            String auxTopic = tokenizedTopic+"/medusa/devices/outputs";
+            auxTopic.toCharArray(generalTopic, 100);
+            client.subscribe(generalTopic);
+            serialcore.sendInLine("General topic: "); serialcore.send(generalTopic);
             // DEVICE SUBSCRIPTION ( topic where we'll get commands to manage )
             if (wifiMAC != "")
             {
                 char commandsTopic[200] = "";
-                String ownTopic = "medusa/set/" + wifiMAC;
+                String ownTopic = tokenizedTopic+"/medusa/set/"+wifiMAC;
                 Serial.print("MQTT topic: "); Serial.println(ownTopic);
                 ownTopic.toCharArray(commandsTopic, 100);
                 client.subscribe(commandsTopic);
@@ -97,6 +100,7 @@ void Mqtt::publishString(char topic[], char value[])
     if (client.connected())
     {
         client.publish(topic, value);
+        serialcore.sendInLine("Published in topic: ");serialcore.send(topic);
     }
 }
 

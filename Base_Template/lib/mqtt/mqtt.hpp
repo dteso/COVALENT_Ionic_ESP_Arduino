@@ -16,6 +16,7 @@ public:
     String lastTopic;
     String deviceName;
     String wifiMAC;
+    String tokenizedTopic;
     char *mqtt_server= "test.mosquitto.org";
 
     Mqtt();
