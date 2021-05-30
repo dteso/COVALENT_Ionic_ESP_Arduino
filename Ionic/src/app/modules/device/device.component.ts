@@ -149,6 +149,10 @@ export class DeviceComponent implements OnInit {
       this.statusService.state.mqttPort = msg.substring(msg.indexOf("[ESP-SYS] - MQTT_PORT: ") + 23, msg.length);
       this.options.port = parseInt(this.statusService.state.mqttPort, 10);
     }
+    if (msg.indexOf('[ESP-NET] - TOKENIZED_TOPIC: ') > -1) {
+      this.statusService.state.tokenizedTopic = msg.substring(msg.indexOf("[ESP-NET] - TOKENIZED_TOPIC: ") + 29, msg.length);
+      this.options.port = parseInt(this.statusService.state.mqttPort, 10);
+    }
     if (msg.indexOf('[ESP-NET] - WEB_SERVER_STATUS: ') > -1) {
       let webServerStatus = 0;
       webServerStatus = parseInt(msg.substring(msg.indexOf("[ESP-NET] - WEB_SERVER_STATUS: ") + 31, msg.length), 10);
@@ -180,8 +184,12 @@ export class DeviceComponent implements OnInit {
   async storeConfig() {
     this.showNameDeviceInput = !this.showNameDeviceInput;
     this.statusService.state.name = this.deviceName.trimLeft();
+
     this.sendMessageByBluetooth(">>>DEVICE_NAME: "+ this.deviceName);
     this.customSerialService.sendData(">>>DEVICE_NAME: " + this.deviceName);
+
+    this.sendMessageByBluetooth(">>>TOKENIZED_TOPIC: "+ this.statusService.tokenizedTopic);
+    this.customSerialService.sendData(">>>TOKENIZED_TOPIC: " + this.statusService.tokenizedTopic);
     //TODO. Debe asignarse el sistema que se elija desde el dispositivo
     delete this.statusService.state.system;
     await this.storage.setDevice(this.statusService.state).then(res => 

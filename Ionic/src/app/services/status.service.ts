@@ -6,6 +6,8 @@ import { State } from './models';
 })
 export class StatusService {
 
+  tokenizedTopic = "";
+
   state:State = {
     deviceMAC: '',
     bluetoothId: '',
@@ -29,7 +31,8 @@ export class StatusService {
     online: false,
     bluetoothOnline: false,
     system: '',
-    type: ''
+    type: '',
+    tokenizedTopic: ''
   };
 
   constructor() { }

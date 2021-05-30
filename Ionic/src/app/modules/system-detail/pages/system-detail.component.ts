@@ -52,7 +52,7 @@ export class SystemDetailComponent implements OnInit {
     this.options.path = this.mqttServers[this.serverSelected].path;
     this._mqttService.connect(this.options);
     console.log('connecting...');   
-    this.subscribeTo(`medusa/devices/outputs`);
+    this.subscribeTo(`/medusa/devices/outputs`);
   }
 
   async ngOnInit() {
@@ -84,14 +84,14 @@ export class SystemDetailComponent implements OnInit {
       this.activeBluetooth = res;
     });
     this.exploreBluetoothDevices();
-    this.sendmsg(`medusa/devices/outputs`, "SUPERV");
+    this.sendmsg(`/medusa/devices/outputs`, "SUPERV");
     await this.bluetooth
       .getCurrentDevice()
       .then((res) => console.log("RES:" + JSON.stringify(res)));
   }
 
   ionViewWillEnter() {
-    this.sendmsg(`medusa/devices/outputs`, "SUPERV");
+    this.sendmsg(`/medusa/devices/outputs`, "SUPERV");
     this.exploreBluetoothDevices();
   }
 
@@ -121,11 +121,9 @@ export class SystemDetailComponent implements OnInit {
   onAction1(i, device) {
     let deviceMAC = device.deviceMAC.substring(0, device.deviceMAC.length - 2);
     if(device.d6_status === "1"){
-      this.sendmsg(`medusa/set/${deviceMAC}`, "TOGGLE_SWITCH_OFF");
-      //device.d6_status = "0";
+      this.sendmsg(`/medusa/set/${deviceMAC}`, "TOGGLE_SWITCH_OFF");
     }else{
-      this.sendmsg(`medusa/set/${deviceMAC}`, "TOGGLE_SWITCH_ON");
-      //device.d6_status = "1";
+      this.sendmsg(`/medusa/set/${deviceMAC}`, "TOGGLE_SWITCH_ON");
     }      
   }
 
@@ -139,14 +137,17 @@ export class SystemDetailComponent implements OnInit {
   }
 
   sendmsg(topic: string, msg: string): void {
-    this._mqttService.unsafePublish(topic, msg, { qos: 1, retain: true });
+    this._mqttService.unsafePublish(`${this.statusService.tokenizedTopic}${topic}`, msg, { qos: 1, retain: true });
   }
 
   subscribeTo(topic) {
     this.connectedDevices = [];
+    let finalTopic = `${this.statusService.tokenizedTopic}${topic}`;
+    console.log('Subscribing to ' + finalTopic);
     this.subscription = this._mqttService
-      .observe(topic)
+      .observe(finalTopic)
       .subscribe((message: IMqttMessage) => {
+        console.log('Final topic', finalTopic);
         console.log("MQTT message", message.payload.toString());
         if (message.payload.toString() !== "SUPERV") {
           this.device = message.payload.toString();
@@ -204,7 +205,6 @@ export class SystemDetailComponent implements OnInit {
       .catch((err) => {
         currentDevice.connectingByBluetooth = false;
         currentDevice.connectionError = true;
-        //this.activeBluetooth = '';
         this.storage.setBluetoothId("");
         console.log(`E R R O R ----> ${err}`);
       });
@@ -221,7 +221,7 @@ export class SystemDetailComponent implements OnInit {
       devicesToActivate = this.storedDevices;
       devicesToActivate.map( dev => {
         let deviceMAC = dev.deviceMAC.substring(0, dev.deviceMAC.length - 2);
-        this.sendmsg(`medusa/set/${deviceMAC}`, "SWITCH_ALARM_OFF");
+        this.sendmsg(`/medusa/set/${deviceMAC}`, "SWITCH_ALARM_OFF");
       });
     }else{
       let date = new Date();
@@ -231,7 +231,7 @@ export class SystemDetailComponent implements OnInit {
       devicesToActivate = this.storedDevices;
       devicesToActivate.map( dev => {
         let deviceMAC = dev.deviceMAC.substring(0, dev.deviceMAC.length - 2);
-        this.sendmsg(`medusa/set/${deviceMAC}`, "SWITCH_ALARM_ON");
+        this.sendmsg(`/medusa/set/${deviceMAC}`, "SWITCH_ALARM_ON");
       });
     }
     this.storage.setSystems(this.storedSystems);

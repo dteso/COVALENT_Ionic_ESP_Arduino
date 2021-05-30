@@ -41,4 +41,5 @@ export interface State {
   bluetoothOnline?: false;
   system?: string;
   type?: string;
+  tokenizedTopic?: string;
 };

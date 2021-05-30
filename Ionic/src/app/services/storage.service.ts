@@ -10,6 +10,7 @@ export class StorageService {
   LANG = 'lang';
   DEVICES = 'devices';
   SYSTEMS = 'systems';
+  TOKENIZED_TOPIC = "tokenized_topic"
   devices = [];
   // Siempre debe haber un sistema por defecto
   systems = [
@@ -96,5 +97,13 @@ export class StorageService {
 
   async setSystems(systems: any[]): Promise<any>{
     return this.storage.set(this.SYSTEMS, systems);
+  }
+
+  async getTokenizedTopic(): Promise<any>{
+    return await this.storage.get(this.TOKENIZED_TOPIC);
+  }
+
+  async setTokenizedTopic(tokenizedTopic): Promise<any>{
+    return this.storage.set(this.TOKENIZED_TOPIC, tokenizedTopic);
   }
 }
