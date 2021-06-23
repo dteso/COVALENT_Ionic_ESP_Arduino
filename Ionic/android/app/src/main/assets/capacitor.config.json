@@ -1,0 +1,6 @@
+{
+	"appId": "com.example.app",
+	"appName": "mouserKeyboarder",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}
