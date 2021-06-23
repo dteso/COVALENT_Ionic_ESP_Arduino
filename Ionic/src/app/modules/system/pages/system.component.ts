@@ -30,6 +30,7 @@ export class SystemComponent implements OnInit {
   async ngOnInit() {}
 
   async ionViewDidEnter() {
+    
     this.getData();
   }
 

@@ -1,0 +1,137 @@
+<ion-content scrollY="true" class="abel custom-bg">
+  <ion-row>
+    <ion-card class="abel w-100" style="background: transparent !important;">
+      <ion-card-header>
+        <div class="text-center p-2">
+          <ion-icon name="hardware-chip-outline" class="txt-white" style="font-size: 4rem;"></ion-icon>
+          <h1 style="font-weight: bolder; color: whitesmoke; font-size: 2.5rem;">New Device</h1>
+        </div>
+      </ion-card-header>
+      <ion-card-content class="txt-white abel">
+
+        <div #step1 *ngIf="step===1" class="fade-in">
+          <h1><strong>Step 1</strong> Select Connection</h1>
+          <ion-row class="text-center" style="font-size: 6rem;">
+            <ion-col (click)="exploreBluetoothDevices()">
+              <ion-icon name="bluetooth"></ion-icon>
+              <h2>Bluetooth</h2>
+            </ion-col>
+            <ion-col>
+              <ion-icon name="terminal"></ion-icon>
+              <h2>Serial</h2>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div #step2 *ngIf="step===2" class="fade-in">
+          <h1><strong>Step 2</strong> Select Device </h1>
+          <ion-row class="text-center" style="font-size: 6rem;"
+            *ngIf="bluetoothDevices && bluetoothDevices.length === 0 else showBluetoothAvailables">
+            <ion-col>
+              <ion-spinner name="crescent" color="secondary" class="search-spinner"></ion-spinner>
+            </ion-col>
+          </ion-row>
+          <ng-template #showBluetoothAvailables>
+            <ion-row class="fade-in">
+              <ion-col size='12'>
+                <div #terminal style="overflow: scroll;">
+                  <div *ngFor="let btDevice of bluetoothDevices" class="abel item"
+                    (click)="bluetoothConnection(btDevice.address)">
+                    <ion-col size='12'><strong>{{btDevice.name? btDevice.name : 'No name'}}</strong></ion-col>
+                    <ion-col size='12'>
+                      [{{btDevice.address}}]
+                    </ion-col>
+                  </div>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ng-template>
+        </div>
+
+        <div #step3 *ngIf="step===3" class="fade-in">
+          <h1><strong>Step 3</strong> WiFi LogIn </h1>
+          <ion-row class="txt-white">
+            <ion-col class="txt-white">
+              <div class="txt-white" style="padding: 1.5rem;">
+                <h2 class="text-center" style="margin-bottom: 1rem;">
+                  {{statusService.state.mcu}}
+                </h2>
+                <form [formGroup]="wifiForm" (ngSubmit)="logForm()">
+                  <div>
+                     <ion-input type="text" placeholder="SSID" formControlName="ssid"></ion-input>
+                      <ion-input type="password" placeholder="Password" formControlName="password"></ion-input>
+                 </div>
+                  <hr>
+                  <div class="text-center">
+                    <ion-button type="submit" expand="block" color="secondary" class="set-button-style"
+                      [disabled]="!wifiForm.valid">SET</ion-button>
+                  </div>
+                </form>
+
+                <ion-row *ngIf="mcuConnected else notConnected" class="text-center" style="color: greenyellow; background: transparent; margin-top: 2rem;">
+                  <ion-col size='2'>
+                    <ion-icon name="checkmark-outline"></ion-icon>
+                  </ion-col>
+                  <ion-col size='5'>
+                    CONNECTED
+                  </ion-col>
+                  <ion-col  size='5'>
+                    {{localIp}}
+                  </ion-col>
+                </ion-row>
+                <ng-template #notConnected>
+                  <ion-row class="text-center" style="color: gray; background: transparent; margin-top: 2rem;">
+                    <ion-col size='2'>
+                      <ion-icon name="close-outline"></ion-icon>
+                    </ion-col>
+                    <ion-col size='8'>
+                      NOT CONNECTED
+                    </ion-col>
+                    <ion-col  size='2'>
+                      ?
+                    </ion-col>
+                  </ion-row>
+
+                </ng-template>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div #step4 *ngIf="step===4" class="fade-in txt-white">
+          <h1 style="margin-bottom: 1.5rem;"><strong>Step 4</strong> Device Type </h1>
+          <ion-row class="text-center">
+            <ion-col *ngFor="let type of deviceTypes" size='4' (click)="sendDeviceType(type.caption)">
+              <ion-icon name={{type.name}} style="padding: 0.5rem; font-size: 5rem;"></ion-icon>
+              <h3>{{type.caption}}</h3>
+            </ion-col>
+          </ion-row>
+        </div>
+
+        <div #step5 *ngIf="step===5" class="fade-in txt-white">
+          <h1 style="margin-bottom: 1.5rem;"><strong>Step 5</strong> Device Name </h1>
+          <ion-row class="text-center">
+            <ion-col>
+              <div class="text-center p-2">
+                <ion-row class="text-center">
+                  <ion-col size='12'>
+                    <ion-item>
+                      <ion-input type="text" class="w-100 text-center abel" [(ngModel)]="deviceName" name="deviceName"></ion-input>
+                    </ion-item>
+                  </ion-col>
+                  <div>
+                    <ion-button color="secondary" shape="round" fill="outline" (click)="storeConfig()">
+                      <ion-icon name="checkmark-outline"></ion-icon>
+                    </ion-button>
+                  </div>
+                </ion-row>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+
+
+      </ion-card-content>
+    </ion-card>
+  </ion-row>
+</ion-content>

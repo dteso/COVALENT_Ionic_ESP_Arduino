@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { StorageService } from 'src/app/services/storage.service';
 import { DeviceTypes } from '../../../shared/utils/enums/device-types.enum';
 import { enumToObjectsArray } from '../../../shared/utils/helpers';
 
@@ -11,11 +12,17 @@ export class ConfigurationComponent implements OnInit {
 
   deviceTypes = [];
   deviceTypesEnum = DeviceTypes;
+  systems = [];
 
-  constructor() { }
+  constructor(
+    private storage:StorageService
+  ) {
+    
+   }
 
-ngOnInit() {
+async ngOnInit() {
   this.deviceTypes = enumToObjectsArray(DeviceTypes);
+  await this.storage.getSystems().then( systems => this.systems = systems );
   console.log(this.deviceTypes);
   }
 

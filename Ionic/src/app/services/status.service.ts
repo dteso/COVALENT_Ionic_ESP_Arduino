@@ -7,7 +7,6 @@ import { State } from './models';
 export class StatusService {
 
   tokenizedTopic = "";
-
   state:State = {
     deviceMAC: '',
     bluetoothId: '',

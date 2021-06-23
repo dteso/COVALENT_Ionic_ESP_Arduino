@@ -32,7 +32,7 @@
       <ion-item>
         <ion-label class="abel">System</ion-label>
         <ion-select placeholder="None" class="abel">
-          <ion-select-option *ngFor="let type of deviceTypes" [value]="type.id">{{type.value}}</ion-select-option>
+          <ion-select-option *ngFor="let system of systems" [value]="system.id">{{system.name}}</ion-select-option>
         </ion-select>
       </ion-item>
     </ion-card-content>

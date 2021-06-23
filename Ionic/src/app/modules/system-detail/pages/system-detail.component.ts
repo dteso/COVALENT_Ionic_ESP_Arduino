@@ -92,6 +92,7 @@ export class SystemDetailComponent implements OnInit {
 
   ionViewWillEnter() {
     this.sendmsg(`/medusa/devices/outputs`, "SUPERV");
+    this.bluetoothDevices = [];
     this.exploreBluetoothDevices();
   }
 
@@ -105,7 +106,6 @@ export class SystemDetailComponent implements OnInit {
     });
     this.bluetooth.searchBluetooth().then(
       (successMessage: Array<Object>) => {
-        this.bluetoothDevices = [];
         this.bluetoothDevices = successMessage;
         console.info("Bluetooth Devices", this.bluetoothDevices);
         this.systemDevices.map((dev) => {
@@ -151,6 +151,8 @@ export class SystemDetailComponent implements OnInit {
         console.log("MQTT message", message.payload.toString());
         if (message.payload.toString() !== "SUPERV") {
           this.device = message.payload.toString();
+          this.device.replaceAll("\r","");
+          this.device.replaceAll("\n","");
           const data = JSON.parse(this.device);
           console.log("Device: ", data);
           if (this.systemDevices) {

@@ -11,8 +11,7 @@ import { IonicModule } from '@ionic/angular';
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,
-    CommonModule
+    IonicModule
   ],
   exports: [HeaderComponent]
 })
