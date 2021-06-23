@@ -215,7 +215,8 @@ void Covalent::setup()
     Serial.begin(serialCore.SERIAL_BAUDRATE);
     EEPROM.begin(this->EEPROM_SIZE);
     dht.begin();
-    this->WEB_SERVER_ENABLED = this->readStringFromMemory(WEB_SERVER_STATUS_DIR).indexOf("1") > -1 ? true : false;
+    //this->WEB_SERVER_ENABLED = this->readStringFromMemory(WEB_SERVER_STATUS_DIR).indexOf("1") > -1 ? true : false;
+    this->WEB_SERVER_ENABLED = false;
     this->NTP_SERVER_ENABLED = true;
     this->saveStringInMemory(NTP_SERVER_STATUS_DIR, "1", NTP_SERVER_STATUS_SIZE);
     loadingScreen();
@@ -345,7 +346,7 @@ void Covalent::reloj()
                 serialCore.send("Periodic I'm alive + Status message sent...");
                 delay(10);
             }
-            this->ntp();
+            if(WiFi.isConnected() && status.ntpEnabled) this->ntp();
         }
         //          ----------------------------
         if (mn == 60)
@@ -605,11 +606,11 @@ void Covalent::getStatus()
     {
         serialCore.send("[ESP-NET] - STA_STATUS_KO");
     }
-    status.webServerEnabled = this->readStringFromMemory(WEB_SERVER_STATUS_DIR);
-    serialCore.send("[ESP-NET] - WEB_SERVER_STATUS: " + status.webServerEnabled);
+    // status.webServerEnabled = this->readStringFromMemory(WEB_SERVER_STATUS_DIR);
+    // serialCore.send("[ESP-NET] - WEB_SERVER_STATUS: " + status.webServerEnabled);
 
     status.ntpEnabled = this->readStringFromMemory(NTP_SERVER_STATUS_DIR);
-    if (status.ntpEnabled)
+    if (status.ntpEnabled && status.STA_connected)
     {
         serialCore.send("[ESP-NTP] - NTP ENABLED");
         timeClient.update();                                                  //sincronizamos con el server NTP
